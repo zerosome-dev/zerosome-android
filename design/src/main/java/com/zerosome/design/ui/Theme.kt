@@ -1,4 +1,4 @@
-package com.zerosome.android.ui.theme
+package com.zerosome.design.ui
 
 import android.app.Activity
 import android.os.Build
