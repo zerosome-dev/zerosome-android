@@ -1,4 +1,4 @@
-package com.zerosome.android.ui.theme
+package com.zerosome.design.ui
 
 import androidx.compose.ui.graphics.Color
 
