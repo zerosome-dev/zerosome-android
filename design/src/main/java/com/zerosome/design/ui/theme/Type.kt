@@ -88,13 +88,22 @@ val Body2
         lineHeight = (14.dp.times(1.4f).toSp()),
     )
 
-val Label
+val Label1
     @Composable
     get() = TextStyle(
         fontFamily = PretendardFontFamily,
         fontSize = 13.dp.toSp(),
         fontWeight = FontWeight.Medium,
         lineHeight = (13.dp.times(1.4f).toSp()),
+    )
+
+val Label2
+    @Composable
+    get() = TextStyle(
+        fontFamily = PretendardFontFamily,
+        fontSize = 11.dp.toSp(),
+        fontWeight = FontWeight.Medium,
+        lineHeight = (13.dp).times(1.4f).toSp()
     )
 
 val Caption
