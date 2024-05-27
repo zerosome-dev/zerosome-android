@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zerosome.design.R
-import com.zerosome.design.ui.extension.toSp
+import com.zerosome.design.extension.toSp
 
 private val PretendardFontFamily = FontFamily(
     listOf(

@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "Zerosome"
 include(":app")
 include(":design")
+include(":feat:onboarding")
+include(":feat:main")
