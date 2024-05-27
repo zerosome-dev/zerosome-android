@@ -1,4 +1,4 @@
-package com.zerosome.design.ui.extension
+package com.zerosome.design.extension
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
