@@ -31,6 +31,8 @@ private val PretendardFontFamily = FontFamily(
     )
 )
 
+object ZSTextStyle
+
 val H1
     @Composable
     get() = TextStyle(
