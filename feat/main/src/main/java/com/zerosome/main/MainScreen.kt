@@ -19,7 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.zerosome.design.ui.theme.Caption
+import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
@@ -29,7 +29,7 @@ fun MainScreen() {
         NavHost(
             modifier = Modifier.weight(1f),
             navController = navController,
-            startDestination = MainDestination().route
+            startDestination = Home.route
         ) {
             composable(Home.route) {
                 HomeScreen()
@@ -75,7 +75,7 @@ fun BottomNavigationView(
         ) {
             items.forEach { item ->
                 NavigationBarItem(selected = currentRoute == item.screenRoute, label = {
-                    Text(stringResource(item.title), style = Caption)
+                    Text(stringResource(item.title), style = Label2)
                 }, icon = {
                     Icon(
                         painter = painterResource(item.icon),

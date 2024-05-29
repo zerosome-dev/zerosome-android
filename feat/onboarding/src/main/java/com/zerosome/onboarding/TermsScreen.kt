@@ -8,7 +8,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zerosome.design.ui.theme.H2
+import com.zerosome.design.ui.theme.Label2
 
 @Composable
 internal fun TermsScreen(moveToNext: () -> Unit) {
@@ -17,7 +17,7 @@ internal fun TermsScreen(moveToNext: () -> Unit) {
             Button(onClick = {
                 moveToNext()
             }) {
-                Text("약관 페이지", style = H2)
+                Text("약관 페이지", style = Label2)
             }
         }
     }
