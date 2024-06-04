@@ -35,7 +35,7 @@ fun MainScreen() {
                 HomeScreen()
             }
             composable(Category.route) {
-                CategoryScreen()
+                CategorySelectionScreen()
             }
             composable(Profile.route) {
                 ProfileScreen()

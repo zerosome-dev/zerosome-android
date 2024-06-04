@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = ZSColor.Primary,
     secondary = Color.White,
     tertiary = Color.White
 
