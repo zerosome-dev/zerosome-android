@@ -21,11 +21,6 @@ fun OnboardingNavScreen(
     ) {
         composable(route = Login.route) {
             LoginScreen {
-                navHostController.navigate(Terms.route)
-            }
-        }
-        composable(route = Terms.route) {
-            TermsScreen {
                 navHostController.navigate(Nickname.route)
             }
         }

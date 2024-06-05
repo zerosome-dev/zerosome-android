@@ -19,7 +19,7 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun PageIndicator(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     pagerState: PagerState,
     selectedColor: Color = Color.Black,
     defaultColor: Color = ZSColor.Neutral500,

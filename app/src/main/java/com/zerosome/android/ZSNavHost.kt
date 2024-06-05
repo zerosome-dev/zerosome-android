@@ -24,7 +24,11 @@ fun ZSNavHost(
         }
         composable(Onboarding.route) {
             OnboardingNavScreen(onUserLoggedIn = {
-                navController.navigate(Main.route)
+                navController.navigate(Main.route) {
+                    popUpTo(Onboarding.route) {
+                        inclusive = true
+                    }
+                }
             })
         }
     }
