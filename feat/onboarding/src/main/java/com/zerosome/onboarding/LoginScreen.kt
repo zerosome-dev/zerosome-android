@@ -48,6 +48,5 @@ internal fun LoginScreen(
             }
 
         }
-
     }
 }

@@ -1,5 +1,6 @@
 package com.zerosome.main
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.CardHorizontalPager
 import com.zerosome.design.ImageHorizontalPager
 import com.zerosome.design.ui.component.SimpleCardComponent
+import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.Caption
 import com.zerosome.design.ui.theme.H1
+import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
@@ -47,17 +51,9 @@ fun HomeScreen() {
             ))
         }
         item {
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(12.dp)
-                .background(color = ZSColor.Neutral50))
-            PopularCategoryComponent()
+            NewItemComponent()
         }
         item {
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(12.dp)
-                .background(color = ZSColor.Neutral50))
             PopularCategoryComponent()
         }
         item {
@@ -74,9 +70,19 @@ fun HomeScreen() {
 @Composable
 private fun NewItemComponent() {
     Column(modifier = Modifier.fillMaxWidth()) {
-        LazyRow {
-
-        }
+        Text(text = "출시 예정 신상품", style = H2, color = ZSColor.Neutral900, modifier = Modifier.padding(horizontal = 20.dp).padding(top = 30.dp))
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(text = "설명 문구를 입력해주세요", color = ZSColor.Neutral500, style = Body2, modifier = Modifier.padding(start = 20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        CardHorizontalPager(listItems = listOf(
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+        ))
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
