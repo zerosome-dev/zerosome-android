@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
+import com.zerosome.main.category.CategorySelectionScreen
 
 @Composable
 fun MainScreen() {
@@ -33,7 +34,9 @@ fun MainScreen() {
             startDestination = Home.route
         ) {
             composable(Home.route) {
-                HomeScreen()
+                HomeScreen {
+                    navController.navigate(ProductDetail.route)
+                }
             }
             composable(Category.route) {
                 CategorySelectionScreen{
@@ -49,7 +52,7 @@ fun MainScreen() {
                 }
             }
             composable(ProductDetail.route) {
-                CategoryDetailScreen {
+                ProductDetailScreen {
                     navController.popBackStack()
                 }
             }

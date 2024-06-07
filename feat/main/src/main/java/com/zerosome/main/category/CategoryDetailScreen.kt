@@ -55,7 +55,7 @@ fun CategoryDetailScreen(onBackPressed: () -> Unit) {
         }
         LazyVerticalGrid(columns = GridCells.Fixed(2), contentPadding = PaddingValues(horizontal = 22.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(20.dp) ) {
             items(40) {
-                SimpleCardComponent(title = "아이템 $it", brandName = "브랜드 $it", image = "", modifier = Modifier.fillMaxWidth())
+                SimpleCardComponent(title = "아이템 $it", brandName = "브랜드 $it", image = "", modifier = Modifier.fillMaxWidth(), onClick = {})
             }
         }
     }
