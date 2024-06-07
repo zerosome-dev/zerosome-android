@@ -32,7 +32,9 @@ import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onClickProduct: () -> Unit
+) {
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .statusBarsPadding(),
@@ -51,24 +53,24 @@ fun HomeScreen() {
             ))
         }
         item {
-            NewItemComponent()
+            NewItemComponent(onClickProduct)
         }
         item {
-            PopularCategoryComponent()
+            PopularCategoryComponent(onClickProduct)
         }
         item {
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .height(12.dp)
                 .background(color = ZSColor.Neutral50))
-            PopularCategoryComponent()
+            PopularCategoryComponent(onClickProduct)
         }
     }
 }
 
 
 @Composable
-private fun NewItemComponent() {
+private fun NewItemComponent(onClickProduct: () -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = "출시 예정 신상품", style = H2, color = ZSColor.Neutral900, modifier = Modifier
             .padding(horizontal = 20.dp)
@@ -89,7 +91,7 @@ private fun NewItemComponent() {
 }
 
 @Composable
-private fun PopularCategoryComponent() {
+private fun PopularCategoryComponent(onClickProduct: () -> Unit) {
     Column(modifier = Modifier.padding(vertical = 30.dp)) {
         Column(modifier = Modifier.padding(start = 22.dp, end = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -110,7 +112,7 @@ private fun PopularCategoryComponent() {
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow(contentPadding = PaddingValues(start = 22.dp, end = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(5) {
-                SimpleCardComponent(title = "CARD $it", brandName = "BRAND $it", image = "")
+                SimpleCardComponent(title = "CARD $it", brandName = "BRAND $it", image = "", onClick = onClickProduct)
             }
         }
     }

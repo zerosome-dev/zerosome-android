@@ -1,4 +1,4 @@
-package com.zerosome.main
+package com.zerosome.main.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
