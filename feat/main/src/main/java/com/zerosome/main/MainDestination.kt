@@ -16,6 +16,16 @@ internal object Profile: MainDestination() {
     override val route: String = "${super.route}/MyPage"
 }
 
+internal object CategoryDetail: MainDestination() {
+    override val route: String
+        get() = "${super.route}/CategoryDetail"
+}
+
+internal object ProductDetail: MainDestination() {
+    override val route: String
+        get() = "${super.route}/ProductDetail"
+}
+
 sealed class BottomNavItem(
     val title: Int,
     val icon: Int,

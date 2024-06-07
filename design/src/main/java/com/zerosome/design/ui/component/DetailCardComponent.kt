@@ -1,6 +1,5 @@
 package com.zerosome.design.ui.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,13 +27,13 @@ fun DetailCardComponent() {
         .wrapContentSize()
         .aspectRatio(100 / 109f),
         shadowElevation = 5.dp
-        ) {
+        )
+    {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 16.dp)) {
             Spacer(modifier = Modifier
                 .height(216.dp)
                 .background(
                     color = ZSColor.Neutral500,
-                    shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
                 ))
             Spacer(modifier = Modifier.height(14.dp))
             Text(text = "#생수/음료 #탄산음료", style = Label1, color = ZSColor.Neutral500)

@@ -21,6 +21,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.main.category.CategoryDetailScreen
 
 @Composable
 fun MainScreen() {
@@ -35,10 +36,22 @@ fun MainScreen() {
                 HomeScreen()
             }
             composable(Category.route) {
-                CategorySelectionScreen()
+                CategorySelectionScreen{
+                    navController.navigate(CategoryDetail.route)
+                }
             }
             composable(Profile.route) {
                 ProfileScreen()
+            }
+            composable(CategoryDetail.route) {
+                CategoryDetailScreen {
+                    navController.popBackStack()
+                }
+            }
+            composable(ProductDetail.route) {
+                CategoryDetailScreen {
+                    navController.popBackStack()
+                }
             }
         }
         BottomNavigationView(

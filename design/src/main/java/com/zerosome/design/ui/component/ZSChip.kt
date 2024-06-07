@@ -1,8 +1,6 @@
 package com.zerosome.design.ui.component
 
-import android.view.Surface
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -22,15 +20,14 @@ fun ZSChip(
     chipText: String,
 ) {
 
-    val backgroundColor: Color by rememberUpdatedState(newValue = if (enable) ZSColor.Primary else Color.White)
+    val backgroundColor: Color by rememberUpdatedState(newValue = if (enable) ZSColor.Primary else ZSColor.Neutral50)
     val borderEnable: BorderStroke? by rememberUpdatedState(newValue = if (enable) BorderStroke(1.dp, color = ZSColor.Neutral200) else null)
-    val textColor: Color by rememberUpdatedState(newValue = if (enable) Color.White else ZSColor.Neutral700)
+    val textColor: Color by rememberUpdatedState(newValue = if (enable) Color.White else ZSColor.Neutral400)
     Surface(
-        modifier = Modifier.height(32.dp).padding(horizontal = 12.dp, vertical = 6.dp),
         color = backgroundColor,
         border = borderEnable,
         shape = RoundedCornerShape(6.dp)
     ) {
-        Text(text = chipText, style = Body2, color = textColor)
+        Text(text = chipText, style = Body2, color = textColor, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
     }
 }

@@ -13,7 +13,7 @@ import com.zerosome.design.ui.theme.ZSColor
 fun ZSTag(
     title: String
 ) {
-    Surface(shape = RoundedCornerShape(4.dp), modifier = Modifier.padding(vertical = 3.dp, horizontal = 6.dp), color = ZSColor.Neutral50) {
-        Text(text = title, color = ZSColor.Neutral700)
+    Surface(shape = RoundedCornerShape(4.dp), color = ZSColor.Neutral50) {
+        Text(text = title, color = ZSColor.Neutral700, modifier = Modifier.padding(vertical = 3.dp, horizontal = 6.dp))
     }
 }
