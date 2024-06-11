@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.component.NonLazyVerticalGrid
+import com.zerosome.design.ui.view.NonLazyVerticalGrid
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.H2

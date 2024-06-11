@@ -1,4 +1,4 @@
-package com.zerosome.design.ui.component
+package com.zerosome.design.ui.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

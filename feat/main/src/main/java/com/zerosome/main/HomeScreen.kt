@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.CardHorizontalPager
 import com.zerosome.design.ImageHorizontalPager
-import com.zerosome.design.ui.component.SimpleCardComponent
+import com.zerosome.design.ui.view.SimpleCardComponent
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.Caption

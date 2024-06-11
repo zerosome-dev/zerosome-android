@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.component.DetailCardComponent
-import com.zerosome.design.ui.component.PageIndicator
+import com.zerosome.design.ui.view.DetailCardComponent
+import com.zerosome.design.ui.view.PageIndicator
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.ZSColor
 

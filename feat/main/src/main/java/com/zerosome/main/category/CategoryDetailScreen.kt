@@ -28,8 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.component.AppBarItem
-import com.zerosome.design.ui.component.SimpleCardComponent
+import com.zerosome.design.R
+import com.zerosome.design.ui.component.ZSAppBar
+import com.zerosome.design.ui.view.SimpleCardComponent
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.component.ZSDropdown
 import com.zerosome.design.ui.theme.H2
@@ -46,7 +47,7 @@ fun CategoryDetailScreen(onBackPressed: () -> Unit) {
         mutableStateOf(false)
     }
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally){
-        AppBarItem(onBackPressed = onBackPressed, backNavigationIcon = painterResource(id = com.zerosome.design.R.drawable.ic_chevron_left), navTitle = "생수/음료")
+        ZSAppBar(onBackPressed = onBackPressed, backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left), navTitle = "생수/음료")
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(PaddingValues(vertical = 10.dp, horizontal = 22.dp)), horizontalArrangement = Arrangement.spacedBy(6.dp)) {

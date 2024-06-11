@@ -23,6 +23,7 @@ import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
 import com.zerosome.main.category.CategorySelectionScreen
+import com.zerosome.main.review.ReviewWriteScreen
 
 @Composable
 fun MainScreen() {
@@ -53,6 +54,11 @@ fun MainScreen() {
             }
             composable(ProductDetail.route) {
                 ProductDetailScreen {
+                    navController.navigate(ReviewWrite.route)
+                }
+            }
+            composable(ReviewWrite.route) {
+                ReviewWriteScreen {
                     navController.popBackStack()
                 }
             }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.googleKsp)
     kotlin("kapt")
     alias(libs.plugins.hilt)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -65,11 +66,13 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.profileinstaller)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    "baselineProfile"(project(":app:baselineprofile"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
