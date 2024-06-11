@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,7 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.R
-import com.zerosome.design.ui.component.SimpleCardComponent
+import com.zerosome.design.ui.view.SimpleCardComponent
+import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.component.ZSTag
 import com.zerosome.design.ui.component.ZSTagType
@@ -35,12 +35,13 @@ import com.zerosome.design.ui.theme.Caption
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.view.StarRatingView
 
 @Composable
 fun ProductDetailScreen(
     onClickWriteReview: () -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 20.dp)) {
         item { ItemDetailComponent() }
         item { Spacer(modifier = Modifier
             .fillMaxWidth()
@@ -54,7 +55,9 @@ fun ProductDetailScreen(
         item {
             SimilarComponent()
         }
-        item { Button(onClick = onClickWriteReview) {
+        item { ZSButton(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 22.dp), onClick = onClickWriteReview) {
             Text(text = "리뷰 작성")
         } }
     }
@@ -75,7 +78,9 @@ fun ItemDetailComponent() {
             .padding(horizontal = 22.dp)
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "[브랜드브랜드브랜드]", style = Body2)
+        StarRatingView(modifier = Modifier)
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = "[브랜드브랜드브랜드]", style = Body2, color = ZSColor.Neutral500)
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = "브랜드 이름 2", style = SubTitle1)
         Spacer(modifier = Modifier.height(18.dp))

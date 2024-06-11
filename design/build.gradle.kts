@@ -50,6 +50,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.compose.rating)
+
 
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

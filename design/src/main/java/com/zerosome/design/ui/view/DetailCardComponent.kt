@@ -1,4 +1,4 @@
-package com.zerosome.design.ui.component
+package com.zerosome.design.ui.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.ui.component.ZSTag
 import com.zerosome.design.ui.theme.Label1
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
@@ -24,14 +25,13 @@ import com.zerosome.design.ui.theme.ZSColor
 @Composable
 fun DetailCardComponent() {
     Surface(shape = RoundedCornerShape(12.dp), modifier = Modifier
-        .wrapContentSize()
-        .aspectRatio(100 / 109f),
-        shadowElevation = 5.dp
-        )
+        .wrapContentSize(),
+        shadowElevation = 5.dp)
     {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 16.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier
                 .height(216.dp)
+                .aspectRatio(75/56f)
                 .background(
                     color = ZSColor.Neutral500,
                 ))
@@ -41,10 +41,11 @@ fun DetailCardComponent() {
             Text(text = "상품명 상품명", maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(horizontal = 66.dp), style = SubTitle1)
             Spacer(modifier = Modifier.height(15.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-               listOf("쿠랑", "이마트").forEach {
+               listOf("쿠팡", "이마트").forEach {
                    ZSTag(title = it)
                }
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
     }

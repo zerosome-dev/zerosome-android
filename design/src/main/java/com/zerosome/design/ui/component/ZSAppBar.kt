@@ -20,7 +20,7 @@ import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
-fun AppBarItem(
+fun ZSAppBar(
     backNavigationIcon: Painter? = null,
     onBackPressed: () -> Unit = {},
     navTitle: String, // TODO : WILL CHANGE TO ResId,

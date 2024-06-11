@@ -26,6 +26,11 @@ internal object ProductDetail: MainDestination() {
         get() = "${super.route}/ProductDetail"
 }
 
+internal object ReviewWrite: MainDestination() {
+    override val route: String
+        get() = "${super.route}/ReviewWrite"
+}
+
 sealed class BottomNavItem(
     val title: Int,
     val icon: Int,
