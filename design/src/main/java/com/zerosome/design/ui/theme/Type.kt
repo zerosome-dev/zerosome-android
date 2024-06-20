@@ -99,6 +99,15 @@ val Body3
         lineHeight = (14.dp.times(1.4f).toSp()),
     )
 
+
+val Body4
+    @Composable
+    get() = TextStyle(
+        fontFamily = PretendardFontFamily,
+        fontSize = 12.dp.toSp(),
+        fontWeight = FontWeight.Medium,
+    )
+
 val Label1
     @Composable
     get() = TextStyle(

@@ -17,48 +17,59 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSTextField
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.view.CommonTitleView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun NicknameScreen(onClickNext: () -> Unit) {
-    var clickNextButton by remember {
-        mutableStateOf(false)
-    }
+internal fun NicknameScreen(
+    onBackPressed: () -> Unit,
+    onClickNext: () -> Unit
+) {
     var nickNameField by remember {
         mutableStateOf("")
     }
-    Column(modifier = Modifier.fillMaxSize().padding(horizontal = 22.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        ZSAppBar(
+            navTitle = "",
+            backNavigationIcon = painterResource(id = com.zerosome.design.R.drawable.ic_chevron_left),
+            onBackPressed = onBackPressed
+        )
+        CommonTitleView(
+            titleRes = R.string.screen_nickname_title,
+            descriptionRes = R.string.screen_nickname_description
+        )
         Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "닉네임을 설정해주세요", style = H2)
-        Text(text = "최소 2자 ~ 12자 이내의 닉네임을 입력해주세요", style = Body2, color = ZSColor.Neutral400)
-        Spacer(modifier = Modifier.height(30.dp))
-        OutlinedTextField(value = nickNameField, onValueChange = { nickNameField = it}, modifier = Modifier.fillMaxWidth())
+        ZSTextField(
+            text = nickNameField,
+            onTextChanged = { nickNameField = it },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp),
+            erasable = true,
+            placeHolderText = stringResource(
+                id = R.string.screen_nickname_textfield_hint
+            )
+        )
         Spacer(modifier = Modifier.weight(1f))
-        ZSButton(onClick ={ clickNextButton = true }) {
+        ZSButton(onClick = onClickNext, modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp).padding(bottom = 10.dp)) {
             Text(
                 "닉네임 설정 화면",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = Label2
             )
-        }
-    }
-    if (clickNextButton) {
-        ModalBottomSheet(onDismissRequest = onClickNext) {
-            Text(text = "약관에 동의해주세요", modifier = Modifier.fillMaxWidth().padding(20.dp))
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
-                Text(text = "모두 동의", style = H2)
-            }
-            ZSButton(onClick = onClickNext, modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-                Text(text = "다음")
-            }
         }
     }
 }

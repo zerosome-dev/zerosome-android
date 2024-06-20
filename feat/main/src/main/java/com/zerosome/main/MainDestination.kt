@@ -1,5 +1,8 @@
 package com.zerosome.main
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+
 open class MainDestination {
     open val route: String = "Main"
 }
@@ -32,12 +35,13 @@ internal object ReviewWrite: MainDestination() {
 }
 
 sealed class BottomNavItem(
-    val title: Int,
-    val icon: Int,
+    @StringRes val title: Int,
+    @DrawableRes val selectedIcon: Int,
+    @DrawableRes val unselectedIcon: Int,
     val screenRoute: String
 ) {
-    data object Home: BottomNavItem(title = R.string.nav_title_home, icon = com.zerosome.design.R.drawable.ic_home, screenRoute = com.zerosome.main.Home.route)
-    data object Category: BottomNavItem(title = R.string.nav_title_category, icon = com.zerosome.design.R.drawable.ic_search, screenRoute = com.zerosome.main.Category.route)
+    data object Home: BottomNavItem(title = R.string.nav_title_home, unselectedIcon = com.zerosome.design.R.drawable.ic_nav_home, selectedIcon = com.zerosome.design.R.drawable.ic_nav_home_selected, screenRoute = com.zerosome.main.Home.route)
+    data object Category: BottomNavItem(title = R.string.nav_title_category, unselectedIcon = com.zerosome.design.R.drawable.ic_nav_search, selectedIcon = com.zerosome.design.R.drawable.ic_nav_search_selected, screenRoute = com.zerosome.main.Category.route)
 
-    data object MyPage: BottomNavItem(title = R.string.nav_title_profile, icon = com.zerosome.design.R.drawable.ic_user, screenRoute = Profile.route)
+    data object MyPage: BottomNavItem(title = R.string.nav_title_profile, unselectedIcon = com.zerosome.design.R.drawable.ic_nav_mypage, selectedIcon = com.zerosome.design.R.drawable.ic_nav_mypage_selected, screenRoute = Profile.route)
 }

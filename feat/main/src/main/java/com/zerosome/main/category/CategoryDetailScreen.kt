@@ -79,7 +79,7 @@ fun CategorySortBottomSheet(onDismissRequest: () -> Unit) {
         SortItem.entries.forEach { 
             Row(modifier = Modifier.padding(vertical = 14.dp, horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(text = it.sortName, style = SubTitle2)
-                Image(painter = painterResource(id = com.zerosome.design.R.drawable.icon_check), contentDescription = "CHECK")
+                Image(painter = painterResource(id = com.zerosome.design.R.drawable.ic_check), contentDescription = "CHECK")
             }
         }
     }
