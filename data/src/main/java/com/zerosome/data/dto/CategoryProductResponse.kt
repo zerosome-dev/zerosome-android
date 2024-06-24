@@ -15,8 +15,8 @@ data class CategoryProductResponse(
     val name: String,
     @SerialName("brand")
     val brand: String,
-    @SerialName("review")
-    val review: Int,
+    @SerialName("rating")
+    val rating: Int,
     @SerialName("reviewCnt")
     val reviewCount: Int
 )

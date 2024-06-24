@@ -12,8 +12,19 @@ data class ProductDetailResponse(
     @SerialName("productName")
     val productName: String,
     @SerialName("nutrientList")
-    val nutrientList: List<NutrientResponse>
-
+    val nutrientList: List<NutrientResponse>,
+    @SerialName("offlineStoreList")
+    val offlineStoreList: List<OfflineStoreResponse>,
+    @SerialName("onlineStoreList")
+    val onlineStoreList: List<OnlineStoreResponse>,
+    @SerialName("rating")
+    val rating: Float,
+    @SerialName("reviewCnt")
+    val reviewCount: Int,
+    @SerialName("reviewThumbnailList")
+    val reviewThumbnailList: List<ReviewThumbnailResponse>,
+    @SerialName("similarProductList")
+    val similarProductList: List<SimilarProductResponse>
 )
 
 data class NutrientResponse(
@@ -41,7 +52,7 @@ data class OnlineStoreResponse(
     val url: String? = null
 )
 
-data class ReviewThumbnail(
+data class ReviewThumbnailResponse(
     @SerialName("reviewId")
     val reviewId: Int,
     @SerialName("rating")
@@ -52,7 +63,7 @@ data class ReviewThumbnail(
     val regDate: String // Will Change to Kotlinx-datetime
 )
 
-data class SimilarProduct(
+data class SimilarProductResponse(
     @SerialName("productId")
     val productId: String,
     @SerialName("image")
