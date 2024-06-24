@@ -1,8 +1,8 @@
-package com.zerosome.data.dto
+package com.zerosome.data.dto.response
 
 import kotlinx.serialization.SerialName
 
-data class CategoryProductResponse(
+data class CafeResponse(
     @SerialName("id")
     val id: Int,
     @SerialName("image")
@@ -16,7 +16,7 @@ data class CategoryProductResponse(
     @SerialName("brand")
     val brand: String,
     @SerialName("rating")
-    val rating: Int,
+    val rating: Float,
     @SerialName("reviewCnt")
     val reviewCount: Int
 )

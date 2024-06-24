@@ -1,5 +1,6 @@
-package com.zerosome.data.dto
+package com.zerosome.data.dto.response
 
+import com.zerosome.data.dto.response.CategoryDepth2Response
 import kotlinx.serialization.SerialName
 
 data class CategoryResponse(

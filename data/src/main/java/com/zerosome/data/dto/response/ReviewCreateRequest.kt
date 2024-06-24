@@ -1,4 +1,4 @@
-package com.zerosome.data.dto
+package com.zerosome.data.dto.response
 
 import kotlinx.serialization.SerialName
 
@@ -6,7 +6,7 @@ data class ReviewCreateRequest(
     @SerialName("productId")
     val productId: Int,
     @SerialName("rating")
-    val rating: Int,
+    val rating: Float,
     @SerialName("content")
-    val content: String,
+    val content: String? = null,
 )

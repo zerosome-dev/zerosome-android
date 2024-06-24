@@ -1,4 +1,4 @@
-package com.zerosome.data.dto
+package com.zerosome.data.dto.response
 
 data class PagedResponse<out T>(
     val content: List<T>,

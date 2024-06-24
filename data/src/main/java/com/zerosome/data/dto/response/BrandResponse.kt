@@ -1,4 +1,4 @@
-package com.zerosome.data.dto
+package com.zerosome.data.dto.response
 
 import kotlinx.serialization.SerialName
 

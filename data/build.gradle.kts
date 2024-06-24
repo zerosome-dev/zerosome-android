@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
-
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 android {
@@ -35,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":network"))
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
@@ -42,4 +44,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.kotlin.serialization)
+
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
 }

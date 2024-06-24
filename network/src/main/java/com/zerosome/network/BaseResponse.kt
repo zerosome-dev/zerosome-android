@@ -6,7 +6,7 @@ data class BaseResponse<T>(
     @SerialName("code")
     val code: String,
     @SerialName("status")
-    val status: String,
+    val status: Boolean,
     @SerialName("data")
     val data: T
 )
