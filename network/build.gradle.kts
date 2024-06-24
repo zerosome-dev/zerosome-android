@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,7 +44,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.kotlin.serialization)
-    implementation(libs.bundles.ktor)
+    api(libs.bundles.ktor)
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
