@@ -55,6 +55,10 @@ android {
 
 dependencies {
     implementation(project(":design"))
+    implementation(project(":network"))
+    implementation(project(":data"))
+
+    // FOR DEPENDENCY INJECTION
     implementation(project(":feat:onboarding"))
     implementation(project(":feat:main"))
 
