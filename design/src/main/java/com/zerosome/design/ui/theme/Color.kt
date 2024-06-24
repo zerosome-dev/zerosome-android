@@ -8,7 +8,11 @@ class ZSColor {
     companion object {
         @Stable
         val Primary
-            get() = Color(0xFFFF6972)
+            get() = Color(0xFFFF4A60)
+
+        @Stable
+        val Secondary
+            get() = Color(0xFFFFFCC0)
 
         @Stable
         val Neutral900: Color
@@ -60,7 +64,7 @@ class ZSColor {
 
         @Stable
         val Negative: Color
-            get() = Color(0xFFFF4040)
+            get() = Color(0xFFFB3126)
 
         @Stable
         val Information: Color

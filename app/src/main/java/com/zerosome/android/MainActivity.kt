@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
             ZerosomeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding(),
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ZSNavHost()

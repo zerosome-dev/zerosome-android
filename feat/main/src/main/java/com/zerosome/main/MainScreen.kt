@@ -1,19 +1,26 @@
 package com.zerosome.main
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,6 +35,7 @@ import com.zerosome.main.review.ReviewWriteScreen
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val entry = navController.currentBackStackEntryAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         NavHost(
             modifier = Modifier.weight(1f),
@@ -40,7 +48,7 @@ fun MainScreen() {
                 }
             }
             composable(Category.route) {
-                CategorySelectionScreen{
+                CategorySelectionScreen {
                     navController.navigate(CategoryDetail.route)
                 }
             }
@@ -93,15 +101,20 @@ fun BottomNavigationView(
         NavigationBar(
             modifier = modifier,
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
+            tonalElevation = 0.dp
         ) {
             items.forEach { item ->
                 NavigationBarItem(selected = currentRoute == item.screenRoute, label = {
-                    Text(stringResource(item.title), style = Label2)
+                    Text(
+                        stringResource(item.title),
+                        style = Label2,
+                        color = if (currentRoute == item.screenRoute) ZSColor.Primary else ZSColor.Neutral300
+                    )
                 }, icon = {
-                    Icon(
-                        painter = painterResource(item.icon),
-                        contentDescription = stringResource(item.title)
+                    Image(
+                        painter = painterResource(if (currentRoute == item.screenRoute) item.selectedIcon else item.unselectedIcon),
+                        contentDescription = stringResource(item.title),
                     )
                 }, onClick = {
                     navHostController.navigate(item.screenRoute) {
@@ -111,8 +124,16 @@ fun BottomNavigationView(
                         launchSingleTop = true
                         restoreState = true
                     }
-
-                })
+                }, alwaysShowLabel = true, colors = NavigationBarItemColors(
+                    selectedIconColor = ZSColor.Primary,
+                    selectedTextColor = ZSColor.Primary,
+                    selectedIndicatorColor = Color.Transparent,
+                    unselectedIconColor = ZSColor.Neutral300,
+                    unselectedTextColor = ZSColor.Neutral300,
+                    disabledIconColor = Color.Transparent,
+                    disabledTextColor = Color.Transparent
+                )
+                )
             }
         }
     }

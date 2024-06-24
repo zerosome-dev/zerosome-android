@@ -5,6 +5,11 @@ open class OnboardingDestination {
         get() = "onboarding"
 }
 
+internal data object Terms: OnboardingDestination() {
+    override val route: String
+        get() = "${super.route}/terms"
+}
+
 internal data object Login: OnboardingDestination() {
     override val route: String = "${super.route}/login"
 }

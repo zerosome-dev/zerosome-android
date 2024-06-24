@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  Login Screen  -->
+    <string name="screen_login_context01">일단 둘러볼게요</string>
+
+    <!--  Terms Screen  -->
+    <string name="screen_terms_title">약관에 동의해 주세요</string>
+    <string name="screen_terms_description">여러분의 개인정보와 서비스 이용 관리\n잘 지켜드릴게요</string>
+    <string name="screen_terms_accept_all">모두 동의</string>
+    <string name="screen_terms_accept_all_description">서비스 이용을 위해 아래 약관에 모두 동의합니다.</string>
+    <string name="screen_terms_watch_page">보기</string>
+    <string name="screen_terms_context_service">(필수) 서비스 이용약관 동의</string>
+    <string name="screen_terms_context_privacy">(필수) 개인정보 처리방침 동의</string>
+    <string name="screen_terms_context_marketing">(선택) 마케팅 수신 동의</string>
+
+    <!--  Nickname Screen  -->
+    <string name="screen_nickname_title">닉네임을 설정해 주세요</string>
+    <string name="screen_nickname_description">최소 2자 ~ 12자 이내의 닉네임을 입력해 주세요\n한글/영문/숫자/특수문자 모두 가능해요</string>
+    <string name="screen_nickname_textfield_hint">닉네임을 입력해 주세요</string>
+    <string name="screen_nickname_textfield_positive">사용 가능한 닉네임입니다.</string>
+    <string name="screen_nickname_textfield_negative">이미 사용중인 닉네임입니다.</string>
+    <string name="screen_nickname_finish_signup">회원가입 완료</string>
+</resources>
