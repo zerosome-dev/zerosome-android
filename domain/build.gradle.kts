@@ -34,6 +34,8 @@ android {
 }
 
 dependencies {
+    api(project(":data"))
+
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 }

@@ -1,4 +1,4 @@
-package com.zerosome.domain
+package com.zerosome.domain.model
 
 enum class SortItem(val sortName: String) {
     LATEST("최신 등록 순"),
