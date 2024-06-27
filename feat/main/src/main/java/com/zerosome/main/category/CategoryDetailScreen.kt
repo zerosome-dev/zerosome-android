@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
@@ -46,7 +48,7 @@ fun CategoryDetailScreen(onBackPressed: () -> Unit) {
     var isBrandDropdownShowing by remember {
         mutableStateOf(false)
     }
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally){
+    Column(modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally){
         ZSAppBar(onBackPressed = onBackPressed, backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left), navTitle = "생수/음료")
         Row(modifier = Modifier
             .fillMaxWidth()
