@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -29,9 +30,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.extension.ChangeSystemColor
 import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.theme.Body1
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.H2
@@ -40,11 +43,13 @@ import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.design.ui.view.CommonTitleView
 
 @Composable
-fun TermsScreen(
+internal fun TermsScreen(
     onBackPressed: () -> Unit,
     onTermsAgreed: (isMarketingAgreed: Boolean) -> Unit,
+    viewModel: TermsViewModel = hiltViewModel()
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    val uiState by viewModel.uiState.collectAsState()
+    ZSScreen(modifier = Modifier.fillMaxSize()) {
         ChangeSystemColor(
             statusBarColor = Color.Transparent
         )
@@ -58,34 +63,40 @@ fun TermsScreen(
             titleRes = R.string.screen_terms_title,
             descriptionRes = R.string.screen_terms_description
         )
-        
+
         Spacer(modifier = Modifier.height(30.dp))
 
         AllAgreementComponent(
             componentTitle = R.string.screen_terms_accept_all,
             componentDescription = R.string.screen_terms_accept_all_description,
-            isChecked = true
-        ) {}
+            isChecked = uiState.allChecked
+        ) {
+            viewModel.setAction(TermsAction.ClickAll)
+        }
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        HorizontalDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp), thickness = 1.dp, color = ZSColor.Neutral100)
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 22.dp), thickness = 1.dp, color = ZSColor.Neutral100
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_service,
-            isChecked = false,
-            onCheckedChange = {},
+            isChecked = uiState.serviceTermsAgreed,
+            onCheckedChange = { viewModel.setAction(TermsAction.ClickService) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_privacy,
-            isChecked = true,
-            onCheckedChange = {},
+            isChecked = uiState.privacyTermsAgreed,
+            onCheckedChange = { viewModel.setAction(TermsAction.ClickPrivacy) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_marketing,
-            isChecked = false,
-            onCheckedChange = {},
+            isChecked = uiState.marketingTermsAgreed,
+            onCheckedChange = { viewModel.setAction(TermsAction.ClickMarketing) },
             onClickedWatchPage = {})
 
         Spacer(modifier = Modifier.weight(1f))
@@ -93,9 +104,11 @@ fun TermsScreen(
         ZSButton(modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 22.dp)
-            .padding(bottom = 10.dp), onClick = {
-            onTermsAgreed(true)
-        }) {
+            .padding(bottom = 10.dp),
+            enable = uiState.canGoNext,
+            onClick = {
+                onTermsAgreed(uiState.marketingTermsAgreed)
+            }) {
             Text(stringResource(id = com.zerosome.design.R.string.common_next), style = Label2)
         }
     }
@@ -106,13 +119,13 @@ private fun AllAgreementComponent(
     @StringRes componentTitle: Int,
     @StringRes componentDescription: Int,
     isChecked: Boolean,
-    onCheckedChange: (isChecked: Boolean) -> Unit
+    onCheckedChange: () -> Unit
 ) {
     val checkIconBackground by rememberUpdatedState(newValue = if (isChecked) ZSColor.Primary else ZSColor.Neutral200)
 
     Surface(modifier = Modifier
         .fillMaxWidth()
-        .clickable { onCheckedChange(isChecked.not()) }) {
+        .clickable { onCheckedChange() }) {
 
         Row(
             modifier = Modifier
@@ -130,9 +143,18 @@ private fun AllAgreementComponent(
             )
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(id = componentTitle), modifier = Modifier.fillMaxWidth(), style = H2)
+                Text(
+                    text = stringResource(id = componentTitle),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = H2
+                )
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = stringResource(id = componentDescription), modifier = Modifier.fillMaxWidth(), style = Body2, color = ZSColor.Neutral500)
+                Text(
+                    text = stringResource(id = componentDescription),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = Body2,
+                    color = ZSColor.Neutral500
+                )
             }
         }
     }
@@ -142,7 +164,7 @@ private fun AllAgreementComponent(
 fun TermsAgreementComponent(
     @StringRes componentTitle: Int,
     isChecked: Boolean,
-    onCheckedChange: (isChecked: Boolean) -> Unit,
+    onCheckedChange: () -> Unit,
     onClickedWatchPage: () -> Unit
 ) {
     val checkIconBackground by rememberUpdatedState(newValue = if (isChecked) ZSColor.Primary else ZSColor.Neutral200)
@@ -155,7 +177,7 @@ fun TermsAgreementComponent(
                 },
                 indication = rememberRipple(),
                 role = Role.Checkbox,
-                onClick = { onCheckedChange(isChecked.not()) })
+                onClick = { onCheckedChange() })
     ) {
         Row(
             modifier = Modifier

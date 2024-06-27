@@ -16,9 +16,24 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+/**
+ * User의 직접적인 액션으로만 바꿀 수 있습니다.
+ */
 interface UIAction
+
+/**
+ * 세부적인 VM의 흐름을 관리합니다.
+ */
 interface UIIntent
+
+/**
+ * 유저에게 직접적으로 보여지는 UI를 담당합니다.
+ */
 interface UIState
+
+/**
+ * 유저가 보지 못하는 UX 적인 부분을 담당합니다. ( ex. Navigation, Dialog, ..etc )
+ */
 interface UIEffect
 
 abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffect>(
