@@ -36,7 +36,7 @@ import com.zerosome.design.ui.component.ZSDropdown
 import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.SubTitle2
-import com.zerosome.domain.SortItem
+import com.zerosome.domain.model.SortItem
 
 @Composable
 fun CategoryDetailScreen(onBackPressed: () -> Unit) {
@@ -76,7 +76,7 @@ fun CategoryDetailScreen(onBackPressed: () -> Unit) {
 @Composable
 fun CategorySortBottomSheet(onDismissRequest: () -> Unit) {
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
-        SortItem.entries.forEach { 
+        SortItem.entries.forEach {
             Row(modifier = Modifier.padding(vertical = 14.dp, horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(text = it.sortName, style = SubTitle2)
                 Image(painter = painterResource(id = com.zerosome.design.R.drawable.ic_check), contentDescription = "CHECK")

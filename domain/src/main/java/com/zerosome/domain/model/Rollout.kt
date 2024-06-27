@@ -1,4 +1,4 @@
-package com.zerosome.domain
+package com.zerosome.domain.model
 
 data class Rollout(
     val id: Int,

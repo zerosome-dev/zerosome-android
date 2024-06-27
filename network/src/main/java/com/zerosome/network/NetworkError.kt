@@ -1,6 +1,6 @@
 package com.zerosome.network
 
-enum class NetworkError(private val errorCode: String, val code: Int) {
+enum class NetworkError(val errorCode: String, val code: Int) {
     INVALID_PARAMETER("REQ00", 400),
     UNAUTHORIZED("AUTHO00", 401),
     INVALID_CALL("REQ00", 403),
