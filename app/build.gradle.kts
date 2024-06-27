@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -22,6 +24,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        resValue("string", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
+        resValue("string", "KAKAO_REDIRECT", properties.getProperty("KAKAO_APP_REDIRECT_KEY"))
     }
 
     buildTypes {
@@ -80,6 +87,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
+    implementation(libs.kakao.auth)
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)

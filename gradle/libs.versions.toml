@@ -56,7 +56,7 @@ compose-rating = { group = "com.github.SmartToolFactory", name = "Compose-Rating
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
-kakao-auth = { group = "com.kakao.sdk", name = "v2-auth", version.ref = "kakao" }
+kakao-auth = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
