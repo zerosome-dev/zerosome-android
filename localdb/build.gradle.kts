@@ -1,13 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.hilt)
-    kotlin("kapt")
 }
 
 android {
-    namespace = "com.zerosome.data"
+    namespace = "com.zerosome.localdb"
     compileSdk = 34
 
     defaultConfig {
@@ -36,18 +33,13 @@ android {
 }
 
 dependencies {
-    api(project(":network"))
-    implementation(project(":localdb"))
-    api(project(":datasource:local"))
-    api(project(":datasource:remote"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.kotlin.serialization)
-
-    implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    api(libs.datastore.preference)
 }
