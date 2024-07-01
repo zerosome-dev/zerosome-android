@@ -71,14 +71,24 @@ internal fun NicknameScreen(
             placeHolderText = stringResource(
                 id = R.string.screen_nickname_textfield_hint
             ),
-            positiveText = if (state.isConfirmed == true) stringResource(id = requireNotNull(state.holderTextResId)) else null,
-            negativeText = if (state.isConfirmed == false) stringResource(id = requireNotNull(state.holderTextResId)) else null
+            positiveText = if (state.isConfirmed == true) state.holderTextResId?.let {
+                stringResource(
+                    id = it
+                )
+            } else null,
+            negativeText = if (state.isConfirmed == false) state.holderTextResId?.let {
+                stringResource(
+                    id = it
+                )
+            } else null
         )
         Spacer(modifier = Modifier.weight(1f))
-        ZSButton(onClick = onClickNext, enable = state.canGoNext, modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 22.dp)
-            .padding(bottom = 10.dp)) {
+        ZSButton(
+            onClick = onClickNext, enable = state.canGoNext, modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 22.dp)
+                .padding(bottom = 10.dp)
+        ) {
             Text(
                 "닉네임 설정 화면",
                 modifier = Modifier.fillMaxWidth(),

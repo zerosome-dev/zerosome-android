@@ -1,7 +1,5 @@
 package com.zerosome.onboarding
 
-import android.util.Log
-import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
@@ -32,14 +30,15 @@ internal sealed interface NicknameIntent : UIIntent {
 internal data class NicknameState(
     val nickname: String = "",
     val isConfirmed: Boolean? = null,
-    val throwable: Throwable? = null
+    val throwable: Throwable? = null,
+    val reason: ValidateReason? = null
 ) : UIState {
     val holderTextResId: Int?
-        get() = isConfirmed?.let {
-            if (it) {
-                com.zerosome.onboarding.R.string.screen_nickname_textfield_positive
-            } else {
-                com.zerosome.onboarding.R.string.screen_nickname_textfield_negative
+        get() = reason?.let {
+            when (it) {
+                ValidateReason.SUCCESS -> R.string.screen_nickname_textfield_positive
+                ValidateReason.NOT_VALIDATED -> R.string.screen_nickname_textfield_negative_validation
+                ValidateReason.NOT_VERIFIED -> R.string.screen_nickname_textfield_negative
             }
         }
 
@@ -60,11 +59,11 @@ internal class NicknameViewModel @Inject constructor(
         setState {
             copy(isConfirmed = null)
         }
-    }.filter { it.isNotEmpty() }.debounce(1000)
+    }.filter { it.isNotEmpty() }.debounce(200)
         .flatMapConcat { validateNicknameUseCase(it) }
         .mapMerge()
         .onEach {
-            setState { copy(isConfirmed = it) }
+            setState { copy(isConfirmed = it == ValidateReason.SUCCESS, reason = it) }
         }
         .stateIn(
             scope = viewModelScope,

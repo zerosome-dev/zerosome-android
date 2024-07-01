@@ -11,15 +11,20 @@ class ValidateNicknameUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
 
-    operator fun invoke(nickname: String): Flow<NetworkResult<Boolean>> = flow {
+    operator fun invoke(nickname: String): Flow<NetworkResult<ValidateReason>> = flow {
         Log.d("CPRI", "VALIDATE STARTED")
         emit(NetworkResult.Loading)
-        kotlinx.coroutines.delay(1000)
-        if (nickname.isNotEmpty()) {
-            emit(NetworkResult.Success(true))
+
+        kotlinx.coroutines.delay(300)
+        if (nickname.length in 2..12) {
+            emit(NetworkResult.Success(ValidateReason.SUCCESS))
         } else {
-            emit(NetworkResult.Success(false))
+            emit(NetworkResult.Success(ValidateReason.NOT_VALIDATED))
         }
         // repository.validateNickname 설정 필요.
     }
+
+}
+enum class ValidateReason {
+    NOT_VALIDATED, SUCCESS, NOT_VERIFIED,
 }
