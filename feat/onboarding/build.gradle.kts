@@ -69,4 +69,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.compose)
+
+    implementation(libs.kakao.auth)
 }

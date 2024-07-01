@@ -25,9 +25,10 @@ fun OnboardingNavScreen(
             .navigationBarsPadding()
     ) {
         composable(route = Login.route) {
-            LoginScreen {
-                navHostController.navigate(Terms.route)
-            }
+            LoginScreen(
+                moveToNext = { navHostController.navigate(Terms.route)},
+                moveToMain = onUserLoggedIn
+            )
         }
         composable(route = Terms.route) {
             TermsScreen(onBackPressed = { navHostController.popBackStack() }, onTermsAgreed = {

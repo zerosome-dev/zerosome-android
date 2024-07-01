@@ -32,3 +32,7 @@ include(":data")
 include(":app:baselineprofile")
 include(":domain:onboarding")
 include(":core")
+include(":localdb")
+
+include(":datasource:local")
+include(":datasource:remote")
