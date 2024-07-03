@@ -7,8 +7,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 suspend fun Context.requestKakaoLogin(): String {
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-        return suspendCancellableCoroutine<String> {
+    return if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+        suspendCancellableCoroutine {
             UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
                 error?.let { throwable ->
                     Log.d("CPRI", "ERROR CAUSE $it")
@@ -19,5 +19,5 @@ suspend fun Context.requestKakaoLogin(): String {
                 } ?: it.cancel()
             }
         }
-    } else return ""
+    } else ""
 }

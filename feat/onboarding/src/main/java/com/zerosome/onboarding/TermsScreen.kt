@@ -48,7 +48,6 @@ internal fun TermsScreen(
     onTermsAgreed: (isMarketingAgreed: Boolean) -> Unit,
     viewModel: TermsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
     ZSScreen(modifier = Modifier.fillMaxSize()) {
         ChangeSystemColor(
             statusBarColor = Color.Transparent
@@ -69,7 +68,7 @@ internal fun TermsScreen(
         AllAgreementComponent(
             componentTitle = R.string.screen_terms_accept_all,
             componentDescription = R.string.screen_terms_accept_all_description,
-            isChecked = uiState.allChecked
+            isChecked = viewModel.uiState.allChecked
         ) {
             viewModel.setAction(TermsAction.ClickAll)
         }
@@ -85,17 +84,17 @@ internal fun TermsScreen(
         Spacer(modifier = Modifier.height(20.dp))
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_service,
-            isChecked = uiState.serviceTermsAgreed,
+            isChecked = viewModel.uiState.serviceTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickService) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_privacy,
-            isChecked = uiState.privacyTermsAgreed,
+            isChecked = viewModel.uiState.privacyTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickPrivacy) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
             componentTitle = R.string.screen_terms_context_marketing,
-            isChecked = uiState.marketingTermsAgreed,
+            isChecked = viewModel.uiState.marketingTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickMarketing) },
             onClickedWatchPage = {})
 
@@ -105,9 +104,9 @@ internal fun TermsScreen(
             .fillMaxWidth()
             .padding(horizontal = 22.dp)
             .padding(bottom = 10.dp),
-            enable = uiState.canGoNext,
+            enable = viewModel.uiState.canGoNext,
             onClick = {
-                onTermsAgreed(uiState.marketingTermsAgreed)
+                onTermsAgreed(viewModel.uiState.marketingTermsAgreed)
             }) {
             Text(stringResource(id = com.zerosome.design.R.string.common_next), style = Label2)
         }

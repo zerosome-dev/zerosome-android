@@ -1,4 +1,4 @@
-package com.zerosome.main
+package com.zerosome.main.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.CardHorizontalPager
@@ -95,13 +96,13 @@ private fun PopularCategoryComponent(onClickProduct: () -> Unit) {
     Column(modifier = Modifier.padding(vertical = 30.dp)) {
         Column(modifier = Modifier.padding(start = 22.dp, end = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "[카페음료] 인기 음료 순위", style = H1)
+                Text(text = "[카페음료] 인기 음료 순위", style = H1, color = Color.Black)
                 Spacer(modifier = Modifier.weight(1f))
                 Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
                 Image(painter = painterResource(id = com.zerosome.design.R.drawable.ic_chevron_right), contentDescription = "more", modifier = Modifier.size(16.dp))
             }
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = "설명 문구를 입력해주세요")
+            Text(text = "설명 문구를 입력해주세요", style = Body2, color = ZSColor.Neutral500)
         }
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {

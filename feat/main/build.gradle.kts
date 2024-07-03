@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(project(":design"))
     implementation(project(":domain"))
+    implementation(project(":core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

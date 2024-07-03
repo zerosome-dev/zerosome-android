@@ -1,5 +1,6 @@
 package com.zerosome.onboarding
 
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ internal class NicknameViewModel @Inject constructor(
     initialState = NicknameState()
 ) {
 
-    private val nicknameFlow = uiState.map { it.nickname }.distinctUntilChanged().onEach {
+    private val nicknameFlow = snapshotFlow { uiState.nickname }.distinctUntilChanged().onEach {
         setState {
             copy(isConfirmed = null)
         }

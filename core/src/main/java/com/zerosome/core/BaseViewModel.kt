@@ -1,6 +1,10 @@
 package com.zerosome.core
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.traceEventStart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zerosome.network.NetworkResult
@@ -40,11 +44,9 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     initialState: S
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<S> = MutableStateFlow(initialState)
-    val uiState: StateFlow<S>
+    private var _uiState by mutableStateOf(initialState)
+    val uiState
         get() = _uiState
-    private val currentState
-        get() = _uiState.value
 
     private val _uiAction: MutableSharedFlow<A> = MutableSharedFlow()
     private val uiAction = _uiAction
@@ -52,11 +54,11 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     private val _uiEffect: MutableSharedFlow<E> = MutableSharedFlow()
     val uiEffect: SharedFlow<E> = _uiEffect
 
-    private val _isLoading= MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private var _isLoading by mutableStateOf(false)
+    val isLoading = _isLoading
 
-    private val _error: MutableSharedFlow<String?> = MutableSharedFlow()
-    val error: SharedFlow<String?> = _error
+    private var _error by mutableStateOf("")
+    val error = _error
 
 
     init {
@@ -72,9 +74,12 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     abstract fun collectIntent(intent: I)
 
     protected fun setState(transform: S.() -> S) {
-        Log.d("CPRI", "STATED SET")
+        _uiState = transform(uiState)
+    }
+
+    protected fun withState(block: suspend S.() -> Unit) {
         viewModelScope.launch {
-            _uiState.emit(transform(currentState))
+            block(uiState)
         }
     }
 
@@ -87,16 +92,16 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     protected fun <T> Flow<NetworkResult<T>>.mapMerge(): Flow<T?> = flatMapConcat {
         when (it) {
             is NetworkResult.Loading -> {
-                _isLoading.emit(true)
+                _isLoading = true
                 flowOf(null)
             }
             is NetworkResult.Success -> {
-                _isLoading.emit(false)
+                _isLoading = false
                 flowOf(it.data)
             }
             is NetworkResult.Error -> {
-                _isLoading.emit(false)
-                _error.emit("\"${it.error.errorCode}\\n${it.error.code}}\")")
+                _isLoading = false
+                _error = "\"${it.error.errorCode}\\n${it.error.code}}\")"
                 flowOf(null)
             }
         }
@@ -105,7 +110,7 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
 
     fun clearError() {
         viewModelScope.launch {
-            _error.emit("")
+            _error = ""
         }
     }
 

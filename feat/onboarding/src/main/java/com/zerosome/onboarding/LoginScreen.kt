@@ -41,7 +41,7 @@ import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
 internal fun LoginScreen(
-    moveToNext: () -> Unit,
+    moveToNext: (customAccessToken: String, userType: LoginType) -> Unit,
     moveToMain: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -52,7 +52,7 @@ internal fun LoginScreen(
             LoginEffect.OpenKakao -> {
                 val accessToken = context.requestKakaoLogin()
                 if (accessToken.isNotEmpty()) {
-                    moveToNext()
+                    viewModel.setAction(LoginAction.CheckKakaoLogin(accessToken))
                 }
             }
 
@@ -60,7 +60,7 @@ internal fun LoginScreen(
                 moveToMain()
             }
             is LoginEffect.NavigateToTermsAgree -> {
-               moveToNext()
+               moveToNext((effect as LoginEffect.NavigateToTermsAgree).accessToken, (effect as LoginEffect.NavigateToTermsAgree).userType)
             }
             else -> {}
         }

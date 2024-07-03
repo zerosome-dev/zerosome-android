@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -25,35 +28,78 @@ import androidx.compose.ui.unit.dp
 import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSTextField
+import com.zerosome.design.ui.theme.Body4
 import com.zerosome.design.ui.theme.Label1
+import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.theme.ZSTextStyle
 
 @Composable
 fun ReviewWriteScreen(onBackPressed: () -> Unit) {
     var text by remember {
         mutableStateOf("")
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-            ZSAppBar(navTitle = "리뷰 작성", backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left), onBackPressed = onBackPressed)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ZSAppBar(
+                navTitle = "리뷰 작성",
+                backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
+                onBackPressed = onBackPressed
+            )
             Spacer(modifier = Modifier.height(10.dp))
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(25 / 16f))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(25 / 16f)
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "[브랜드 브랜드 브랜드]", style = Label1, color = ZSColor.Neutral500)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "상품명상품명상품명상품명상품명상품명상품명상품명상품명", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = "상품명상품명상품명상품명상품명상품명상품명상품명상품명",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             Spacer(modifier = Modifier.height(30.dp))
             HorizontalDivider()
-            TextField(value = text, onValueChange = {text = it}, modifier = Modifier.fillMaxWidth())
-            Text(text = "${text.length}/1000", modifier = Modifier.align(Alignment.End))
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(text = "상품은 어떠셨나요?", style = SubTitle1)
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ZSTextField(
+                text = text, onTextChanged = { text = it }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 22.dp), singleLine = false
+            )
+            Text(
+                text = "${text.length}/1000",
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = 22.dp),
+                style = Body4,
+                color = ZSColor.Neutral400
+            )
             Spacer(modifier = Modifier.height(50.dp))
-            ZSButton(onClick = onBackPressed) {
-                Text(text = "작성 완료")
-            }
+        }
+        ZSButton(
+            onClick = onBackPressed,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(22.dp)
+                .align(Alignment.BottomCenter)
+        ) {
+            Text(text = "작성 완료")
         }
     }
 }
