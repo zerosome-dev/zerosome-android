@@ -36,3 +36,5 @@ include(":localdb")
 
 include(":datasource:local")
 include(":datasource:remote")
+include(":feat:review")
+include(":domain:review")

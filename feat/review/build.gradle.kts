@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zerosome.main"
+    namespace = "com.zerosome.review"
     compileSdk = 34
 
     defaultConfig {
@@ -25,15 +25,15 @@ android {
             )
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
     buildFeatures {
         compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -41,11 +41,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":design"))
-    implementation(project(":domain"))
     implementation(project(":core"))
-
-    implementation(project(":feat:review"))
+    implementation(project(":domain:review"))
+    implementation(project(":design"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -64,9 +62,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.navigation.compose)
 
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+    implementation(libs.hilt.compose)
 }

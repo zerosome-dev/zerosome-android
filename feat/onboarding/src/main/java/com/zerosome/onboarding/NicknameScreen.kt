@@ -89,7 +89,7 @@ internal fun NicknameScreen(
                 .padding(bottom = 10.dp)
         ) {
             Text(
-                "닉네임 설정 화면",
+                "회원가입 완료",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = Label2

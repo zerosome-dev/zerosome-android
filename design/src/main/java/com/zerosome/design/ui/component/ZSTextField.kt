@@ -47,6 +47,7 @@ fun ZSTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     placeHolderText: String = "",
     singleLine: Boolean = true,
+    minLines: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     positiveText: String? = null,
     negativeText: String? = null,
@@ -64,6 +65,7 @@ fun ZSTextField(
             value = text,
             onValueChange = onTextChanged,
             textStyle = Body2,
+            minLines = minLines,
             decorationBox = { innerTextField ->
                 OutlinedTextFieldDefaults.DecorationBox(
                     value = text,

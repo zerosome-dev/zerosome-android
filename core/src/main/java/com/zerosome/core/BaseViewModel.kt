@@ -55,7 +55,8 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     val uiEffect: SharedFlow<E> = _uiEffect
 
     private var _isLoading by mutableStateOf(false)
-    val isLoading = _isLoading
+    val isLoading
+        get() = _isLoading
 
     private var _error by mutableStateOf("")
     val error = _error

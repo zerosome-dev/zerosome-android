@@ -11,22 +11,27 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
 import com.zerosome.main.category.CategorySelectionScreen
 import com.zerosome.main.home.HomeScreen
-import com.zerosome.main.review.ReviewWriteScreen
+import com.zerosome.review.ReviewDestination
+import com.zerosome.review.ReviewWriteScreen
+import com.zerosome.review.reviewNavigation
 
 @Composable
 fun MainScreen() {
@@ -57,15 +62,18 @@ fun MainScreen() {
                 }
             }
             composable(ProductDetail.route) {
-                ProductDetailScreen {
+                ProductDetailScreen(onClickReview = {
+                    navController.navigate(ReviewDestination().route)
+                }, onClickWriteReview = {
                     navController.navigate(ReviewWrite.route)
-                }
+                })
             }
             composable(ReviewWrite.route) {
                 ReviewWriteScreen {
                     navController.popBackStack()
                 }
             }
+            reviewNavigation(0, navController)
         }
         BottomNavigationView(
             modifier = Modifier.fillMaxWidth(),
@@ -133,5 +141,4 @@ fun BottomNavigationView(
             }
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package com.zerosome.data.di
 
+import com.zerosome.data.repository.FakeUserRepositoryImpl
 import com.zerosome.data.repository.TokenRepository
 import com.zerosome.data.repository.TokenRepositoryImpl
 import com.zerosome.data.repository.UserRepository
@@ -16,7 +17,7 @@ internal interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindsUserRepository(impl: UserRepositoryImpl): UserRepository
+    fun bindsUserRepository(impl: FakeUserRepositoryImpl): UserRepository
 
     @Binds
     @Singleton

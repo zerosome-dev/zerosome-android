@@ -1,4 +1,4 @@
-package com.zerosome.main.review
+package com.zerosome.review
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +35,7 @@ import com.zerosome.design.ui.theme.Label1
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.design.ui.theme.ZSTextStyle
+import com.zerosome.design.ui.view.StarRatingView
 
 @Composable
 fun ReviewWriteScreen(onBackPressed: () -> Unit) {
@@ -69,18 +71,21 @@ fun ReviewWriteScreen(onBackPressed: () -> Unit) {
             Text(
                 text = "상품명상품명상품명상품명상품명상품명상품명상품명상품명",
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                style = SubTitle1,
+                color = ZSColor.Neutral900
             )
             Spacer(modifier = Modifier.height(30.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "상품은 어떠셨나요?", style = SubTitle1)
+            Text(text = "상품은 어떠셨나요?", style = SubTitle1, color = ZSColor.Neutral700)
             Spacer(modifier = Modifier.height(20.dp))
-
+            StarRatingView(modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(30.dp))
             ZSTextField(
                 text = text, onTextChanged = { text = it }, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 22.dp), singleLine = false
+                    .padding(horizontal = 22.dp), singleLine = false, minLines = 3
             )
             Text(
                 text = "${text.length}/1000",
