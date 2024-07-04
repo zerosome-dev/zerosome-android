@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.CardHorizontalPager
 import com.zerosome.design.ImageHorizontalPager
+import com.zerosome.design.extension.ChangeSystemColor
 import com.zerosome.design.ui.view.SimpleCardComponent
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.theme.Body2
@@ -36,6 +37,9 @@ import com.zerosome.design.ui.theme.ZSColor
 fun HomeScreen(
     onClickProduct: () -> Unit
 ) {
+    ChangeSystemColor(
+        statusBarColor = Color.Transparent
+    )
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .statusBarsPadding(),
@@ -86,7 +90,7 @@ private fun NewItemComponent(onClickProduct: () -> Unit) {
             "1",
             "1",
             "1",
-        ))
+        ), isMoreVisible = true, onItemClick = onClickProduct, onMoreClick = {})
         Spacer(modifier = Modifier.height(40.dp))
     }
 }

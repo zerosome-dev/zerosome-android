@@ -23,10 +23,13 @@ import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
-fun DetailCardComponent() {
+fun DetailCardComponent(
+    onProductClick: () -> Unit,
+) {
     Surface(shape = RoundedCornerShape(12.dp), modifier = Modifier
         .wrapContentSize(),
-        shadowElevation = 5.dp)
+        shadowElevation = 5.dp,
+        onClick = onProductClick)
     {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier
