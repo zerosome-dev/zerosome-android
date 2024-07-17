@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.R
+import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.SubTitle2
 import com.zerosome.design.ui.theme.ZSColor
@@ -38,8 +39,8 @@ fun SimpleCardComponent(
     Column(modifier = modifier.clickable(interactionSource = remember {
         MutableInteractionSource()
     }, indication = rememberRipple(), role = Role.Button, onClick = onClick)) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_home),
+        ZSImage(
+            imageString = image,
             contentDescription = "image",
             modifier = modifier
                 .background(ZSColor.Neutral100, RoundedCornerShape(10.dp))

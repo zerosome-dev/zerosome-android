@@ -1,8 +1,10 @@
 package com.zerosome.main
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,15 +28,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.R
+import com.zerosome.design.ui.component.ButtonSize
+import com.zerosome.design.ui.component.ButtonType
 import com.zerosome.design.ui.view.SimpleCardComponent
 import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.component.ZSChip
+import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.component.ZSTag
 import com.zerosome.design.ui.component.ZSTagType
 import com.zerosome.design.ui.theme.Body2
+import com.zerosome.design.ui.theme.Body3
+import com.zerosome.design.ui.theme.Body4
 import com.zerosome.design.ui.theme.Caption
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.H2
@@ -46,38 +56,50 @@ fun ProductDetailScreen(
     onClickReview: () -> Unit,
     onClickWriteReview: () -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize().navigationBarsPadding().statusBarsPadding(), contentPadding = PaddingValues(bottom = 20.dp)) {
-        item { ItemDetailComponent() }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(12.dp)
-                    .background(ZSColor.Neutral50)
-            )
-        }
-        item { SellerComponent() }
-        item {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(12.dp)
-                    .background(ZSColor.Neutral50)
-            )
-        }
-        item {
-            ReviewComponent(reviewCount = 4, totalRating = 4.3f) {
-                onClickReview()
+    ZSScreen(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .statusBarsPadding()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 50.dp)
+            ) {
+                item { ItemDetailComponent() }
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .background(ZSColor.Neutral50)
+                    )
+                }
+                item { SellerComponent() }
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .background(ZSColor.Neutral50)
+                    )
+                }
+                item {
+                    ReviewComponent(reviewCount = 4, totalRating = 4.3f, onClickReview) {
+                        onClickWriteReview()
+                    }
+                }
+                item {
+                    SimilarComponent()
+                }
             }
-        }
-        item {
-            SimilarComponent()
-        }
-        item {
             ZSButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 22.dp), onClick = onClickWriteReview
+                    .padding(horizontal = 22.dp)
+                    .padding(bottom = 10.dp)
+                    .align(Alignment.BottomCenter), onClick = onClickWriteReview
             ) {
                 Text(text = "리뷰 작성")
             }
@@ -104,7 +126,7 @@ fun ItemDetailComponent() {
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = "[브랜드브랜드브랜드]", style = Body2, color = ZSColor.Neutral500)
         Spacer(modifier = Modifier.height(12.dp))
-        Text(text = "브랜드 이름 2", style = SubTitle1)
+        Text(text = "브랜드 이름 2", style = SubTitle1, color = ZSColor.Neutral900)
         Spacer(modifier = Modifier.height(18.dp))
     }
 }
@@ -117,7 +139,7 @@ fun SellerComponent() {
             .fillMaxWidth()
             .padding(24.dp)
     ) {
-        Text(text = "오프라인 판매처", style = H1)
+        Text(text = "오프라인 판매처", style = H1, color = ZSColor.Neutral900)
         Spacer(modifier = Modifier.height(16.dp))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -148,7 +170,9 @@ private fun OnlineSellerComponent(
         Text(
             text = sellerName, modifier = Modifier
                 .padding(vertical = 10.dp)
-                .padding(start = 16.dp)
+                .padding(start = 16.dp),
+            style = Body2,
+            color = ZSColor.Neutral600
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
@@ -164,11 +188,16 @@ private fun ReviewComponent(
     reviewCount: Int,
     totalRating: Float,
     onClickReview: () -> Unit,
+    onClickWriteReview: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 22.dp)
+    ) {
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = "리뷰 ($reviewCount)",
+            text = if (reviewCount > 0 ) { "리뷰 ($reviewCount)" } else "아직 리뷰가 없어요",
             style = H2,
             color = ZSColor.Neutral900,
             modifier = Modifier.align(Alignment.Start)
@@ -201,7 +230,69 @@ private fun ReviewComponent(
                 Spacer(modifier = Modifier.height(18.dp))
             }
         }
+        Spacer(modifier = Modifier.height(20.dp))
+        if (reviewCount > 0) {
+            LazyRow {
+                items(reviewCount) {
+                    SimpleReviewComponent(
+                        rating = it,
+                        description = "리뷰입니다리뷰는두줄까지노출합니다리뷰는두줄까지노출합니다리뷰는두줄까지노출합니다리뷰리뷰입니다리뷰는두줄까지노출합니다리뷰는두줄까지노출합니다리뷰는두줄까지노출합니다리뷰",
+                        writtenAt = "2022.01.01"
+                    )
+                }
 
+            }
+        } else {
+            Spacer(modifier = Modifier.height(62.dp))
+            Text(text = "첫 리뷰를 작성해보세요!", style = H2, color = ZSColor.Neutral700, modifier = Modifier.align(Alignment.CenterHorizontally))
+            Spacer(modifier = Modifier.height(12.dp))
+            ZSButton(onClick = onClickWriteReview, buttonType = ButtonType.SECONDARY, buttonSize = ButtonSize.MEDIUM) {
+
+            }
+        }
+    }
+}
+
+@Composable
+fun SimpleReviewComponent(
+    rating: Int,
+    description: String,
+    writtenAt: String
+) {
+    Surface(
+        color = Color.White,
+        border = BorderStroke(1.dp, ZSColor.Neutral100),
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(14.dp)
+                .width(300.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                repeat(5) {
+                    Image(
+                        painter = if (it - 1 < rating) painterResource(id = R.drawable.ic_star_filled) else painterResource(
+                            id = R.drawable.ic_star_gray
+                        ), contentDescription = "REVIEW RATING",
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "$rating", style = Body3, color = ZSColor.Neutral900)
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = writtenAt, style = Body4, color = ZSColor.Neutral400)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = description,
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = Body2,
+                color = ZSColor.Neutral700
+            )
+        }
     }
 }
 
@@ -210,7 +301,7 @@ private fun SimilarComponent() {
     Column(modifier = Modifier.padding(vertical = 30.dp)) {
         Column(modifier = Modifier.padding(start = 22.dp, end = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "이 상품과 비슷한 상품이에요", style = H1)
+                Text(text = "이 상품과 비슷한 상품이에요", style = H1, color = ZSColor.Neutral900)
                 Spacer(modifier = Modifier.weight(1f))
                 Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
                 Image(

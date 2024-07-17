@@ -64,8 +64,8 @@ fun ZSTextField(
                 },
             value = text,
             onValueChange = onTextChanged,
-            textStyle = Body2,
             minLines = minLines,
+            textStyle = Body2,
             decorationBox = { innerTextField ->
                 OutlinedTextFieldDefaults.DecorationBox(
                     value = text,

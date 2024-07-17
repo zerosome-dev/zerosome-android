@@ -23,7 +23,7 @@ import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.theme.SubTitle1
 
 @Composable
-fun ReviewScreen(onBackPressed: () -> Unit, onReviewWrite: () -> Unit) {
+fun ReviewScreen(onBackPressed: () -> Unit, onReviewWrite: () -> Unit, onReviewReport: () -> Unit) {
     ChangeSystemColor(
         statusBarColor = Color.Transparent,
         navigationBarColor = Color.Transparent
@@ -43,7 +43,8 @@ fun ReviewScreen(onBackPressed: () -> Unit, onReviewWrite: () -> Unit) {
                         dateString = "2024.02.02",
                         rating = (it % 5),
                         reviewString = "리뷰텍스트 $it",
-                        it == 9
+                        it == 9,
+                        onReviewReport
                     )
                 }
             }

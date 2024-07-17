@@ -51,6 +51,7 @@ dependencies {
 
     implementation(libs.compose.rating)
 
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

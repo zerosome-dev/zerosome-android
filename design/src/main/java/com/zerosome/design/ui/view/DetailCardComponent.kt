@@ -1,6 +1,7 @@
 package com.zerosome.design.ui.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,7 @@ fun DetailCardComponent(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier
                 .height(216.dp)
-                .aspectRatio(75/56f)
+                .aspectRatio(75 / 56f)
                 .background(
                     color = ZSColor.Neutral500,
                 ))

@@ -40,7 +40,8 @@ fun ReviewListComponent(
     dateString: String,
     rating: Int,
     reviewString: String,
-    isLast: Boolean = false
+    isLast: Boolean = false,
+    onClickReportReview: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
@@ -104,7 +105,7 @@ fun ReviewListComponent(
                     .clickable { expanded = expanded.not() })
             Spacer(Modifier.height(2.dp))
         }
-        Text(text = "신고", style = Body3, color = ZSColor.Neutral300, modifier = Modifier.padding(start = 22.dp))
+        Text(text = "신고", style = Body3, color = ZSColor.Neutral300, modifier = Modifier.padding(start = 22.dp).clickable { onClickReportReview() })
         Spacer(modifier = Modifier.height(30.dp))
         if (isLast.not()) {
             HorizontalDivider(color = ZSColor.Neutral100)

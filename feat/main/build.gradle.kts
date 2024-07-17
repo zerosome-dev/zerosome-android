@@ -44,8 +44,10 @@ dependencies {
     implementation(project(":design"))
     implementation(project(":domain"))
     implementation(project(":core"))
-
+    implementation(project(":domain:product"))
     implementation(project(":feat:review"))
+    implementation(project(":feat:profile"))
+    implementation(project(":feat:report"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -69,4 +71,5 @@ dependencies {
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+    implementation(libs.hilt.compose)
 }

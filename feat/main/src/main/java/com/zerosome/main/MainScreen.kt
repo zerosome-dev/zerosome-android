@@ -29,6 +29,11 @@ import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
 import com.zerosome.main.category.CategorySelectionScreen
 import com.zerosome.main.home.HomeScreen
+import com.zerosome.main.home.RolloutScreen
+import com.zerosome.profile.ProfileScreen
+import com.zerosome.profile.profileNavigation
+import com.zerosome.report.ReportDestination
+import com.zerosome.report.reportNavigation
 import com.zerosome.review.ReviewDestination
 import com.zerosome.review.ReviewWriteScreen
 import com.zerosome.review.reviewNavigation
@@ -44,22 +49,30 @@ fun MainScreen() {
             startDestination = Home.route
         ) {
             composable(Home.route) {
-                HomeScreen {
+                HomeScreen(onClickProduct = {
                     navController.navigate(ProductDetail.route)
-                }
+                }, onClickMore = {
+                    navController.navigate(Rollout.route)
+                })
             }
             composable(Category.route) {
                 CategorySelectionScreen {
                     navController.navigate(CategoryDetail.route)
                 }
             }
-            composable(Profile.route) {
-                ProfileScreen()
+            profileNavigation(navController)
+            composable(Rollout.route) {
+                RolloutScreen(
+                    onBackPressed = {
+                        navController.popBackStack()
+                    },
+                    onClickProduct = {
+                        navController.navigate(ProductDetail.route)
+                    }
+                )
             }
             composable(CategoryDetail.route) {
-                CategoryDetailScreen {
-                    navController.popBackStack()
-                }
+                CategoryDetailScreen(onBackPressed = { navController.popBackStack() })
             }
             composable(ProductDetail.route) {
                 ProductDetailScreen(onClickReview = {
@@ -73,7 +86,12 @@ fun MainScreen() {
                     navController.popBackStack()
                 }
             }
-            reviewNavigation(0, navController)
+            reviewNavigation(0, navController) {
+                navController.navigate(ReportDestination().route)
+            }
+            reportNavigation(0) {
+                navController.popBackStack()
+            }
         }
         BottomNavigationView(
             modifier = Modifier.fillMaxWidth(),

@@ -25,6 +25,7 @@ profileinstaller = "1.3.1"
 
 kakao = "2.20.1"
 datastore = "1.1.1"
+coil-compose = "2.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,7 @@ ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlin
 ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor"}
 compose-rating = { group = "com.github.SmartToolFactory", name = "Compose-RatingBar", version.ref = "compose-rating" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose"}
 
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }

@@ -1,5 +1,6 @@
 package com.zerosome.main.category
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,9 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.R
+import com.zerosome.design.ui.component.ButtonSize
+import com.zerosome.design.ui.component.ButtonType
+import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.view.NonLazyVerticalGrid
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H1
@@ -47,12 +53,13 @@ fun CategorySelectionScreen(
                 Text(text = "카테고리", style = H1)
             }
             LazyColumn(modifier = Modifier.weight(1f)) {
-                GridItemSpan(
+                gridItemSpan(
                     categoryName = "카페 음료",
                     categoryItems = listOf("스타벅스", "메가커피", "빽다방", "투썸플레이스"),
-                    onClickCategory
+                    onClickCategory,
+                    {}
                 )
-                GridItemSpan(
+                gridItemSpan(
                     categoryName = "생수/음료",
                     categoryItems = listOf(
                         "탄산수",
@@ -64,17 +71,20 @@ fun CategorySelectionScreen(
                         "스포츠음료",
                         "숙취/건강음료"
                     ),
-                    onClickCategory
+                    onClickCategory,
+                    {}
                 )
-                GridItemSpan(
+                gridItemSpan(
                     categoryName = "과자/아이스크림",
                     categoryItems = listOf("과자", "아이스크림"),
-                    onClickCategory
+                    onClickCategory,
+                    {}
                 )
-                GridItemSpan(
+                gridItemSpan(
                     categoryName = "양념/소스",
                     categoryItems = listOf("설탕/향신료", "소스/드레싱"),
-                    onClickCategory
+                    onClickCategory,
+                    {}
                 )
             }
         }
@@ -82,24 +92,32 @@ fun CategorySelectionScreen(
     }
 }
 
-fun LazyListScope.GridItemSpan(
+
+fun LazyListScope.gridItemSpan(
     categoryName: String,
     categoryItems: List<String>,
-    onClickCategory: () -> Unit
+    onClickCategory: () -> Unit,
+    onClickCategoryAll: () -> Unit
 ) {
     item {
-        Text(
-            text = categoryName, style = H2, modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp, bottom = 12.dp)
-                .padding(horizontal = 22.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = categoryName, style = H2, modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 30.dp, bottom = 12.dp)
+                    .padding(horizontal = 22.dp)
+            )
+            Image(painter = painterResource(id = R.drawable.ic_chevron_right), contentDescription = "MORE")
+        }
+
     }
     item {
         NonLazyVerticalGrid(
             modifier = Modifier.padding(horizontal = 22.dp),
             columns = 4,
-            itemCount = categoryItems.size,
+            itemCount = if (categoryItems.size > 8) 8 else categoryItems.size,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Column(
@@ -130,6 +148,17 @@ fun LazyListScope.GridItemSpan(
                     .height(12.dp)
                     .background(ZSColor.Neutral50)
             )
+        }
+    }
+    if (categoryItems.size > 8) {
+        item {
+            ZSButton(
+                onClick = onClickCategoryAll,
+                buttonType = ButtonType.SECONDARY,
+                buttonSize = ButtonSize.SMALL
+            ) {
+                Text(text = "전체 보기", style = Body3, color = ZSColor.Neutral900)
+            }
         }
     }
 }
