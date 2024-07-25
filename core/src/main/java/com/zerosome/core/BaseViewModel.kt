@@ -4,20 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventStart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zerosome.network.NetworkResult
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -91,6 +85,7 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     }
 
     protected fun <T> Flow<NetworkResult<T>>.mapMerge(): Flow<T?> = flatMapConcat {
+        Log.d("CPRI", "$it")
         when (it) {
             is NetworkResult.Loading -> {
                 _isLoading = true

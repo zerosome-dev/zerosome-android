@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -42,4 +44,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(project(":domain"))
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
 }

@@ -1,17 +1,15 @@
 package com.zerosome.data.repository
 
 import android.util.Log
-import com.zerosome.datasource.local.source.TokenSource
 import com.zerosome.datasource.remote.dto.response.LoginResponse
 import com.zerosome.datasource.remote.dto.response.TokenResponse
 import com.zerosome.datasource.remote.service.AuthService
 import com.zerosome.network.NetworkError
 import com.zerosome.network.NetworkResult
+import com.zerosome.network.safeCall
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 interface UserRepository {
@@ -29,7 +27,7 @@ interface UserRepository {
 internal class UserRepositoryImpl @Inject constructor(
     private val userService: AuthService,
 ): UserRepository {
-    override fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> = userService.validateNickname(nickname)
+    override fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> = safeCall { userService.validateNickname(nickname) }
     override fun signUp(
         socialToken: String,
         socialType: String,

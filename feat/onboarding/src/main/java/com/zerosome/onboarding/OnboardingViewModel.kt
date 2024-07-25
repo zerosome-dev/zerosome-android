@@ -45,7 +45,7 @@ internal sealed interface OnboardingEffect : UIEffect {
 
 @HiltViewModel
 internal class OnboardingViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase
+//    private val signUpUseCase: SignUpUseCase
 ) : BaseViewModel<OnboardingAction, OnboardingIntent, OnboardingState, OnboardingEffect>(
     initialState = OnboardingState()
 ) {
@@ -90,14 +90,14 @@ internal class OnboardingViewModel @Inject constructor(
     }
 
     private fun signUp() = withState {
-        signUpUseCase(
-            socialType = userType.name,
-            socialToken = userToken,
-            nickname = nickname,
-            marketingAgreed = userMarketingAgreed
-        ).mapMerge()
-            .collect {
-                setEffect { OnboardingEffect.NavigateToMain }
-            }
+//        signUpUseCase(
+//            socialType = userType.name,
+//            socialToken = userToken,
+//            nickname = nickname,
+//            marketingAgreed = userMarketingAgreed
+//        ).mapMerge()
+//            .collect {
+//                setEffect { OnboardingEffect.NavigateToMain }
+//            }
     }
 }

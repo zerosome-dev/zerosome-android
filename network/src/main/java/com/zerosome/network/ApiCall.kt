@@ -1,5 +1,6 @@
 package com.zerosome.network
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -10,25 +11,19 @@ import io.ktor.http.headers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-fun<T> HttpClient.safeGet(
-    token: String? = null,
-    url: String,
-    builder: HttpRequestBuilder.() -> Unit = {}
+fun<T> safeCall(
+    apiCall: suspend () -> BaseResponse<T>
 ): Flow<NetworkResult<T>> = flow {
+    Log.d("CPRI", "FLOW STARTED")
     emit(NetworkResult.Loading)
-    val response = get(Url(url), builder.apply {
-        token?.let {
-            headers {
-                append("Authorization", "Bearer $it")
-            }
-        }
-    }).body<BaseResponse<T>>()
+    val response = apiCall.invoke()
     if (response.status) {
         emit(NetworkResult.Success(response.data))
     } else {
         emit(NetworkResult.Error(NetworkError.from(response.code)))
     }
 }
+
 
 fun<T> HttpClient.safePost(
     token: String? = null,
