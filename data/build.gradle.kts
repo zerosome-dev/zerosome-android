@@ -36,10 +36,11 @@ android {
 }
 
 dependencies {
-    api(project(":network"))
+    implementation(project(":network"))
     implementation(project(":localdb"))
-    api(project(":datasource:local"))
-    api(project(":datasource:remote"))
+    implementation(project(":datasource:local"))
+    implementation(project(":datasource:remote"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)

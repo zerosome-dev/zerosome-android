@@ -2,14 +2,11 @@ package com.zerosome.data.repository
 
 //
 //interface ProductRepository {
-//
-//    fun getProductList()
+//    get
 //}
 //
 //@Singleton
 //internal class ProductRepositoryImpl @Inject constructor(
 //    private val productService: ProductService
 //): ProductRepository {
-//    override fun getProductList(): Flow<NetworkResult<List<ProductResponse>>> = productService.getProductDetail()
-//    }
 //}

@@ -30,10 +30,14 @@ data class ProductDetailResponse(
 data class NutrientResponse(
     @SerialName("nutrientName")
     val nutrientName: String,
-    @SerialName("servingPercent")
+    @SerialName("servings")
     val servingPercent: Int,
     @SerialName("amount")
     val amount: Int,
+    @SerialName("servingsStandard")
+    val serviceStandard: String,
+    @SerialName("amountStandard")
+    val amountStandard: String
 )
 
 data class OfflineStoreResponse(

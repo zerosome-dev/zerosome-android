@@ -1,11 +1,7 @@
 package com.zerosome.datasource.remote.service
 
-import com.zerosome.datasource.remote.dto.response.CategoryResponse
 import com.zerosome.network.BaseService
-import com.zerosome.network.NetworkResult
-import com.zerosome.network.safeGet
 import io.ktor.client.HttpClient
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CategoryService @Inject constructor(
@@ -14,7 +10,7 @@ class CategoryService @Inject constructor(
     override val apiRoute: String
         get() = "api/app/v1/category"
 
-    fun getAllCategories(token: String? = null): Flow<NetworkResult<List<CategoryResponse>>> =
-        client.safeGet(token, "$apiRoute/list")
+//    fun getAllCategories(token: String? = null): Flow<CategoryResponse>> =
+//        client.safeGet(token, "$apiRoute/list")
 
 }

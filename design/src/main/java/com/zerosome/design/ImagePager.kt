@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,13 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.view.DetailCardComponent
-import com.zerosome.design.ui.view.PageIndicator
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.view.PageIndicator
 
 @Composable
 fun ImageHorizontalPager(
@@ -57,15 +54,14 @@ fun ImageHorizontalPager(
 @Composable
 fun CardHorizontalPager(
     modifier: Modifier = Modifier,
-    listItems: List<String>,
+    itemList: List<@Composable () -> Unit>,
     isMoreVisible: Boolean = false,
     moreEnableItem: @Composable (() -> Unit)? = null,
-    onProductClick: (String) -> Unit,
     indicatorVisible: Boolean = true
 ) {
     val pagerState = rememberPagerState(
         0,
-        pageCount = { if (isMoreVisible) listItems.size + 1 else listItems.size })
+        pageCount = { if (isMoreVisible) itemList.size + 1 else itemList.size })
     Column(
         modifier
             .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -78,9 +74,7 @@ fun CardHorizontalPager(
             if (page == pagerState.pageCount - 1 && isMoreVisible) {
                 moreEnableItem?.invoke()
             } else {
-                DetailCardComponent {
-                    onProductClick(listItems[page])
-                }
+                itemList[page].invoke()
             }
         }
 

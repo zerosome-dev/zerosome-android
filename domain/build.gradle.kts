@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -34,8 +32,8 @@ android {
 }
 
 dependencies {
-    api(project(":data"))
+    // NetworkResult 가지고 오는 용 -> 차후 Core 로 이관 필요
+    implementation(project(":network"))
 
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.core.ktx)
 }

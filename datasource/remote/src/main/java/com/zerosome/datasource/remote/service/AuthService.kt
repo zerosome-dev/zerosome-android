@@ -3,14 +3,15 @@ package com.zerosome.datasource.remote.service
 import com.zerosome.datasource.remote.dto.request.JoinRequest
 import com.zerosome.datasource.remote.dto.response.LoginResponse
 import com.zerosome.datasource.remote.dto.response.TokenResponse
+import com.zerosome.network.BaseResponse
 import com.zerosome.network.BaseService
 import com.zerosome.network.NetworkResult
 import com.zerosome.network.safeDelete
-import com.zerosome.network.safeGet
 import com.zerosome.network.safePost
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import kotlinx.coroutines.flow.Flow
@@ -30,10 +31,10 @@ class AuthService @Inject constructor(
         parameter("socialType", socialType)
     }
 
-    fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> =
-        client.safeGet(url = "$apiRoute/nickname") {
+    suspend fun validateNickname(nickname: String): BaseResponse<Boolean> =
+        client.get("$apiRoute/nickname") {
             parameter("nickname", nickname)
-        }
+        }.body()
 
     fun join(
         socialToken: String,
