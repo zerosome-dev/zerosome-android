@@ -56,9 +56,11 @@ fun MainScreen() {
                 })
             }
             composable(Category.route) {
-                CategorySelectionScreen {
-                    navController.navigate(CategoryDetail.route)
-                }
+                CategorySelectionScreen(
+                    onCategorySelected = { depth1, depth2 ->
+                        navController.navigate(CategoryDetail.route)
+                    }
+                )
             }
             profileNavigation(navController)
             composable(Rollout.route) {

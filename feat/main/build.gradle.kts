@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
-    kotlin("kapt")
+    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -48,6 +48,7 @@ dependencies {
     implementation(project(":feat:review"))
     implementation(project(":feat:profile"))
     implementation(project(":feat:report"))
+    implementation(project(":domain:category"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -70,6 +71,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 }

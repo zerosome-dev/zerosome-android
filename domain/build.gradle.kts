@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
-    id("kotlin-kapt")
+    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -37,5 +37,5 @@ dependencies {
     api(project(":data"))
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 }

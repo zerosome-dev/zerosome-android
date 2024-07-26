@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleKsp)
-    kotlin("kapt")
     alias(libs.plugins.hilt)
     alias(libs.plugins.baselineprofile)
 }
@@ -90,5 +89,5 @@ dependencies {
     implementation(libs.kakao.auth)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 }

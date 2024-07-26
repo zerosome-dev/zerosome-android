@@ -13,14 +13,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,20 +32,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ButtonSize
 import com.zerosome.design.ui.component.ButtonType
 import com.zerosome.design.ui.component.ZSButton
-import com.zerosome.design.ui.view.NonLazyVerticalGrid
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.view.NonLazyVerticalGrid
+import com.zerosome.domain.model.CategoryDepth2
 
 @Composable
-fun CategorySelectionScreen(
-    onClickCategory: () -> Unit
+internal fun CategorySelectionScreen(
+    onCategorySelected: (depth1: String, depth2: String?) -> Unit,
+    viewModel: CategorySelectionViewModel = hiltViewModel(),
 ) {
+    val state = viewModel.uiState
+    val effect by viewModel.uiEffect.collectAsState(initial = null)
+    LaunchedEffect(key1 = effect) {
+        when(effect) {
+            is CategorySelectionEffect.NavigateToCategorySelectionDetail -> {
+                onCategorySelected((effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth1Id, (effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth2Id)
+            }
+            else -> {
+                viewModel.clearError()
+            }
+        }
+    }
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -53,72 +72,64 @@ fun CategorySelectionScreen(
                 Text(text = "카테고리", style = H1)
             }
             LazyColumn(modifier = Modifier.weight(1f)) {
-                gridItemSpan(
-                    categoryName = "카페 음료",
-                    categoryItems = listOf("스타벅스", "메가커피", "빽다방", "투썸플레이스"),
-                    onClickCategory,
-                    {}
-                )
-                gridItemSpan(
-                    categoryName = "생수/음료",
-                    categoryItems = listOf(
-                        "탄산수",
-                        "탄산음료",
-                        "커피음료",
-                        "차음료",
-                        "어린이음료",
-                        "무알콜음료",
-                        "스포츠음료",
-                        "숙취/건강음료"
-                    ),
-                    onClickCategory,
-                    {}
-                )
-                gridItemSpan(
-                    categoryName = "과자/아이스크림",
-                    categoryItems = listOf("과자", "아이스크림"),
-                    onClickCategory,
-                    {}
-                )
-                gridItemSpan(
-                    categoryName = "양념/소스",
-                    categoryItems = listOf("설탕/향신료", "소스/드레싱"),
-                    onClickCategory,
-                    {}
-                )
+                items(state.categories) {
+                    GridItemSpan(
+                        categoryName = it.categoryName,
+                        categoryItems = it.categoryDepth2,
+                        onClickCategory = { depth2 ->
+                            viewModel.setAction(
+                                CategorySelectionAction.ClickSpecificCategory(
+                                    it,
+                                    depth2
+                                )
+                            )
+                        },
+                        onClickCategoryAll = {
+                            viewModel.setAction(
+                                CategorySelectionAction.ClickCategoryMore(
+                                    it
+                                )
+                            )
+                        }
+                    )
+                }
             }
         }
-
     }
 }
 
 
-fun LazyListScope.gridItemSpan(
+@Composable
+fun GridItemSpan(
     categoryName: String,
-    categoryItems: List<String>,
-    onClickCategory: () -> Unit,
+    categoryItems: List<CategoryDepth2>,
+    onClickCategory: (depth2: CategoryDepth2) -> Unit,
     onClickCategoryAll: () -> Unit
 ) {
-    item {
+    Column {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 30.dp, bottom = 12.dp)
+                .padding(horizontal = 22.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = categoryName, style = H2, modifier = Modifier
                     .weight(1f)
-                    .padding(top = 30.dp, bottom = 12.dp)
-                    .padding(horizontal = 22.dp)
             )
-            Image(painter = painterResource(id = R.drawable.ic_chevron_right), contentDescription = "MORE")
+            Image(
+                painter = painterResource(id = R.drawable.ic_chevron_right),
+                modifier = Modifier.size(16.dp),
+                contentDescription = "MORE"
+            )
         }
-
-    }
-    item {
         NonLazyVerticalGrid(
             modifier = Modifier.padding(horizontal = 22.dp),
             columns = 4,
             itemCount = if (categoryItems.size > 8) 8 else categoryItems.size,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -126,7 +137,7 @@ fun LazyListScope.gridItemSpan(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
                     role = Role.Button,
-                    onClick = onClickCategory
+                    onClick = { onClickCategory(categoryItems[it]) }
                 )
             ) {
                 Spacer(
@@ -135,11 +146,9 @@ fun LazyListScope.gridItemSpan(
                         .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8))
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(text = categoryItems[it], style = Body3, textAlign = TextAlign.Center)
+                Text(text = categoryItems[it].categoryName, style = Body3, textAlign = TextAlign.Center)
             }
         }
-    }
-    item {
         Column {
             Spacer(modifier = Modifier.height(30.dp))
             Spacer(
@@ -149,9 +158,7 @@ fun LazyListScope.gridItemSpan(
                     .background(ZSColor.Neutral50)
             )
         }
-    }
-    if (categoryItems.size > 8) {
-        item {
+        if (categoryItems.size > 8) {
             ZSButton(
                 onClick = onClickCategoryAll,
                 buttonType = ButtonType.SECONDARY,

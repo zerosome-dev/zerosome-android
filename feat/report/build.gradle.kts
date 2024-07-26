@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    kotlin("kapt")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -68,6 +69,6 @@ dependencies {
     implementation(libs.navigation.compose)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 }

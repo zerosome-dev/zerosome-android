@@ -5,6 +5,8 @@ import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.domain.model.Banner
 import com.zerosome.domain.model.Cafe
+import com.zerosome.domain.model.CategoryDepth1
+import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.model.Rollout
 
 internal sealed interface HomeAction: UIAction {
@@ -17,6 +19,9 @@ internal sealed interface HomeAction: UIAction {
     data class ClickCafe(val cafeResponse: Cafe): HomeAction
 
     data object ClickCafeMore: HomeAction
+
+    data class ClickCategoryDepth(val depth1Category: CategoryDepth1, val depth2Category: CategoryDepth2): HomeAction
+
 }
 
 internal sealed interface HomeIntent: UIIntent {
