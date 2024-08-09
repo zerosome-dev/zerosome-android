@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.hilt)
-    kotlin("kapt")
+    alias(libs.plugins.googleKsp)
 }
 
 android {
@@ -36,10 +36,14 @@ android {
 }
 
 dependencies {
-    api(project(":network"))
+    implementation(project(":network"))
     implementation(project(":localdb"))
-    api(project(":datasource:local"))
-    api(project(":datasource:remote"))
+    implementation(project(":datasource:local"))
+    implementation(project(":datasource:remote"))
+    implementation(project(":domain"))
+
+    // 서버 붙으면 없어질 것.
+    implementation(project(":design"))
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
@@ -49,5 +53,5 @@ dependencies {
     implementation(libs.kotlin.serialization)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
@@ -42,11 +43,12 @@ fun ZSDropdown(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = selectedString.ifEmpty { placeholderText }, style = Label1, modifier = Modifier.padding(vertical = 6.dp))
+        Text(text = selectedString.ifEmpty { placeholderText }, style = Label1, modifier = Modifier.padding(vertical = 6.dp), color = ZSColor.Neutral700)
         Spacer(modifier = Modifier.width(6.dp))
         Image(
             painter = painterResource(id = R.drawable.ic_chevron_down),
-            contentDescription = "SHOW MORE"
+            contentDescription = "SHOW MORE",
+            modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
     }

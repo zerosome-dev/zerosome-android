@@ -1,7 +1,9 @@
 package com.zerosome.datasource.remote.dto.response
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class HomeRolloutResponse(
     @SerialName("id")
     val id: Int,
@@ -14,5 +16,5 @@ data class HomeRolloutResponse(
     @SerialName("name")
     val name: String,
     @SerialName("salesStore")
-    val salesStore: List<String>
+    val salesStore: List<String?>? = null
 )

@@ -1,7 +1,6 @@
 package com.zerosome.onboarding
 
-import android.util.Log
-import androidx.annotation.StringRes
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -32,14 +30,15 @@ internal sealed interface NicknameIntent : UIIntent {
 internal data class NicknameState(
     val nickname: String = "",
     val isConfirmed: Boolean? = null,
-    val throwable: Throwable? = null
+    val throwable: Throwable? = null,
+    val reason: ValidateReason? = null
 ) : UIState {
     val holderTextResId: Int?
-        get() = isConfirmed?.let {
-            if (it) {
-                com.zerosome.onboarding.R.string.screen_nickname_textfield_positive
-            } else {
-                com.zerosome.onboarding.R.string.screen_nickname_textfield_negative
+        get() = reason?.let {
+            when (it) {
+                ValidateReason.SUCCESS -> R.string.screen_nickname_textfield_positive
+                ValidateReason.NOT_VALIDATED -> R.string.screen_nickname_textfield_negative_validation
+                ValidateReason.NOT_VERIFIED -> R.string.screen_nickname_textfield_negative
             }
         }
 
@@ -56,15 +55,15 @@ internal class NicknameViewModel @Inject constructor(
     initialState = NicknameState()
 ) {
 
-    private val nicknameFlow = uiState.map { it.nickname }.distinctUntilChanged().onEach {
+    private val nicknameFlow = snapshotFlow { uiState.nickname }.distinctUntilChanged().onEach {
         setState {
             copy(isConfirmed = null)
         }
-    }.filter { it.isNotEmpty() }.debounce(1000)
-        .flatMapConcat { validateNicknameUseCase(it) }
+    }.filter { it.isNotEmpty() }.debounce(200)
+       .flatMapConcat { validateNicknameUseCase(it) }
         .mapMerge()
         .onEach {
-            setState { copy(isConfirmed = it) }
+            setState { copy(isConfirmed = it == ValidateReason.SUCCESS, reason = it) }
         }
         .stateIn(
             scope = viewModelScope,
@@ -90,5 +89,4 @@ internal class NicknameViewModel @Inject constructor(
             }
         }
     }
-
 }

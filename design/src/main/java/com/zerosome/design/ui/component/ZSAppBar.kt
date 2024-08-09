@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
 
@@ -41,7 +42,7 @@ fun ZSAppBar(
                 )
                 .align(Alignment.CenterStart))
             
-            Text(text = navTitle, style = SubTitle1, color = ZSColor.Neutral900, modifier = Modifier.align(Alignment.Center))
+            Text(text = navTitle, style = H2, color = ZSColor.Neutral900, modifier = Modifier.align(Alignment.Center))
         }
     }
 }

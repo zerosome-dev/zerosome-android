@@ -1,12 +1,10 @@
 package com.zerosome.main
 
-import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
@@ -15,12 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,12 +25,19 @@ import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
 import com.zerosome.main.category.CategorySelectionScreen
-import com.zerosome.main.review.ReviewWriteScreen
+import com.zerosome.main.detail.ProductDetailScreen
+import com.zerosome.main.home.HomeScreen
+import com.zerosome.main.home.RolloutScreen
+import com.zerosome.profile.profileNavigation
+import com.zerosome.report.ReportDestination
+import com.zerosome.report.reportNavigation
+import com.zerosome.review.ReviewDestination
+import com.zerosome.review.ReviewWriteScreen
+import com.zerosome.review.reviewNavigation
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val entry = navController.currentBackStackEntryAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         NavHost(
             modifier = Modifier.weight(1f),
@@ -43,32 +45,61 @@ fun MainScreen() {
             startDestination = Home.route
         ) {
             composable(Home.route) {
-                HomeScreen {
-                    navController.navigate(ProductDetail.route)
-                }
+                HomeScreen(onClickProduct = { productId ->
+                    navController.navigate("${ProductDetail.route}/$productId")
+                }, onClickMore = {
+                    navController.navigate(Rollout.route)
+                })
             }
             composable(Category.route) {
-                CategorySelectionScreen {
-                    navController.navigate(CategoryDetail.route)
-                }
+                CategorySelectionScreen(
+                    onCategorySelected = { depth1, depth2 ->
+                        navController.navigate("${CategoryDetail.route}/$depth1/$depth2")
+                    }
+                )
             }
-            composable(Profile.route) {
-                ProfileScreen()
+            profileNavigation(navController)
+            composable(Rollout.route) {
+                RolloutScreen(
+                    onBackPressed = {
+                        navController.popBackStack()
+                    },
+                    onClickProduct = {
+                        navController.navigate("${ProductDetail.route}/$it")
+                    }
+                )
             }
-            composable(CategoryDetail.route) {
-                CategoryDetailScreen {
-                    navController.popBackStack()
-                }
+            composable("${CategoryDetail.route}/(${CategoryDetail.category1})/(${CategoryDetail.category2})", arguments = CategoryDetail.argument) {
+                val firstCategory = it.arguments?.getString(CategoryDetail.category1)
+                val secondCategory = it.arguments?.getString(CategoryDetail.category2)
+                CategoryDetailScreen(
+                    category1Id = requireNotNull(firstCategory) { "Argument Must be passed "},
+                    category2Id = secondCategory,
+                    onBackPressed = { navController.popBackStack() }
+                )
             }
-            composable(ProductDetail.route) {
-                ProductDetailScreen {
+            composable("${ProductDetail.route}/{${ProductDetail.argumentTypeArg}}", arguments = ProductDetail.argument) {
+                val accountTypeArgs = it.arguments?.getString(ProductDetail.argumentTypeArg)
+                ProductDetailScreen(
+                    productId = requireNotNull(accountTypeArgs) { "Argument Must be Passed "},
+                    onClickReview = { _, _ ->
+                    navController.navigate(ReviewDestination().route)
+                }, onClickWriteReview = {
                     navController.navigate(ReviewWrite.route)
-                }
+                }, onClickSimilarProduct = { productId ->
+                    navController.navigate("${ProductDetail.route}/$productId")
+                })
             }
             composable(ReviewWrite.route) {
                 ReviewWriteScreen {
                     navController.popBackStack()
                 }
+            }
+            reviewNavigation(0, navController) {
+                navController.navigate(ReportDestination().route)
+            }
+            reportNavigation(0) {
+                navController.popBackStack()
             }
         }
         BottomNavigationView(
@@ -137,5 +168,4 @@ fun BottomNavigationView(
             }
         }
     }
-
 }

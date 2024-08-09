@@ -18,6 +18,7 @@ import com.zerosome.design.ui.theme.ZSColor
 fun ZSChip(
     enable: Boolean,
     chipText: String,
+    onClick: () -> Unit = {}
 ) {
 
     val backgroundColor: Color by rememberUpdatedState(newValue = if (enable) ZSColor.Primary else ZSColor.Neutral50)
@@ -26,7 +27,8 @@ fun ZSChip(
     Surface(
         color = backgroundColor,
         border = borderEnable,
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(6.dp),
+        onClick = onClick
     ) {
         Text(text = chipText, style = Body2, color = textColor, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
     }

@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleKsp)
-    kotlin("kapt")
     alias(libs.plugins.hilt)
     alias(libs.plugins.baselineprofile)
 }
@@ -18,7 +17,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.0.1-RC2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -68,6 +67,7 @@ dependencies {
     // FOR DEPENDENCY INJECTION
     implementation(project(":feat:onboarding"))
     implementation(project(":feat:main"))
+    implementation(project(":feat:splash"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -90,5 +90,6 @@ dependencies {
     implementation(libs.kakao.auth)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.compose)
 }

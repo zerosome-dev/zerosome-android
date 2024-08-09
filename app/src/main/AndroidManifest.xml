@@ -8,12 +8,13 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_logo"
+        android:icon="@drawable/zerosome_logo"
         android:label="@string/app_name"
         android:name=".ZerosomeApplication"
-        android:roundIcon="@drawable/ic_logo"
+        android:roundIcon="@drawable/zerosome_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Zerosome"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

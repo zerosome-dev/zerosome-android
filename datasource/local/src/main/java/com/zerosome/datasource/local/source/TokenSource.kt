@@ -19,7 +19,7 @@ class TokenSource(
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     }
 
-    suspend fun getAccessToken(): Flow<TokenEntity?> = tokenPreferenceStore.data.catch { exception ->
+    fun getAccessToken(): Flow<TokenEntity?> = tokenPreferenceStore.data.catch { exception ->
         if (exception is IOException) {
             emit(emptyPreferences())
         } else {

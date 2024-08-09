@@ -32,24 +32,21 @@ import com.zerosome.design.ui.view.CommonTitleView
 @Composable
 internal fun NicknameScreen(
     onBackPressed: () -> Unit,
-    onClickNext: () -> Unit,
+    onClickNext: (nickname: String) -> Unit,
     viewModel: NicknameViewModel = hiltViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState("")
 
     val dialogShown by remember {
-        derivedStateOf { error.isNullOrEmpty().not() }
+        derivedStateOf { viewModel.error.isEmpty().not() }
     }
 
     ZSScreen(
         modifier = Modifier
             .fillMaxSize(),
         isDialogShown = dialogShown,
-        isLoading = isLoading,
+        isLoading = viewModel.isLoading,
         onDismiss = { viewModel.clearError() },
-        errorMessage = error,
+        errorMessage = viewModel.error,
     ) {
         ZSAppBar(
             navTitle = "",
@@ -62,7 +59,7 @@ internal fun NicknameScreen(
         )
         Spacer(modifier = Modifier.height(30.dp))
         ZSTextField(
-            text = state.nickname,
+            text = viewModel.uiState.nickname,
             onTextChanged = { viewModel.setAction(NicknameAction.SetNickname(it)) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,16 +68,28 @@ internal fun NicknameScreen(
             placeHolderText = stringResource(
                 id = R.string.screen_nickname_textfield_hint
             ),
-            positiveText = if (state.isConfirmed == true) stringResource(id = requireNotNull(state.holderTextResId)) else null,
-            negativeText = if (state.isConfirmed == false) stringResource(id = requireNotNull(state.holderTextResId)) else null
+            positiveText = if (viewModel.uiState.isConfirmed == true) viewModel.uiState.holderTextResId?.let {
+                stringResource(
+                    id = it
+                )
+            } else null,
+            negativeText = if (viewModel.uiState.isConfirmed == false) viewModel.uiState.holderTextResId?.let {
+                stringResource(
+                    id = it
+                )
+            } else null
         )
         Spacer(modifier = Modifier.weight(1f))
-        ZSButton(onClick = onClickNext, enable = state.canGoNext, modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 22.dp)
-            .padding(bottom = 10.dp)) {
+        ZSButton(
+            onClick = {
+                onClickNext(viewModel.uiState.nickname)
+            }, enable = viewModel.uiState.canGoNext, modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 22.dp)
+                .padding(bottom = 10.dp)
+        ) {
             Text(
-                "닉네임 설정 화면",
+                "회원가입 완료",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = Label2

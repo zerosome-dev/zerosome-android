@@ -5,12 +5,12 @@ import com.zerosome.datasource.remote.service.CategoryService
 import com.zerosome.datasource.remote.service.FilterService
 import com.zerosome.datasource.remote.service.HomeService
 import com.zerosome.datasource.remote.service.ProductService
-import com.zerosome.datasource.remote.service.ReviewService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,14 +29,11 @@ internal class ServiceModule {
         FilterService(httpClient)
 
     @Provides
+    @Singleton
     fun providesHomeService(httpClient: HttpClient): HomeService =
         HomeService(httpClient)
 
     @Provides
     fun providesProductService(httpClient: HttpClient): ProductService =
        ProductService(httpClient)
-
-    @Provides
-    fun providesReviewService(httpClient: HttpClient): ReviewService =
-        ReviewService(httpClient)
 }

@@ -18,6 +18,7 @@
     <string name="screen_nickname_description">최소 2자 ~ 12자 이내의 닉네임을 입력해 주세요\n한글/영문/숫자/특수문자 모두 가능해요</string>
     <string name="screen_nickname_textfield_hint">닉네임을 입력해 주세요</string>
     <string name="screen_nickname_textfield_positive">사용 가능한 닉네임입니다.</string>
+    <string name="screen_nickname_textfield_negative_validation">2자 ~ 12자 내외의 닉네임만 입력해주세요.</string>
     <string name="screen_nickname_textfield_negative">이미 사용중인 닉네임입니다.</string>
     <string name="screen_nickname_finish_signup">회원가입 완료</string>
 </resources>

@@ -17,10 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.view.DetailCardComponent
-import com.zerosome.design.ui.view.PageIndicator
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.ZSColor
+import com.zerosome.design.ui.view.PageIndicator
 
 @Composable
 fun ImageHorizontalPager(
@@ -31,11 +30,17 @@ fun ImageHorizontalPager(
     Box(
         modifier
             .fillMaxWidth()
-            .background(color = ZSColor.Neutral300)) {
+            .background(color = ZSColor.Neutral300)
+    ) {
         HorizontalPager(modifier = Modifier.fillMaxSize(), state = pagerState) {
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center), text = "PAGE $it", style = H1, textAlign = TextAlign.Center)
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                text = "PAGE $it",
+                style = H1,
+                textAlign = TextAlign.Center
+            )
         }
         PageIndicator(
             modifier = Modifier
@@ -49,17 +54,36 @@ fun ImageHorizontalPager(
 @Composable
 fun CardHorizontalPager(
     modifier: Modifier = Modifier,
-    listItems: List<String>
+    itemList: List<@Composable () -> Unit>,
+    isMoreVisible: Boolean = false,
+    moreEnableItem: @Composable (() -> Unit)? = null,
+    indicatorVisible: Boolean = true
 ) {
-    val pagerState = rememberPagerState(0, pageCount = { listItems.size })
-    Column(modifier
-        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        HorizontalPager(state = pagerState, contentPadding = PaddingValues(start = 22.dp, end = 56.dp), pageSpacing = 14.dp) {
-            DetailCardComponent()
+    val pagerState = rememberPagerState(
+        0,
+        pageCount = { if (isMoreVisible) itemList.size + 1 else itemList.size })
+    Column(
+        modifier
+            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            modifier = Modifier.fillMaxWidth(),
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = 32.dp),
+            pageSpacing = 14.dp
+        ) { page ->
+            if (page == pagerState.pageCount - 1 && isMoreVisible) {
+                moreEnableItem?.invoke()
+            } else {
+                itemList[page].invoke()
+            }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        PageIndicator(pagerState = pagerState)
 
+
+        if (indicatorVisible) {
+            Spacer(modifier = Modifier.height(20.dp))
+            PageIndicator(pagerState = pagerState)
+        }
     }
 }
 
