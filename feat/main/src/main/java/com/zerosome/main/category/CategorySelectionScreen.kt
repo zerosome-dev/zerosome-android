@@ -37,6 +37,7 @@ import com.zerosome.design.R
 import com.zerosome.design.ui.component.ButtonSize
 import com.zerosome.design.ui.component.ButtonType
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H1
 import com.zerosome.design.ui.theme.H2
@@ -140,10 +141,11 @@ fun GridItemSpan(
                     onClick = { onClickCategory(categoryItems[it]) }
                 )
             ) {
-                Spacer(
+                ZSImage(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8))
+                        .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8)),
+                    painter = painterResource(id = requireNotNull(categoryItems[it].categoryPainterResId))
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(text = categoryItems[it].categoryName, style = Body3, textAlign = TextAlign.Center)

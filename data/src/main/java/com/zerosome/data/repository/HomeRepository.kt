@@ -3,6 +3,7 @@ package com.zerosome.data.repository
 import android.util.Log
 import com.zerosome.data.mapper.domainModel
 import com.zerosome.data.mapper.mapToDomain
+import com.zerosome.datasource.local.source.TokenSource
 import com.zerosome.datasource.remote.service.HomeService
 import com.zerosome.domain.model.Banner
 import com.zerosome.domain.model.Cafe
@@ -21,9 +22,9 @@ import javax.inject.Inject
 
 internal class HomeRepositoryImpl @Inject constructor(
     private val homeService: HomeService,
-    private val tokenRepository: TokenRepository,
+    tokenSource: TokenSource
 ) : HomeRepository {
-    private val currentAccessToken = tokenRepository.getToken().stateIn(
+    private val currentAccessToken = tokenSource.getAccessToken().stateIn(
         scope = CoroutineScope(Dispatchers.IO),
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
@@ -36,21 +37,13 @@ internal class HomeRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun getBanner(): Flow<NetworkResult<List<Banner>>> = safeCall {
-        homeService.getBanners(currentAccessToken.value?.accessToken)
-    }.mapToDomain { it.map { data -> data.domainModel } }
+    override fun getBanner(): Flow<NetworkResult<List<Banner>>> = safeCall { homeService.getBanners() }.mapToDomain { it.map { data -> data.domainModel } }
 
     override fun getRollout(): Flow<NetworkResult<List<Rollout>>> {
-        Log.d("CPRI", "LOG STARTED")
-        return safeCall {
-            homeService.getRollout(currentAccessToken.value?.accessToken).also {
-                Log.d("CPRI", "LOGGER")
-            }
-        }.mapToDomain { it.map { data -> data.domainModel } }
+        return safeCall { homeService.getRollout() }.mapToDomain { it.map { data -> data.domainModel } }
     }
 
-    override fun getCafe(): Flow<NetworkResult<List<Cafe>>> = safeCall {
-        homeService.getCafe(currentAccessToken.value?.accessToken)
-    }.mapToDomain { it.map { data -> data.domainModel } }
+    override fun getCafe(): Flow<NetworkResult<List<Cafe>>> =
+        safeCall { homeService.getCafe() }.mapToDomain { it.map { data -> data.domainModel } }
 
 }

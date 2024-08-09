@@ -69,7 +69,7 @@ enum class ButtonType(val containerColor: Color, val contentColor: Color) {
 }
 
 enum class ButtonSize(val paddingValues: PaddingValues) {
-    LARGE(paddingValues = PaddingValues(vertical = 16.dp)), MEDIUM(PaddingValues()), SMALL(PaddingValues(vertical = 6.dp, horizontal = 12.dp)), NONE(
+    LARGE(paddingValues = PaddingValues(vertical = 16.dp)), MEDIUM(PaddingValues(vertical = 10.dp, horizontal = 20.dp )), SMALL(PaddingValues(vertical = 6.dp, horizontal = 12.dp)), NONE(
         PaddingValues(0.dp)
     )
 }

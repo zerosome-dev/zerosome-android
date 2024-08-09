@@ -1,8 +1,9 @@
 package com.zerosome.datasource.remote.dto.response
 
-import com.zerosome.datasource.remote.dto.response.CategoryDepth2Response
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CategoryResponse(
     @SerialName("d1CategoryCode")
     val d1CategoryCode: String,

@@ -11,26 +11,23 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.main.category.CategoryDetailScreen
 import com.zerosome.main.category.CategorySelectionScreen
+import com.zerosome.main.detail.ProductDetailScreen
 import com.zerosome.main.home.HomeScreen
 import com.zerosome.main.home.RolloutScreen
-import com.zerosome.profile.ProfileScreen
 import com.zerosome.profile.profileNavigation
 import com.zerosome.report.ReportDestination
 import com.zerosome.report.reportNavigation
@@ -41,7 +38,6 @@ import com.zerosome.review.reviewNavigation
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val entry = navController.currentBackStackEntryAsState()
     Column(modifier = Modifier.fillMaxSize()) {
         NavHost(
             modifier = Modifier.weight(1f),
@@ -49,8 +45,8 @@ fun MainScreen() {
             startDestination = Home.route
         ) {
             composable(Home.route) {
-                HomeScreen(onClickProduct = {
-                    navController.navigate(ProductDetail.route)
+                HomeScreen(onClickProduct = { productId ->
+                    navController.navigate("${ProductDetail.route}/$productId")
                 }, onClickMore = {
                     navController.navigate(Rollout.route)
                 })
@@ -58,7 +54,7 @@ fun MainScreen() {
             composable(Category.route) {
                 CategorySelectionScreen(
                     onCategorySelected = { depth1, depth2 ->
-                        navController.navigate(CategoryDetail.route)
+                        navController.navigate("${CategoryDetail.route}/$depth1/$depth2")
                     }
                 )
             }
@@ -69,18 +65,29 @@ fun MainScreen() {
                         navController.popBackStack()
                     },
                     onClickProduct = {
-                        navController.navigate(ProductDetail.route)
+                        navController.navigate("${ProductDetail.route}/$it")
                     }
                 )
             }
-            composable(CategoryDetail.route) {
-                CategoryDetailScreen(onBackPressed = { navController.popBackStack() })
+            composable("${CategoryDetail.route}/(${CategoryDetail.category1})/(${CategoryDetail.category2})", arguments = CategoryDetail.argument) {
+                val firstCategory = it.arguments?.getString(CategoryDetail.category1)
+                val secondCategory = it.arguments?.getString(CategoryDetail.category2)
+                CategoryDetailScreen(
+                    category1Id = requireNotNull(firstCategory) { "Argument Must be passed "},
+                    category2Id = secondCategory,
+                    onBackPressed = { navController.popBackStack() }
+                )
             }
-            composable(ProductDetail.route) {
-                ProductDetailScreen(onClickReview = {
+            composable("${ProductDetail.route}/{${ProductDetail.argumentTypeArg}}", arguments = ProductDetail.argument) {
+                val accountTypeArgs = it.arguments?.getString(ProductDetail.argumentTypeArg)
+                ProductDetailScreen(
+                    productId = requireNotNull(accountTypeArgs) { "Argument Must be Passed "},
+                    onClickReview = { _, _ ->
                     navController.navigate(ReviewDestination().route)
                 }, onClickWriteReview = {
                     navController.navigate(ReviewWrite.route)
+                }, onClickSimilarProduct = { productId ->
+                    navController.navigate("${ProductDetail.route}/$productId")
                 })
             }
             composable(ReviewWrite.route) {

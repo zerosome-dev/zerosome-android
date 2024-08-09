@@ -10,5 +10,6 @@ data class CategoryDepth2(
     val categoryCode: String,
     val categoryName: String,
     val categoryImage: String? = null,
-    val optional: Boolean = false
+    val optional: Boolean = false,
+    val categoryPainterResId: Int? = null,
 )

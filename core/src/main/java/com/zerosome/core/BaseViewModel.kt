@@ -112,7 +112,6 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     }
 
     fun setAction(action: A) {
-        Log.d("CPRI", "HANDLE ACTION $action")
         viewModelScope.launch {
             _uiAction.emit(action)
         }

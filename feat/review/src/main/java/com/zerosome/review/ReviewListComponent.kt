@@ -38,7 +38,7 @@ import com.zerosome.design.ui.theme.ZSColor
 fun ReviewListComponent(
     authorName: String,
     dateString: String,
-    rating: Int,
+    rating: Float,
     reviewString: String,
     isLast: Boolean = false,
     onClickReportReview: () -> Unit,
@@ -49,9 +49,11 @@ fun ReviewListComponent(
     val isButtonShown by remember { derivedStateOf { isExpandable || expanded } }
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(Modifier.height(30.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 22.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 22.dp)
+        ) {
             Text(
                 authorName,
                 textAlign = TextAlign.Start,
@@ -64,21 +66,12 @@ fun ReviewListComponent(
             Text(text = dateString, style = Body4, color = ZSColor.Neutral400)
         }
         Spacer(Modifier.height(4.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 22.dp)) {
-            repeat(5) {
-                Image(
-                    painter = if (it < rating) painterResource(com.zerosome.design.R.drawable.ic_star_filled) else painterResource(
-                        com.zerosome.design.R.drawable.ic_star_gray
-                    ),
-                    contentDescription = "USER RATING",
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("$rating", color = ZSColor.Neutral700, style = Body4)
-        }
+        ReviewRatingComponent(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 22.dp),
+            rating = rating
+        )
         Spacer(Modifier.height(16.dp))
         Text(
             text = reviewString,
@@ -105,10 +98,30 @@ fun ReviewListComponent(
                     .clickable { expanded = expanded.not() })
             Spacer(Modifier.height(2.dp))
         }
-        Text(text = "신고", style = Body3, color = ZSColor.Neutral300, modifier = Modifier.padding(start = 22.dp).clickable { onClickReportReview() })
+        Text(text = "신고", style = Body3, color = ZSColor.Neutral300, modifier = Modifier
+            .padding(start = 22.dp)
+            .clickable { onClickReportReview() })
         Spacer(modifier = Modifier.height(30.dp))
         if (isLast.not()) {
             HorizontalDivider(color = ZSColor.Neutral100)
         }
+    }
+}
+
+
+@Composable
+fun ReviewRatingComponent(modifier: Modifier = Modifier, rating: Float) {
+    Row(modifier = modifier) {
+        repeat(5) {
+            Image(
+                painter = if (it < rating) painterResource(com.zerosome.design.R.drawable.ic_star_filled) else painterResource(
+                    com.zerosome.design.R.drawable.ic_star_gray
+                ),
+                contentDescription = "USER RATING",
+                modifier = Modifier.size(16.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text("$rating", color = ZSColor.Neutral700, style = Body4)
     }
 }

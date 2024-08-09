@@ -1,6 +1,5 @@
 package com.zerosome.main.category
 
-import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
@@ -9,10 +8,11 @@ import com.zerosome.core.UIState
 import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.model.SortItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal sealed interface CategoryDetailAction : UIAction {
+    data class ViewCreated(val category1Id: String, val category2id: String?): CategoryDetailAction
+
     data object ClickOpenSort : CategoryDetailAction
 
     data class ClickSelectSort(val sortItem: SortItem) : CategoryDetailAction
@@ -41,7 +41,7 @@ internal sealed interface CategoryDetailAction : UIAction {
 }
 
 internal sealed interface CategoryDetailIntent : UIIntent {
-    data object Initialize : CategoryDetailIntent
+    data class Initialize(val category1Id: String, val category2id: String?) : CategoryDetailIntent
 
     data class OpenDialog(val type: DialogType) : CategoryDetailIntent
 
@@ -89,12 +89,9 @@ internal class CategoryDetailViewModel @Inject constructor(
         initialState = CategoryDetailState()
     ) {
 
-    init {
-        setIntent(CategoryDetailIntent.Initialize)
-    }
-
     override fun actionPredicate(action: CategoryDetailAction): CategoryDetailIntent {
         return when (action) {
+            is CategoryDetailAction.ViewCreated -> CategoryDetailIntent.Initialize(action.category1Id, action.category2id)
             CategoryDetailAction.ClearCategory -> CategoryDetailIntent.Clear(DialogType.DEPTH2)
             CategoryDetailAction.ClickOpenCategoryDepth2 -> CategoryDetailIntent.OpenDialog(
                 DialogType.DEPTH2
@@ -178,6 +175,7 @@ internal class CategoryDetailViewModel @Inject constructor(
     }
 
     private fun getChangedData() = withState {
+
     }
 }
 

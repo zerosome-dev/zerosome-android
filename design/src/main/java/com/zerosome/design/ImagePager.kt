@@ -69,7 +69,8 @@ fun CardHorizontalPager(
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
             state = pagerState,
-            contentPadding = PaddingValues(horizontal = 32.dp)
+            contentPadding = PaddingValues(horizontal = 32.dp),
+            pageSpacing = 14.dp
         ) { page ->
             if (page == pagerState.pageCount - 1 && isMoreVisible) {
                 moreEnableItem?.invoke()

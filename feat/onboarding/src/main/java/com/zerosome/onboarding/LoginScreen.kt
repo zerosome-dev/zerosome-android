@@ -1,18 +1,13 @@
 package com.zerosome.onboarding
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,13 +25,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.zerosome.design.ImageHorizontalPager
 import com.zerosome.design.extension.ChangeSystemColor
-import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.theme.Body2
-import com.zerosome.design.ui.theme.Label2
 import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
@@ -59,9 +50,14 @@ internal fun LoginScreen(
             LoginEffect.NavigateToMain -> {
                 moveToMain()
             }
+
             is LoginEffect.NavigateToTermsAgree -> {
-               moveToNext((effect as LoginEffect.NavigateToTermsAgree).accessToken, (effect as LoginEffect.NavigateToTermsAgree).userType)
+                moveToNext(
+                    (effect as LoginEffect.NavigateToTermsAgree).accessToken,
+                    (effect as LoginEffect.NavigateToTermsAgree).userType
+                )
             }
+
             else -> {}
         }
     }
@@ -76,11 +72,10 @@ internal fun LoginScreen(
         Column(modifier = Modifier.fillMaxSize()) {
 
             Spacer(modifier = Modifier.height(46.dp))
-            Spacer(
-                modifier = Modifier
-                    .size(240.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .border(1.dp, color = Color.White, shape = RoundedCornerShape(20.dp))
+            Image(
+                painter = painterResource(id = com.zerosome.design.R.drawable.ic_logo_main),
+                contentDescription = "",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.weight(1f))
             Image(

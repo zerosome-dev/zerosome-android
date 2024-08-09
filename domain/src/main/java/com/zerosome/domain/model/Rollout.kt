@@ -6,5 +6,5 @@ data class Rollout(
     val categoryD1: String,
     val categoryD2: String,
     val name: String,
-    val salesStore: List<String>
+    val salesStore: List<String>?
 )

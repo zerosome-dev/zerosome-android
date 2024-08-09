@@ -6,14 +6,18 @@ import com.zerosome.datasource.remote.dto.response.TokenResponse
 import com.zerosome.network.BaseResponse
 import com.zerosome.network.BaseService
 import com.zerosome.network.NetworkResult
+import com.zerosome.network.safeCall
 import com.zerosome.network.safeDelete
 import com.zerosome.network.safePost
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.headers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -26,29 +30,36 @@ class AuthService @Inject constructor(
     fun login(
         socialToken: String,
         socialType: String
-    ): Flow<NetworkResult<LoginResponse>> = client.safePost(url = apiRoute) {
-        header("Authorization", socialToken)
-        parameter("socialType", socialType)
+    ): Flow<NetworkResult<LoginResponse>> = safeCall {
+        client.post(urlString = apiRoute) {
+            header("Authorization", socialToken)
+            parameter("socialType", socialType)
+        }.body()
     }
 
-    suspend fun validateNickname(nickname: String): BaseResponse<Boolean> =
+    fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> = safeCall {
         client.get("$apiRoute/nickname") {
             parameter("nickname", nickname)
         }.body()
+    }
+
 
     fun join(
         socialToken: String,
         socialType: String,
         nickname: String,
         marketingAgreement: Boolean
-    ): Flow<NetworkResult<TokenResponse>> = client.safePost(url = "$apiRoute/join") {
-        header("Authorization", socialToken)
-        parameter("socialType", socialType)
-        setBody(JoinRequest(nickname, marketingAgreement))
+    ): Flow<NetworkResult<TokenResponse>> = safeCall {
+        client.post(urlString = "$apiRoute/join") {
+            header("Authorization", socialToken)
+            parameter("socialType", socialType)
+            setBody(JoinRequest(nickname, marketingAgreement))
+        }.body()
     }
 
-    fun revoke(token: String): Flow<NetworkResult<Unit>> =
-        client.safeDelete(token, "$apiRoute/logout")
+    fun revoke(token: String): Flow<NetworkResult<Unit>> = safeCall {
+        client.delete(urlString = "$apiRoute/logout") {}.body()
+    }
 
     fun logout(token: String): Flow<NetworkResult<Unit>> = client.safePost(token, apiRoute)
 

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zerosome.main.MainScreen
 import com.zerosome.onboarding.OnboardingNavScreen
+import com.zerosome.splash.SplashScreen
 
 @Composable
 fun ZSNavHost(
@@ -17,7 +18,7 @@ fun ZSNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = Onboarding.route // 차후 DATASTORE의 ACCESSTOKEN REFRESH 여부에 따른 핸들링 처리
+        startDestination = Splash.route
     ) {
         composable(Main.route) {
             MainScreen()
@@ -26,6 +27,21 @@ fun ZSNavHost(
             OnboardingNavScreen(onUserLoggedIn = {
                 navController.navigate(Main.route) {
                     popUpTo(Onboarding.route) {
+                        inclusive = true
+                    }
+                }
+            })
+        }
+        composable(Splash.route) {
+            SplashScreen(onMoveToMain = {
+                navController.navigate(Main.route) {
+                    popUpTo(Splash.route) {
+                        inclusive = true
+                    }
+                }
+            }, onMoveToLogin = {
+                navController.navigate(Onboarding.route) {
+                    popUpTo(Splash.route) {
                         inclusive = true
                     }
                 }

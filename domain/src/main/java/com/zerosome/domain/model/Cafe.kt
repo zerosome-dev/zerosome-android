@@ -3,10 +3,10 @@ package com.zerosome.domain.model
 data class Cafe(
     val id: Int,
     val image: String,
-    val categoryDepth1Id: Int,
-    val categoryDepth2Id: Int,
+    val categoryDepth1Id: String,
+    val categoryDepth2Id: String,
     val name: String,
     val brand: String,
-    val rating: Float,
+    val rating: Float? = null,
     val reviewCount: Int
 )

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -101,5 +103,24 @@ fun ProfileScreen(
                 Text(text = "회원 탈퇴", style = Body3, color = ZSColor.Neutral400)
             }
         }
+    }
+}
+
+
+
+@Composable
+fun ProfileNotLoginScreen() {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .statusBarsPadding()
+        .navigationBarsPadding()
+        .drawBehind {
+            drawRect(color = Color.White)
+        }) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = "마이페이지 기능은 준비중입니다.\n다음 업데이트를 기다려주세요!", style = H1, color = ZSColor.Neutral900, modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 22.dp))
+        Spacer(modifier = Modifier.weight(1f))
     }
 }

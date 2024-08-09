@@ -52,6 +52,8 @@ import com.zerosome.domain.model.SortItem
 
 @Composable
 internal fun CategoryDetailScreen(
+    category1Id: String,
+    category2Id: String? = null,
     onBackPressed: () -> Unit,
     viewModel: CategoryDetailViewModel = hiltViewModel(),
 ) {

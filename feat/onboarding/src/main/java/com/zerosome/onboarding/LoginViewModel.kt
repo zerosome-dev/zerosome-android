@@ -45,7 +45,7 @@ internal sealed interface LoginEffect: UIEffect {
 
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
-//    private val loginUseCase: LoginUseCase,
+    private val loginUseCase: LoginUseCase,
 ): BaseViewModel<LoginAction, LoginIntent, LoginState, LoginEffect>(
     initialState = LoginState()
 ){
@@ -67,13 +67,13 @@ internal class LoginViewModel @Inject constructor(
 
     private fun userLogin(accessToken: String, userType: LoginType) {
         viewModelScope.launch {
-//            loginUseCase(socialType = userType.name, socialToken = accessToken).mapMerge().collect {
-//                if (it == true) {
-//                    setEffect { LoginEffect.NavigateToMain }
-//                } else {
-//                    setEffect { LoginEffect.NavigateToTermsAgree(accessToken, userType) }
-//                }
-//            }
+            loginUseCase(socialType = userType.name, socialToken = accessToken).mapMerge().collect {
+                if (it == true) {
+                    setEffect { LoginEffect.NavigateToMain }
+                } else {
+                    setEffect { LoginEffect.NavigateToTermsAgree(accessToken, userType) }
+                }
+            }
         }
     }
 }

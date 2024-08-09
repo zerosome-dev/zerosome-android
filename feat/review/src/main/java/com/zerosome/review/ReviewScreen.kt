@@ -41,7 +41,7 @@ fun ReviewScreen(onBackPressed: () -> Unit, onReviewWrite: () -> Unit, onReviewR
                     ReviewListComponent(
                         "AUTHOR $it",
                         dateString = "2024.02.02",
-                        rating = (it % 5),
+                        rating = (it % 5).toFloat(),
                         reviewString = "리뷰텍스트 $it",
                         it == 9,
                         onReviewReport

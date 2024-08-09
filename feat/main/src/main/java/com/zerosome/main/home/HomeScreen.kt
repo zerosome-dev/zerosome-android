@@ -39,6 +39,7 @@ import com.zerosome.design.CardHorizontalPager
 import com.zerosome.design.ImageHorizontalPager
 import com.zerosome.design.R
 import com.zerosome.design.extension.ChangeSystemColor
+import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.component.ZSTag
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.Caption
@@ -48,10 +49,11 @@ import com.zerosome.design.ui.theme.Label1
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.design.ui.view.SimpleCardComponent
+import com.zerosome.domain.model.Cafe
 
 @Composable
 internal fun HomeScreen(
-    onClickProduct: () -> Unit,
+    onClickProduct: (productId: Int) -> Unit,
     onClickMore: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -79,7 +81,11 @@ internal fun HomeScreen(
                     onClickMore = onClickMore
                 )
 
-                is HomeUiModel.Cafes -> CafeCategoryComponent(onClickCafe = onClickMore, onClickMore = onClickMore)
+                is HomeUiModel.Cafes -> CafeCategoryComponent(
+                    cafeList = it.cafe,
+                    onClickCafe = onClickMore,
+                    onClickMore = onClickMore
+                )
             }
         }
     }
@@ -89,7 +95,7 @@ internal fun HomeScreen(
 @Composable
 private fun NewItemComponent(
     products: List<com.zerosome.domain.model.Rollout>,
-    onClickProduct: () -> Unit, onClickMore: () -> Unit
+    onClickProduct: (productId: Int) -> Unit, onClickMore: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -110,13 +116,14 @@ private fun NewItemComponent(
                 {
                     RolloutCardComponent(
                         rollOut = rollout,
-                        onClick = onClickProduct
+                        onClick = { onClickProduct(rollout.id) }
                     )
                 }
             },
             isMoreVisible = true,
             moreEnableItem = {
-                Image(painter = painterResource(id = com.zerosome.main.R.drawable.card_launch_more),
+                Image(
+                    painter = painterResource(id = com.zerosome.main.R.drawable.card_launch_more),
                     contentDescription = "LAUNCH_MORE",
                     modifier = Modifier
                         .size(width = 300.dp, height = 327.dp)
@@ -144,13 +151,11 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
     )
     {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(
+            ZSImage(
                 modifier = Modifier
                     .height(216.dp)
-                    .aspectRatio(75 / 56f)
-                    .background(
-                        color = ZSColor.Neutral500,
-                    )
+                    .aspectRatio(75 / 56f),
+                imageString = rollOut.image
             )
             Spacer(modifier = Modifier.height(14.dp))
             Text(text = rollOut.categoryD1, style = Label1, color = ZSColor.Neutral500)
@@ -164,7 +169,7 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
             )
             Spacer(modifier = Modifier.height(15.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                rollOut.salesStore.forEach {
+                rollOut.salesStore?.forEach {
                     ZSTag(title = it)
                 }
             }
@@ -175,7 +180,11 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
 }
 
 @Composable
-private fun CafeCategoryComponent(onClickCafe: () -> Unit, onClickMore: () -> Unit) {
+private fun CafeCategoryComponent(
+    cafeList: List<Cafe>,
+    onClickCafe: () -> Unit,
+    onClickMore: () -> Unit
+) {
     Column(modifier = Modifier.padding(vertical = 30.dp)) {
         Column(modifier = Modifier.padding(start = 22.dp, end = 18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -198,12 +207,15 @@ private fun CafeCategoryComponent(onClickCafe: () -> Unit, onClickMore: () -> Un
             contentPadding = PaddingValues(start = 22.dp, end = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(5) {
+            items(cafeList) { cafe ->
                 SimpleCardComponent(
-                    title = "CARD $it",
-                    brandName = "BRAND $it",
-                    image = "",
-                    onClick = onClickCafe
+                    modifier = Modifier.size(width = 150.dp, height = 242.dp),
+                    title = cafe.name,
+                    brandName = "[${cafe.brand}]",
+                    image = cafe.image,
+                    onClick = onClickCafe,
+                    reviewRating = cafe.rating,
+                    reviewCount = cafe.reviewCount
                 )
             }
         }

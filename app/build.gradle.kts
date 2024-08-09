@@ -67,6 +67,7 @@ dependencies {
     // FOR DEPENDENCY INJECTION
     implementation(project(":feat:onboarding"))
     implementation(project(":feat:main"))
+    implementation(project(":feat:splash"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -90,4 +91,5 @@ dependencies {
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.compose)
 }

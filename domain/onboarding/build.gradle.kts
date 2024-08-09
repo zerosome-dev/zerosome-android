@@ -38,10 +38,14 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(project(":network"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.kakao.auth)
+
 }

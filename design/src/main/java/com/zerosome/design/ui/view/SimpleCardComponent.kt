@@ -1,6 +1,5 @@
 package com.zerosome.design.ui.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,11 +10,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ZSImage
+import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.SubTitle2
 import com.zerosome.design.ui.theme.ZSColor
@@ -32,7 +34,9 @@ import com.zerosome.design.ui.theme.ZSColor
 fun SimpleCardComponent(
     modifier: Modifier = Modifier,
     title: String,
-    brandName: String,
+    brandName: String? = null,
+    reviewRating: Float? = null,
+    reviewCount: Int? = null,
     image: String,
     onClick: () -> Unit
 ) {
@@ -42,7 +46,7 @@ fun SimpleCardComponent(
         ZSImage(
             imageString = image,
             contentDescription = "image",
-            modifier = modifier
+            modifier = Modifier
                 .background(ZSColor.Neutral100, RoundedCornerShape(10.dp))
                 .defaultMinSize(150.dp, 150.dp)
                 .aspectRatio(1f)
@@ -51,10 +55,24 @@ fun SimpleCardComponent(
                 )
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = brandName, maxLines = 1, overflow = TextOverflow.Ellipsis, style = SubTitle2, color = ZSColor.Neutral500)
+        brandName?.let {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text(text = brandName, maxLines = 1, overflow = TextOverflow.Ellipsis, style = SubTitle2, color = ZSColor.Neutral500)
+            }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = SubTitle1)
+        Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = SubTitle1, color = ZSColor.Neutral900)
+        reviewRating?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                ZSImage(painter = painterResource(id = R.drawable.ic_star_filled))
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(text = "$it", style = Body3, color = ZSColor.Neutral400)
+                Spacer(modifier = Modifier.width(2.dp))
+                reviewCount?.let {
+                    Text(text = "($reviewCount)", style = Body3, color = ZSColor.Neutral400)
+                }
+            }
+        }
     }
 }

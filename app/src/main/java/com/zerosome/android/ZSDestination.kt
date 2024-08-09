@@ -14,3 +14,9 @@ data object Onboarding: ZSDestination {
         get() = "onboarding"
 
 }
+
+data object Splash: ZSDestination {
+    override val route: String
+        get() = "Splash"
+
+}

@@ -1,7 +1,9 @@
 package com.zerosome.datasource.remote.dto.response
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ProductDetailResponse(
     @SerialName("productId")
     val id: Int,
@@ -27,6 +29,7 @@ data class ProductDetailResponse(
     val similarProductList: List<SimilarProductResponse>
 )
 
+@Serializable
 data class NutrientResponse(
     @SerialName("nutrientName")
     val nutrientName: String,
@@ -40,6 +43,7 @@ data class NutrientResponse(
     val amountStandard: String
 )
 
+@Serializable
 data class OfflineStoreResponse(
     @SerialName("storeCode")
     val storeCode: String,
@@ -47,6 +51,7 @@ data class OfflineStoreResponse(
     val storeName: String
 )
 
+@Serializable
 data class OnlineStoreResponse(
     @SerialName("storeCode")
     val storeCode: String,
@@ -56,6 +61,7 @@ data class OnlineStoreResponse(
     val url: String? = null
 )
 
+@Serializable
 data class ReviewThumbnailResponse(
     @SerialName("reviewId")
     val reviewId: Int,
@@ -67,6 +73,7 @@ data class ReviewThumbnailResponse(
     val regDate: String // Will Change to Kotlinx-datetime
 )
 
+@Serializable
 data class SimilarProductResponse(
     @SerialName("productId")
     val productId: String,

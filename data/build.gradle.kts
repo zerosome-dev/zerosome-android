@@ -42,6 +42,9 @@ dependencies {
     implementation(project(":datasource:remote"))
     implementation(project(":domain"))
 
+    // 서버 붙으면 없어질 것.
+    implementation(project(":design"))
+
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
