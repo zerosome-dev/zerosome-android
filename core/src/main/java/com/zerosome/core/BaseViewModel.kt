@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlin.reflect.KProperty
 
 /**
  * User의 직접적인 액션으로만 바꿀 수 있습니다.
@@ -116,6 +115,7 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
             _uiAction.emit(action)
         }
     }
+
     protected fun setIntent(intent: I) = viewModelScope.launch {
         collectIntent(intent)
     }

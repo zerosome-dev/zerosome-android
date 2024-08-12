@@ -1,7 +1,6 @@
 package com.zerosome.main.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -16,18 +15,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -65,7 +65,16 @@ internal fun HomeScreen(
             .fillMaxSize()
             .statusBarsPadding(),
     ) {
-        items(viewModel.uiState.uiModels) {
+        item {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_app_logo),
+                    contentDescription = "",
+                    modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 9.dp)
+                )
+            }
+        }
+        items(viewModel.uiState.uiModels, key = { it.keyId }) {
             when (it) {
                 is HomeUiModel.Banners -> {
                     ImageHorizontalPager(
@@ -123,7 +132,7 @@ private fun NewItemComponent(
             isMoreVisible = true,
             moreEnableItem = {
                 Image(
-                    painter = painterResource(id = com.zerosome.main.R.drawable.card_launch_more),
+                    painter = painterResource(id = R.drawable.card_launch_more),
                     contentDescription = "LAUNCH_MORE",
                     modifier = Modifier
                         .size(width = 300.dp, height = 327.dp)
@@ -143,39 +152,46 @@ private fun NewItemComponent(
 
 @Composable
 fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: () -> Unit) {
-    Surface(
-        shape = RoundedCornerShape(12.dp), modifier = Modifier
-            .wrapContentSize(),
-        shadowElevation = 5.dp,
-        onClick = onClick
-    )
-    {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            ZSImage(
-                modifier = Modifier
-                    .height(216.dp)
-                    .aspectRatio(75 / 56f),
-                imageString = rollOut.image
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(text = rollOut.categoryD1, style = Label1, color = ZSColor.Neutral500)
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = rollOut.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 66.dp),
-                style = SubTitle1
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                rollOut.salesStore?.forEach {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .shadow(5.dp, shape = RoundedCornerShape(12.dp))
+            .drawBehind {
+                drawRoundRect(
+                    color = Color.White,
+                    cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
+                )
+            }
+            .clickable(interactionSource = remember {
+                MutableInteractionSource()
+            }, indication = rememberRipple(), onClick = onClick)
+    ) {
+        ZSImage(
+            modifier = Modifier
+                .height(216.dp)
+                .aspectRatio(75 / 56f),
+            imageString = rollOut.image
+        )
+        Spacer(modifier = Modifier.height(14.dp))
+        Text(text = rollOut.categoryD1, style = Label1, color = ZSColor.Neutral500)
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = rollOut.name,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 66.dp),
+            style = SubTitle1,
+            color = ZSColor.Neutral900
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            rollOut.salesStore?.forEach {
+                if (it.isNotEmpty()) {
                     ZSTag(title = it)
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
-
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -200,7 +216,7 @@ private fun CafeCategoryComponent(
                 Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
             }
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = "설명 문구를 입력해주세요", style = Body2, color = ZSColor.Neutral500)
+            Text(text = "트렌디한 카페 음료를 지금 바로 확인해보세요", style = Body2, color = ZSColor.Neutral500)
         }
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow(

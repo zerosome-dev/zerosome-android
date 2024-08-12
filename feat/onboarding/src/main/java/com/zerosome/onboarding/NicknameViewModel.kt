@@ -1,5 +1,6 @@
 package com.zerosome.onboarding
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
@@ -27,6 +28,7 @@ internal sealed interface NicknameIntent : UIIntent {
     data class SetNickname(val nickname: String) : NicknameIntent
 }
 
+@Stable
 internal data class NicknameState(
     val nickname: String = "",
     val isConfirmed: Boolean? = null,
@@ -36,9 +38,9 @@ internal data class NicknameState(
     val holderTextResId: Int?
         get() = reason?.let {
             when (it) {
-                ValidateReason.SUCCESS -> R.string.screen_nickname_textfield_positive
-                ValidateReason.NOT_VALIDATED -> R.string.screen_nickname_textfield_negative_validation
-                ValidateReason.NOT_VERIFIED -> R.string.screen_nickname_textfield_negative
+                ValidateReason.SUCCESS -> com.zerosome.design.R.string.screen_nickname_textfield_positive
+                ValidateReason.NOT_VALIDATED -> com.zerosome.design.R.string.screen_nickname_textfield_negative_validation
+                ValidateReason.NOT_VERIFIED -> com.zerosome.design.R.string.screen_nickname_textfield_negative
             }
         }
 
@@ -46,6 +48,7 @@ internal data class NicknameState(
         get() = nickname.isNotEmpty() && isConfirmed == true
 }
 
+@Stable
 internal sealed interface NicknameEffect : UIEffect
 
 @HiltViewModel

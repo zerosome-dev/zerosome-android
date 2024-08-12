@@ -85,13 +85,13 @@ internal fun LoginScreen(
                     .clickable {
                         viewModel.setAction(LoginAction.ClickKakaoLogin)
                     },
-                painter = painterResource(id = com.zerosome.onboarding.R.drawable.img_kakao_login),
+                painter = painterResource(id = com.zerosome.design.R.drawable.img_kakao_login),
                 contentScale = ContentScale.Crop,
                 contentDescription = "KAKAO_LOGIN"
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = stringResource(id = com.zerosome.onboarding.R.string.screen_login_context01),
+                text = stringResource(id = com.zerosome.design.R.string.screen_login_context01),
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable { viewModel.setAction(LoginAction.ClickSkip) }
