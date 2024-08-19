@@ -4,7 +4,6 @@ import android.util.Log
 import com.zerosome.datasource.local.entity.TokenEntity
 import com.zerosome.datasource.local.source.TokenSource
 import com.zerosome.datasource.remote.dto.response.TokenResponse
-import com.zerosome.network.BaseResponse
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,10 +64,11 @@ class NetworkModule {
             this.level = LogLevel.ALL
             logger = object : Logger {
                 override fun log(message: String) {
-                    Log.d("CPRI", message)
+                    Log.i("HTTP-REQUEST", message)
                 }
             }
         }
+
         install(Auth) {
             val accessToken = runBlocking { dataSource.getAccessToken().firstOrNull() }
             Log.d("CPRI", "ACCESS TOKEN $accessToken")
@@ -81,7 +81,13 @@ class NetworkModule {
                             setBody(TokenEntity(it.accessToken, it.refreshToken))
                         }.body<TokenResponse>()
 
-                        BearerTokens(token.accessToken, refreshToken = token.refreshToken)
+                        BearerTokens("Bearer ${token.accessToken}", refreshToken = token.refreshToken)
+                            .also {
+                                dataSource.updateToken(
+                                    accessToken = token.accessToken,
+                                    refreshToken = token.refreshToken
+                                )
+                            }
                     }
 
                 }
