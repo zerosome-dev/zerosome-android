@@ -29,8 +29,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -68,7 +70,7 @@ internal fun HomeScreen(
         item {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_app_logo),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.img_app_logo),
                     contentDescription = "",
                     modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 9.dp)
                 )
@@ -206,14 +208,14 @@ private fun CafeCategoryComponent(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "[카페음료] 인기 음료 순위", style = H1, color = Color.Black)
                 Spacer(modifier = Modifier.weight(1f))
-                Row(modifier = Modifier.clickable(onClick = onClickMore)) {
+                Row(modifier = Modifier.clickable(onClick = onClickMore), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
                     Image(
                         painter = painterResource(id = R.drawable.ic_chevron_right),
                         contentDescription = "more",
                         modifier = Modifier.size(16.dp)
                     )
                 }
-                Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
             }
             Spacer(modifier = Modifier.height(2.dp))
             Text(text = "트렌디한 카페 음료를 지금 바로 확인해보세요", style = Body2, color = ZSColor.Neutral500)

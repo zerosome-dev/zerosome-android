@@ -29,9 +29,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,8 +53,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ButtonSize
 import com.zerosome.design.ui.component.ButtonType
+import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
-import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.component.ZSTag
@@ -72,36 +75,59 @@ import com.zerosome.domain.model.ReviewThumbnail
 import com.zerosome.domain.model.Store
 import com.zerosome.review.ReviewRatingComponent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ProductDetailScreen(
-    productId: String,
-    onClickReview: (reviewId: Int?, productId: String) -> Unit,
-    onClickWriteReview: (productId: String) -> Unit,
-    onClickSimilarProduct: (productId: String) -> Unit,
+    productId: Int,
+    onBackPressed: () -> Unit,
+    onClickReview: (reviewId: Int?, productId: Int) -> Unit,
+    onClickWriteReview: (productId: Int) -> Unit,
+    onClickSimilarProduct: (productId: Int) -> Unit,
     viewModel: ProductDetailViewModel = hiltViewModel(),
 ) {
     val effect by viewModel.uiEffect.collectAsState(initial = null)
     var dialogShown by remember {
         mutableStateOf(false)
     }
+    val bottomSheetState = rememberModalBottomSheetState()
     LaunchedEffect(key1 = productId) {
         viewModel.setAction(ProductDetailAction.ViewCreated(productId))
     }
     LaunchedEffect(key1 = effect) {
         when (effect) {
             is ProductDetailEffect.NavigateToSimilarProduct -> onClickSimilarProduct((effect as ProductDetailEffect.NavigateToSimilarProduct).productId)
-            is ProductDetailEffect.NavigateToReview -> onClickReview((effect as ProductDetailEffect.NavigateToReview).reviewId, viewModel.uiState.productId)
-            is ProductDetailEffect.NavigateToReviewWrite -> onClickWriteReview(viewModel.uiState.productId)
+            is ProductDetailEffect.NavigateToReview -> onClickReview(
+                (effect as ProductDetailEffect.NavigateToReview).reviewId,
+                requireNotNull(viewModel.uiState.productId)
+            )
+
+            is ProductDetailEffect.NavigateToReviewWrite -> onClickWriteReview(
+                requireNotNull(
+                    viewModel.uiState.productId
+                )
+            )
+
             is ProductDetailEffect.OpenNutrientDialog -> dialogShown = true
             else -> {}
         }
     }
     ZSScreen(
+        isLoading = viewModel.isLoading,
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding()
             .statusBarsPadding()
+            .drawBehind {
+                drawRect(ZSColor.Neutral50)
+            }
     ) {
+        ZSAppBar(
+            navTitle = viewModel.uiState.selectedProduct?.productName ?: "",
+            backNavigationIcon = painterResource(
+                id = R.drawable.ic_chevron_left
+            ),
+            onBackPressed = onBackPressed
+        )
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -153,7 +179,7 @@ internal fun ProductDetailScreen(
                     .padding(horizontal = 22.dp)
                     .padding(bottom = 10.dp)
                     .align(Alignment.BottomCenter), onClick = {
-                        viewModel.setAction(ProductDetailAction.ClickReviewWrite)
+                    viewModel.setAction(ProductDetailAction.ClickReviewWrite)
                 }
             ) {
                 Text(text = "리뷰 작성")
@@ -161,9 +187,14 @@ internal fun ProductDetailScreen(
         }
     }
     if (dialogShown) {
-        NutrientComponent {
-            dialogShown = false
-        }
+        NutrientBottomDialog(
+            bottomSheetState,
+            onDismiss = {
+                viewModel.clearEffect().also {
+                    dialogShown = false
+                }
+            }, nutrientList = viewModel.uiState.selectedProduct?.nutrientList ?: emptyList()
+        )
     }
 }
 
@@ -205,11 +236,16 @@ fun ItemDetailComponent(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .background(color = ZSColor.Neutral50)
+            .drawBehind {
+                drawRect(Color.White)
+            }
     )
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .drawBehind {
+                drawRect(Color.White)
+            }
             .padding(horizontal = 22.dp)
     ) {
         Spacer(modifier = Modifier.height(12.dp))
@@ -223,46 +259,65 @@ fun ItemDetailComponent(
             color = ZSColor.Neutral100
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             ReviewRatingComponent(rating = rating)
             Spacer(modifier = Modifier.width(6.dp))
             VerticalDivider()
             Text(text = "${reviewCount}개 리뷰", style = Body2, color = ZSColor.Neutral500)
         }
+        Spacer(modifier = Modifier.height(30.dp))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NutrientBottomDialog(
+    bottomSheetState: SheetState,
     onDismiss: () -> Unit,
     nutrientList: List<Nutrient>
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
-        Surface(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier
+    ModalBottomSheet(
+        sheetState = bottomSheetState,
+        onDismissRequest = onDismiss,
+        dragHandle = {},
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.White)
+        ) {
+            Row(
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "제품 영양 정보", style = H2, color = ZSColor.Neutral900)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(painter = painterResource(id = R.drawable.ic_close), contentDescription = "CLOSE", modifier = Modifier
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "제품 영양 정보", style = H2, color = ZSColor.Neutral900)
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(painter = painterResource(id = R.drawable.ic_close),
+                    contentDescription = "CLOSE",
+                    modifier = Modifier
                         .size(24.dp)
                         .clickable { onDismiss() })
-                }
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp), contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp)) {
-                    items(nutrientList) {
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = it.nutrientName, style = Body2)
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(text = "(${it.amount})${it.amountStandard} ((${it.servingPercent})${it.serviceStandard})")
-                        }
+            }
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+            ) {
+                items(nutrientList) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(text = it.nutrientName, style = Body2)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(text = "(${it.amount})${it.amountStandard} ((${it.percentage})${it.serviceStandard})")
                     }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    HorizontalDivider(thickness = 1.dp, color = ZSColor.Neutral100)
                 }
             }
         }
     }
+
 }
 
 @Composable
@@ -289,7 +344,8 @@ fun EmptyReviewComponent(onClickWriteReview: () -> Unit) {
         ZSButton(
             onClick = onClickWriteReview,
             buttonType = ButtonType.SECONDARY,
-            buttonSize = ButtonSize.MEDIUM
+            buttonSize = ButtonSize.MEDIUM,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = "리뷰 작성하러 가기", style = Body1, color = ZSColor.Neutral900)
         }
@@ -306,6 +362,9 @@ fun SellerComponent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .drawBehind {
+                drawRect(Color.White)
+            }
             .padding(24.dp)
     ) {
         Text(text = "오프라인 판매처", style = H1, color = ZSColor.Neutral900)
@@ -319,7 +378,7 @@ fun SellerComponent(
             }
         }
         Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "온라인 판매처", style = H1)
+        Text(text = "온라인 판매처", style = H1, color = ZSColor.Neutral900)
         Spacer(modifier = Modifier.height(16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             online.forEach {
@@ -340,7 +399,12 @@ private fun OnlineSellerComponent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8.dp))
+            .drawBehind {
+                drawRoundRect(
+                    ZSColor.Neutral50,
+                    cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                )
+            }
             .clickable { onClickONLineStore(sellerName) }
     ) {
         Text(
@@ -369,6 +433,12 @@ private fun ReviewComponent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .drawBehind {
+                drawRoundRect(
+                    ZSColor.Neutral50,
+                    cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                )
+            }
             .padding(horizontal = 22.dp)
     ) {
         Spacer(modifier = Modifier.height(30.dp))
@@ -415,9 +485,9 @@ private fun ReviewComponent(
             items(reviewThumbnails) {
                 SimpleReviewComponent(
                     rating = it.rating.toInt(),
-                    description = it.reviewContents,
+                    description = it.reviewContents ?: "",
                     writtenAt = it.regDate,
-                    onclick = { onClickReview(it.reviewId)}
+                    onclick = { onClickReview(it.reviewId) }
                 )
             }
         }
@@ -472,29 +542,24 @@ fun SimpleReviewComponent(
 @Composable
 private fun SimilarComponent(
     relatedProduct: List<RelatedProduct>,
-    productClicked: (productId: String) -> Unit
+    productClicked: (productId: Int) -> Unit
 ) {
-    Column(modifier = Modifier.padding(vertical = 30.dp)) {
-        Column(modifier = Modifier.padding(start = 22.dp, end = 18.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "이 상품과 비슷한 상품이에요", style = H1, color = ZSColor.Neutral900)
-                Spacer(modifier = Modifier.weight(1f))
-                Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
-                Image(
-                    painter = painterResource(id = R.drawable.ic_chevron_right),
-                    contentDescription = "more",
-                    modifier = Modifier.size(16.dp)
-                )
-            }
+    Column(modifier = Modifier
+        .drawBehind {
+            drawRect(Color.White)
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            items(5) {
-                ZSChip(enable = it == 0, chipText = "$it")
-            }
+        .padding(vertical = 30.dp)
+        .padding(start = 22.dp, end = 18.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "이 상품과 비슷한 상품이에요", style = H1, color = ZSColor.Neutral900)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = "더보기", style = Caption, color = ZSColor.Neutral700)
+            Image(
+                painter = painterResource(id = R.drawable.ic_chevron_right),
+                contentDescription = "more",
+                modifier = Modifier.size(16.dp)
+            )
         }
         Spacer(modifier = Modifier.height(20.dp))
         LazyRow(
@@ -504,10 +569,10 @@ private fun SimilarComponent(
             items(relatedProduct) {
                 SimpleCardComponent(
                     title = it.productName,
-                    image = it.image,
+                    image = it.image ?: "",
                     reviewRating = it.rating,
                     reviewCount = it.reviewCount,
-                    onClick = { productClicked(it.productId)})
+                    onClick = { productClicked(it.productId) })
             }
         }
     }

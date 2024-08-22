@@ -5,5 +5,5 @@ import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
-    fun getProductDetail(id: String): Flow<NetworkResult<Product>>
+    fun getProductDetail(id: Int): Flow<NetworkResult<Product>>
 }

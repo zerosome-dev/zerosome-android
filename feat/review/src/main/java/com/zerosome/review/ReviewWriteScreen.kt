@@ -9,38 +9,42 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zerosome.design.ui.component.ZSAppBar
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.R
+import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.component.ZSTextField
 import com.zerosome.design.ui.theme.Body4
 import com.zerosome.design.ui.theme.Label1
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.ZSColor
-import com.zerosome.design.ui.theme.ZSTextStyle
 import com.zerosome.design.ui.view.StarRatingView
 
 @Composable
-fun ReviewWriteScreen(onBackPressed: () -> Unit) {
-    var text by remember {
-        mutableStateOf("")
+fun ReviewWriteScreen(
+    onBackPressed: () -> Unit
+) {
+    val viewModel: ReviewWriteViewModel = hiltViewModel()
+    val effect by viewModel.uiEffect.collectAsState(initial = null)
+    LaunchedEffect(key1 = effect) {
+        when (effect) {
+            is ReviewWriteEffect.PopToBackStack -> onBackPressed()
+            else -> {}
+        }
     }
     Box(
         modifier = Modifier
@@ -66,10 +70,14 @@ fun ReviewWriteScreen(onBackPressed: () -> Unit) {
                     .aspectRatio(25 / 16f)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "[브랜드 브랜드 브랜드]", style = Label1, color = ZSColor.Neutral500)
+            Text(
+                text = "[${viewModel.uiState.selectedProduct?.brandName}]",
+                style = Label1,
+                color = ZSColor.Neutral500
+            )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "상품명상품명상품명상품명상품명상품명상품명상품명상품명",
+                text = viewModel.uiState.selectedProduct?.productName ?: "",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = SubTitle1,
@@ -80,15 +88,22 @@ fun ReviewWriteScreen(onBackPressed: () -> Unit) {
             Spacer(modifier = Modifier.height(30.dp))
             Text(text = "상품은 어떠셨나요?", style = SubTitle1, color = ZSColor.Neutral700)
             Spacer(modifier = Modifier.height(20.dp))
-            StarRatingView(modifier = Modifier.fillMaxWidth())
+            StarRatingView(
+                modifier = Modifier.fillMaxWidth(),
+                rating = viewModel.uiState.reviewScore,
+                onRatingChanged = { viewModel.setAction(ReviewWriteAction.ClickReviewScore(it)) })
             Spacer(modifier = Modifier.height(30.dp))
             ZSTextField(
-                text = text, onTextChanged = { text = it }, modifier = Modifier
+                text = viewModel.uiState.reviewText,
+                onTextChanged = { viewModel.setAction(ReviewWriteAction.WriteReview(it)) },
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 22.dp), singleLine = false, minLines = 3
+                    .padding(horizontal = 22.dp),
+                singleLine = false,
+                minLines = 3,
             )
             Text(
-                text = "${text.length}/1000",
+                text = "${viewModel.uiState.reviewText.length}/1000",
                 modifier = Modifier
                     .align(Alignment.End)
                     .padding(end = 22.dp),
@@ -98,7 +113,7 @@ fun ReviewWriteScreen(onBackPressed: () -> Unit) {
             Spacer(modifier = Modifier.height(50.dp))
         }
         ZSButton(
-            onClick = onBackPressed,
+            onClick = { viewModel.setAction(ReviewWriteAction.ClickConfirmButton) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(22.dp)

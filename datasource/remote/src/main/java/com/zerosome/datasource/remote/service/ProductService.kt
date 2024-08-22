@@ -3,9 +3,12 @@ package com.zerosome.datasource.remote.service
 import com.zerosome.datasource.remote.dto.request.CategoryProductRequest
 import com.zerosome.datasource.remote.dto.response.PagedResponse
 import com.zerosome.datasource.remote.dto.response.ProductDetailResponse
+import com.zerosome.network.BaseResponse
 import com.zerosome.network.BaseService
 import com.zerosome.network.safeGet
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import javax.inject.Inject
@@ -41,9 +44,8 @@ class ProductService @Inject constructor(
         )
     }
 
-    fun getProductDetail(
-        token: String? = null,
-        productId: String
-    ) = apiClient.safeGet<ProductDetailResponse>(token = token, url = "$apiRoute/$productId")
-
+    suspend fun getProductDetail(
+        productId: Int
+    ): BaseResponse<ProductDetailResponse> =
+        apiClient.get(urlString = "$apiRoute/detail/$productId").body()
 }

@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,10 +47,11 @@ fun SimpleCardComponent(
         ZSImage(
             imageString = image,
             contentDescription = "image",
+            scale = ContentScale.Crop,
             modifier = Modifier
-                .background(ZSColor.Neutral100, RoundedCornerShape(10.dp))
-                .defaultMinSize(150.dp, 150.dp)
+                .size(150.dp)
                 .aspectRatio(1f)
+                .background(ZSColor.Neutral100, RoundedCornerShape(10.dp))
                 .clip(
                     RoundedCornerShape(10.dp)
                 )
@@ -57,11 +59,24 @@ fun SimpleCardComponent(
         Spacer(modifier = Modifier.height(8.dp))
         brandName?.let {
             Row(modifier = Modifier.fillMaxWidth()) {
-                Text(text = brandName, maxLines = 1, overflow = TextOverflow.Ellipsis, style = SubTitle2, color = ZSColor.Neutral500)
+                Text(
+                    text = brandName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = SubTitle2,
+                    color = ZSColor.Neutral500
+                )
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = title, maxLines = 2, overflow = TextOverflow.Ellipsis, style = SubTitle1, color = ZSColor.Neutral900)
+        Text(
+            text = title,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            style = SubTitle1,
+            color = ZSColor.Neutral900,
+            modifier = Modifier.width(150.dp)
+        )
         reviewRating?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -1,5 +1,6 @@
 package com.zerosome.main.detail
 
+import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
@@ -11,16 +12,15 @@ import com.zerosome.domain.model.Product
 import com.zerosome.product.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal sealed interface ProductDetailAction: UIAction {
-    data class ViewCreated(val id: String): ProductDetailAction
+    data class ViewCreated(val id: Int): ProductDetailAction
 
     data object ClickNutrients: ProductDetailAction
 
@@ -28,13 +28,13 @@ internal sealed interface ProductDetailAction: UIAction {
 
     data object ClickReviewWrite: ProductDetailAction
 
-    data class ClickSimilarProduct(val productId: String): ProductDetailAction
+    data class ClickSimilarProduct(val productId: Int): ProductDetailAction
 }
 
 internal sealed interface ProductDetailIntent: UIIntent {
-    data class Initialize(val id: String): ProductDetailIntent
+    data class Initialize(val id: Int): ProductDetailIntent
 
-    data class SelectSimilarId(val productId: String): ProductDetailIntent
+    data class SelectSimilarId(val productId: Int): ProductDetailIntent
 
     data class SelectReview(val reviewId: Int?): ProductDetailIntent
 
@@ -44,13 +44,13 @@ internal sealed interface ProductDetailIntent: UIIntent {
 }
 
 internal data class ProductDetailState(
-    val productId: String = "",
+    val productId: Int? = null,
     val uiModel: List<ProductDetailUiModel> = emptyList(),
     val selectedProduct: Product? = null
 ): UIState
 
 internal sealed interface ProductDetailEffect: UIEffect {
-    data class NavigateToSimilarProduct(val productId: String): ProductDetailEffect
+    data class NavigateToSimilarProduct(val productId: Int): ProductDetailEffect
 
     data class NavigateToReview(val reviewId: Int?): ProductDetailEffect
 
@@ -66,7 +66,7 @@ internal class ProductDetailViewModel @Inject constructor(
     initialState = ProductDetailState()
 ) {
 
-    private val productIdFlow = snapshotFlow { uiState.productId }.filter { it.isEmpty() }.flatMapConcat {
+    private val productIdFlow = snapshotFlow { uiState.productId }.filterNotNull().flatMapConcat {
         getProductDetailUseCase(it)
     }.mapMerge().onEach {
         setState {
@@ -76,30 +76,26 @@ internal class ProductDetailViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
-    )
+    ).launchIn(viewModelScope)
 
-    private val productFlow = snapshotFlow { uiState.selectedProduct }.filter { it == null }.onEach {
+    private val productFlow = snapshotFlow { uiState.selectedProduct }.filterNotNull().onEach {
         handleUiModel()
-    }
+    }.stateIn(
+        viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    ).launchIn(viewModelScope)
 
-    init {
-        viewModelScope.launch {
-            productIdFlow.collect()
-        }
-
-        viewModelScope.launch {
-            productFlow.collect()
-        }
-    }
 
     private fun handleUiModel() = withState {
         val uiModelList = mutableListOf<ProductDetailUiModel>()
+        Log.d("CPRI", "HANDLE DETAIL MODEL")
         selectedProduct?.let {
-            uiModelList.add(ProductDetailUiModel.Introduction(it.image, it.brandName, it.productName, it.rating, it.reviewCount))
+            uiModelList.add(ProductDetailUiModel.Introduction(it.image, it.brandName, it.productName, it.rating ?: 0f, it.reviewCount))
             uiModelList.add(ProductDetailUiModel.Nutrient)
             uiModelList.add(ProductDetailUiModel.Stores(it.onlineStoreList, it.offlineStoreList))
             if (it.reviewCount > 0) {
-                uiModelList.add(ProductDetailUiModel.Reviews(it.reviewCount, it.rating, it.reviewThumbnailList))
+                uiModelList.add(ProductDetailUiModel.Reviews(it.reviewCount, it.rating ?: 0f, it.reviewThumbnailList))
             } else {
                 uiModelList.add(ProductDetailUiModel.EmptyReview)
             }

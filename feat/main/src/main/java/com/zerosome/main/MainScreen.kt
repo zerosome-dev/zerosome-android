@@ -1,5 +1,6 @@
 package com.zerosome.main
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ fun MainScreen() {
         ) {
             composable(Home.route) {
                 HomeScreen(onClickProduct = { productId ->
+                    Log.d("CPRI", "PRODUCT ID $productId")
                     navController.navigate("${ProductDetail.route}/$productId")
                 }, onClickMore = {
                     navController.navigate(Rollout.route)
@@ -65,30 +67,40 @@ fun MainScreen() {
                         navController.popBackStack()
                     },
                     onClickProduct = {
+                        Log.d("CPRI", "PRODUCT $it")
                         navController.navigate("${ProductDetail.route}/$it")
                     }
                 )
             }
-            composable("${CategoryDetail.route}/(${CategoryDetail.category1})/(${CategoryDetail.category2})", arguments = CategoryDetail.argument) {
+            composable(
+                "${CategoryDetail.route}/(${CategoryDetail.category1})/(${CategoryDetail.category2})",
+                arguments = CategoryDetail.argument
+            ) {
                 val firstCategory = it.arguments?.getString(CategoryDetail.category1)
                 val secondCategory = it.arguments?.getString(CategoryDetail.category2)
                 CategoryDetailScreen(
-                    category1Id = requireNotNull(firstCategory) { "Argument Must be passed "},
+                    category1Id = requireNotNull(firstCategory) { "Argument Must be passed " },
                     category2Id = secondCategory,
                     onBackPressed = { navController.popBackStack() }
                 )
             }
-            composable("${ProductDetail.route}/{${ProductDetail.argumentTypeArg}}", arguments = ProductDetail.argument) {
-                val accountTypeArgs = it.arguments?.getString(ProductDetail.argumentTypeArg)
+            composable(
+                "${ProductDetail.route}/{${ProductDetail.argumentTypeArg}}",
+                arguments = ProductDetail.argument
+            ) {
+                val accountTypeArgs = it.arguments?.getInt(ProductDetail.argumentTypeArg)
                 ProductDetailScreen(
-                    productId = requireNotNull(accountTypeArgs) { "Argument Must be Passed "},
+                    productId = requireNotNull(accountTypeArgs) { "Argument Must be Passed " },
+                    onBackPressed = {
+                        navController.popBackStack()
+                    },
                     onClickReview = { _, _ ->
-                    navController.navigate(ReviewDestination().route)
-                }, onClickWriteReview = {
-                    navController.navigate(ReviewWrite.route)
-                }, onClickSimilarProduct = { productId ->
-                    navController.navigate("${ProductDetail.route}/$productId")
-                })
+                        navController.navigate(ReviewDestination().route)
+                    }, onClickWriteReview = {
+                        navController.navigate(ReviewWrite.route)
+                    }, onClickSimilarProduct = { productId ->
+                        navController.navigate("${ProductDetail.route}/$productId")
+                    })
             }
             composable(ReviewWrite.route) {
                 ReviewWriteScreen {

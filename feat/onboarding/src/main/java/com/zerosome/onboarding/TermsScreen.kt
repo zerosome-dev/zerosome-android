@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -59,15 +58,15 @@ internal fun TermsScreen(
         )
 
         CommonTitleView(
-            titleRes = R.string.screen_terms_title,
-            descriptionRes = R.string.screen_terms_description
+            titleRes = com.zerosome.design.R.string.screen_terms_title,
+            descriptionRes = com.zerosome.design.R.string.screen_terms_description
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
         AllAgreementComponent(
-            componentTitle = R.string.screen_terms_accept_all,
-            componentDescription = R.string.screen_terms_accept_all_description,
+            componentTitle = com.zerosome.design.R.string.screen_terms_accept_all,
+            componentDescription = com.zerosome.design.R.string.screen_terms_accept_all_description,
             isChecked = viewModel.uiState.allChecked
         ) {
             viewModel.setAction(TermsAction.ClickAll)
@@ -83,17 +82,17 @@ internal fun TermsScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
         TermsAgreementComponent(
-            componentTitle = R.string.screen_terms_context_service,
+            componentTitle = com.zerosome.design.R.string.screen_terms_context_service,
             isChecked = viewModel.uiState.serviceTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickService) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
-            componentTitle = R.string.screen_terms_context_privacy,
+            componentTitle = com.zerosome.design.R.string.screen_terms_context_privacy,
             isChecked = viewModel.uiState.privacyTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickPrivacy) },
             onClickedWatchPage = {})
         TermsAgreementComponent(
-            componentTitle = R.string.screen_terms_context_marketing,
+            componentTitle = com.zerosome.design.R.string.screen_terms_context_marketing,
             isChecked = viewModel.uiState.marketingTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickMarketing) },
             onClickedWatchPage = {})
@@ -199,7 +198,7 @@ fun TermsAgreementComponent(
                 color = Color.Black
             )
             Text(
-                text = stringResource(id = R.string.screen_terms_watch_page),
+                text = stringResource(id = com.zerosome.design.R.string.screen_terms_watch_page),
                 style = Body2,
                 color = ZSColor.Neutral400,
                 modifier = Modifier.clickable(interactionSource = remember {

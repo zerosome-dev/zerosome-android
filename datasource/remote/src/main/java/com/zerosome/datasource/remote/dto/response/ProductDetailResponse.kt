@@ -20,7 +20,7 @@ data class ProductDetailResponse(
     @SerialName("onlineStoreList")
     val onlineStoreList: List<OnlineStoreResponse>,
     @SerialName("rating")
-    val rating: Float,
+    val rating: Float?,
     @SerialName("reviewCnt")
     val reviewCount: Int,
     @SerialName("reviewThumbnailList")
@@ -33,20 +33,20 @@ data class ProductDetailResponse(
 data class NutrientResponse(
     @SerialName("nutrientName")
     val nutrientName: String,
-    @SerialName("servings")
-    val servingPercent: Int,
+    @SerialName("percentage")
+    val servingPercent: Double,
     @SerialName("amount")
-    val amount: Int,
-    @SerialName("servingsStandard")
-    val serviceStandard: String,
-    @SerialName("amountStandard")
+    val amount: Double,
+    @SerialName("percentageUnit")
+    val percentageUnit: String,
+    @SerialName("amountUnit")
     val amountStandard: String
 )
 
 @Serializable
 data class OfflineStoreResponse(
     @SerialName("storeCode")
-    val storeCode: String,
+    val storeCode: String?,
     @SerialName("storeName")
     val storeName: String
 )
@@ -54,7 +54,7 @@ data class OfflineStoreResponse(
 @Serializable
 data class OnlineStoreResponse(
     @SerialName("storeCode")
-    val storeCode: String,
+    val storeCode: String?,
     @SerialName("storeName")
     val storeName: String,
     @SerialName("url")
@@ -68,7 +68,7 @@ data class ReviewThumbnailResponse(
     @SerialName("rating")
     val rating: Float,
     @SerialName("reviewContents")
-    val reviewContents: String,
+    val reviewContents: String? = null,
     @SerialName("regDate")
     val regDate: String // Will Change to Kotlinx-datetime
 )
@@ -76,13 +76,13 @@ data class ReviewThumbnailResponse(
 @Serializable
 data class SimilarProductResponse(
     @SerialName("productId")
-    val productId: String,
+    val productId: Int,
     @SerialName("image")
-    val image: String,
+    val image: String?,
     @SerialName("productName")
     val productName: String,
     @SerialName("rating")
-    val rating: Float,
+    val rating: Float?,
     @SerialName("reviewCnt")
     val reviewCount: Int,
 )

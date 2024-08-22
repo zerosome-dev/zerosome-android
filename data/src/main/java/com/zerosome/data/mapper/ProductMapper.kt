@@ -31,7 +31,7 @@ val ProductDetailResponse.domainModel
     get() = Product(productId = id, image = image, brandName = brandName, productName = productName, nutrientList = nutrientList.map { it.domainModel }, onlineStoreList = onlineStoreList.map { it.domainModel }, offlineStoreList = offlineStoreList.map { it.domainModel }, rating = rating, reviewCount = reviewCount, reviewThumbnailList = reviewThumbnailList.map { it.domainModel }, relatedProductList = similarProductList.map { it.domainModel })
 
 val NutrientResponse.domainModel
-    get() = Nutrient(nutrientName = nutrientName, servingPercent = servingPercent, amount = amount, serviceStandard = serviceStandard, amountStandard = amountStandard)
+    get() = Nutrient(nutrientName = nutrientName, percentage = servingPercent, amount = amount, serviceStandard = percentageUnit, amountStandard = amountStandard)
 
 val OnlineStoreResponse.domainModel
     get() = Store.Online(url = url, storeCode = storeCode, storeName = storeName)

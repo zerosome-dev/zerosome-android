@@ -45,8 +45,8 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     private val _uiAction: MutableSharedFlow<A> = MutableSharedFlow()
     private val uiAction = _uiAction
 
-    private val _uiEffect: MutableSharedFlow<E> = MutableSharedFlow()
-    val uiEffect: SharedFlow<E> = _uiEffect
+    private val _uiEffect: MutableSharedFlow<E?> = MutableSharedFlow()
+    val uiEffect: SharedFlow<E?> = _uiEffect
 
     private var _isLoading by mutableStateOf(false)
     val isLoading
@@ -107,6 +107,12 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     fun clearError() {
         viewModelScope.launch {
             _error = ""
+        }
+    }
+
+    fun clearEffect() {
+        viewModelScope.launch {
+            _uiEffect.emit(null)
         }
     }
 

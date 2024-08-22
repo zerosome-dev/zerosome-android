@@ -49,7 +49,7 @@ internal fun ChangeNicknameScreen(
         )
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            text = stringResource(id = R.string.screen_change_nickname_description),
+            text = stringResource(id = com.zerosome.design.R.string.screen_change_nickname_description),
             style = Body2,
             color = ZSColor.Neutral500,
             modifier = Modifier
@@ -65,7 +65,7 @@ internal fun ChangeNicknameScreen(
                 .padding(horizontal = 22.dp),
             erasable = true,
             placeHolderText = stringResource(
-                id = R.string.screen_change_nickname_textfield_hint
+                id = com.zerosome.design.R.string.screen_change_nickname_textfield_hint
             ),
             positiveText = if (viewModel.uiState.isVerified == true) viewModel.uiState.holderTextResId?.let {
                 stringResource(

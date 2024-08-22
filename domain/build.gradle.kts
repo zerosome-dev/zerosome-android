@@ -33,7 +33,7 @@ android {
 
 dependencies {
     // NetworkResult 가지고 오는 용 -> 차후 Core 로 이관 필요
-    implementation(project(":network"))
+    api(project(":network"))
 
     implementation(libs.androidx.core.ktx)
 }

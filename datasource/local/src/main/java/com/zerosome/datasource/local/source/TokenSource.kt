@@ -37,14 +37,21 @@ class TokenSource(
         } else null
     }
 
-    suspend fun updateToken(accessToken: String? = null, refreshToken: String? = null) {
-        tokenPreferenceStore.edit {
-            accessToken?.let { at ->
-                it[ACCESS_TOKEN] = at
+    suspend fun updateToken(accessToken: String? = null, refreshToken: String? = null): Boolean {
+        try {
+            tokenPreferenceStore.edit {
+                accessToken?.let { at ->
+                    it[ACCESS_TOKEN] = at
+                }
+                refreshToken?.let { rt ->
+                    it[REFRESH_TOKEN] = rt
+                }
             }
-            refreshToken?.let { rt ->
-                it[REFRESH_TOKEN] = rt
-            }
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
         }
+
     }
 }
