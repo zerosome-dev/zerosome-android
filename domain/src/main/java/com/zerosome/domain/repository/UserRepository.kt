@@ -1,5 +1,6 @@
 package com.zerosome.domain.repository
 
+import com.zerosome.domain.model.UserBasicInfo
 import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,8 @@ interface UserRepository {
     fun checkUserLogin(): Flow<Boolean>
 
     fun deleteAccessToken(): Flow<Boolean>
+
+    fun getUserData(): Flow<NetworkResult<UserBasicInfo>>
 
     fun revoke(): Flow<NetworkResult<Boolean>>
 }

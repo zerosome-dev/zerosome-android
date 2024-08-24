@@ -1,8 +1,12 @@
 package com.zerosome.data.repository
 
 import android.util.Log
+import com.zerosome.data.mapper.domainModel
+import com.zerosome.data.mapper.mapToDomain
 import com.zerosome.datasource.local.source.TokenSource
 import com.zerosome.datasource.remote.service.AuthService
+import com.zerosome.datasource.remote.service.UserService
+import com.zerosome.domain.model.UserBasicInfo
 import com.zerosome.domain.repository.UserRepository
 import com.zerosome.network.NetworkError
 import com.zerosome.network.NetworkResult
@@ -25,6 +29,7 @@ import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
     private val userService: AuthService,
+    private val userDetailService: UserService,
     private val tokenSource: TokenSource,
 ) : UserRepository {
     private val currentAccessToken = tokenSource.getAccessToken().stateIn(
@@ -40,7 +45,8 @@ internal class UserRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> = userService.validateNickname(nickname)
+    override fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>> =
+        userService.validateNickname(nickname)
 
     override fun signUp(
         socialToken: String,
@@ -64,8 +70,8 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun login(socialToken: String, socialType: String): Flow<NetworkResult<Boolean>> =
-        userService.login(socialToken, socialType).map {
+    override fun login(socialToken: String, socialType: String): Flow<NetworkResult<Boolean>> {
+        return userService.login(socialToken, socialType).map {
             when (it) {
                 NetworkResult.Loading -> NetworkResult.Loading
                 is NetworkResult.Success -> {
@@ -76,8 +82,12 @@ internal class UserRepositoryImpl @Inject constructor(
                 is NetworkResult.Error -> NetworkResult.Error(it.error)
             }
         }
+    }
 
-    override fun checkUserLogin(): Flow<Boolean> = currentAccessToken.onEach { Log.d("CPRI", "TOKEN ENTITY : $it") }.map { it?.accessToken.isNullOrEmpty().not() }
+
+    override fun checkUserLogin(): Flow<Boolean> =
+        currentAccessToken.onEach { Log.d("CPRI", "TOKEN ENTITY : $it") }
+            .map { it?.accessToken.isNullOrEmpty().not() }
 
     override fun deleteAccessToken(): Flow<Boolean> = flow {
         tokenSource.updateToken(null, null)
@@ -85,6 +95,10 @@ internal class UserRepositoryImpl @Inject constructor(
     }.catch {
         emit(false)
     }
+
+    override fun getUserData(): Flow<NetworkResult<UserBasicInfo>> = safeCall {
+        userDetailService.getUserDetailData()
+    }.mapToDomain { it.domainModel }
 
     override fun revoke(): Flow<NetworkResult<Boolean>> =
         tokenSource.getAccessToken().map { it?.accessToken }.flatMapLatest {

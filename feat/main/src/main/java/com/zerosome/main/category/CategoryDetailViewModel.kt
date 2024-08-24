@@ -1,17 +1,31 @@
 package com.zerosome.main.category
 
+import android.util.Log
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
+import com.zerosome.domain.category.GetCategoriesUseCase
+import com.zerosome.domain.category.GetLowerCategoryUseCase
+import com.zerosome.domain.model.CategoryDepth1
 import com.zerosome.domain.model.CategoryDepth2
+import com.zerosome.domain.model.CategoryProduct
 import com.zerosome.domain.model.SortItem
+import com.zerosome.product.GetProductsByFilterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 internal sealed interface CategoryDetailAction : UIAction {
-    data class ViewCreated(val category1Id: String, val category2id: String?): CategoryDetailAction
+    data class ViewCreated(val category1Id: String, val category2id: String?) : CategoryDetailAction
 
     data object ClickOpenSort : CategoryDetailAction
 
@@ -37,11 +51,11 @@ internal sealed interface CategoryDetailAction : UIAction {
 
     data object DismissDialog : CategoryDetailAction
 
-    data object ClickConfirm: CategoryDetailAction
+    data object ClickConfirm : CategoryDetailAction
 }
 
 internal sealed interface CategoryDetailIntent : UIIntent {
-    data class Initialize(val category1Id: String, val category2id: String?) : CategoryDetailIntent
+    data class Initialize(val category1Id: String, val category2Id: String?) : CategoryDetailIntent
 
     data class OpenDialog(val type: DialogType) : CategoryDetailIntent
 
@@ -61,17 +75,21 @@ internal sealed interface CategoryDetailIntent : UIIntent {
 
     data object ClearEffect : CategoryDetailIntent
 
-    data object ChangeConfirm: CategoryDetailIntent
+    data object ChangeConfirm : CategoryDetailIntent
 }
 
 internal data class CategoryDetailState(
+    val depth1CategoryName: String? = null,
+    val depth2CategoryName: String? = null,
+    val depth1Category: CategoryDepth1? = null,
     val depth2Category: CategoryDepth2? = null,
     val categoryList: List<CategoryDepth2> = emptyList(),
-    val sort: SortItem = SortItem.LATEST,
+    val sort: SortItem = SortItem.RECENT,
     val brands: List<String> = emptyList(),
     val selectedBrands: List<String> = emptyList(),
     val zeroTag: List<String> = emptyList(),
     val selectedTags: List<String> = emptyList(),
+    val productList: List<CategoryProduct> = emptyList(),
 ) : UIState
 
 internal sealed interface CategoryDetailEffect : UIEffect {
@@ -84,14 +102,45 @@ internal sealed interface CategoryDetailEffect : UIEffect {
 
 @HiltViewModel
 internal class CategoryDetailViewModel @Inject constructor(
-
+    private val categoryDetailFilterUseCase: GetProductsByFilterUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getLowerCategoryUseCase: GetLowerCategoryUseCase
 ) : BaseViewModel<CategoryDetailAction, CategoryDetailIntent, CategoryDetailState, CategoryDetailEffect>(
-        initialState = CategoryDetailState()
-    ) {
+    initialState = CategoryDetailState()
+) {
+
+    private val productFlow = snapshotFlow { uiState.depth1CategoryName }.filterNotNull()
+        .flatMapLatest {
+            Log.d("CPRI", "CATEGORYCODE : $it")
+            getCategoriesUseCase.getSpecificCategory(it)
+        }.onEach {
+            setState { copy(depth1Category = it) }
+        }.filterNotNull()
+        .flatMapLatest {
+            getLowerCategoryUseCase(it.categoryCode)
+        }.mapMerge()
+        .filterNotNull().onEach {
+            setState { copy(categoryList = it) }
+        }.flatMapLatest {
+            val category =
+                it.find { category -> category.categoryCode == uiState.depth2CategoryName }?.categoryCode
+                    ?: it.first().categoryCode
+            categoryDetailFilterUseCase(category)
+        }.mapMerge().onEach {
+            setState { copy(productList = it ?: emptyList()) }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        ).launchIn(viewModelScope)
 
     override fun actionPredicate(action: CategoryDetailAction): CategoryDetailIntent {
         return when (action) {
-            is CategoryDetailAction.ViewCreated -> CategoryDetailIntent.Initialize(action.category1Id, action.category2id)
+            is CategoryDetailAction.ViewCreated -> CategoryDetailIntent.Initialize(
+                action.category1Id,
+                action.category2id
+            )
+
             CategoryDetailAction.ClearCategory -> CategoryDetailIntent.Clear(DialogType.DEPTH2)
             CategoryDetailAction.ClickOpenCategoryDepth2 -> CategoryDetailIntent.OpenDialog(
                 DialogType.DEPTH2
@@ -126,9 +175,13 @@ internal class CategoryDetailViewModel @Inject constructor(
 
     override fun collectIntent(intent: CategoryDetailIntent) {
         when (intent) {
-            is CategoryDetailIntent.Initialize -> {
-                getChangedData()
+            is CategoryDetailIntent.Initialize -> setState {
+                copy(
+                    depth1CategoryName = intent.category1Id,
+                    depth2CategoryName = intent.category2Id
+                )
             }
+
             is CategoryDetailIntent.OpenDialog -> setEffect {
                 when (intent.type) {
                     DialogType.DEPTH2 -> CategoryDetailEffect.OpenCategoryDialog
@@ -175,7 +228,7 @@ internal class CategoryDetailViewModel @Inject constructor(
     }
 
     private fun getChangedData() = withState {
-
+        categoryDetailFilterUseCase.setFilteringData(category2Code = depth2Category?.categoryCode, sortItem = sort, brandList = brands, zeroTag)
     }
 }
 

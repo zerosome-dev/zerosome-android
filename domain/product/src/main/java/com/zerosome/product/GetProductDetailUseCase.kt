@@ -6,12 +6,9 @@ import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,19 +20,27 @@ class GetProductDetailUseCase @Inject constructor(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _idFlow: MutableStateFlow<Int?> = MutableStateFlow(null)
-    private val responseFlow: StateFlow<NetworkResult<Product>> =
-        _idFlow.filterNotNull().distinctUntilChanged().flatMapLatest {
-            productRepository.getProductDetail(it)
-        }.stateIn(
-            coroutineScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = NetworkResult.Loading
-        )
-
+    private val responseFlow: MutableStateFlow<NetworkResult<Product>> =
+        MutableStateFlow(NetworkResult.Loading)
 
     operator fun invoke(id: Int) = responseFlow.also {
         _idFlow.tryEmit(id)
+    }.also { callLogic() }
+
+    private fun callLogic() {
+        coroutineScope.launch {
+            productRepository.getProductDetail(requireNotNull(_idFlow.value))
+                .onEach {
+                    when (it) {
+                        is NetworkResult.Loading -> responseFlow.emit(NetworkResult.Loading)
+                        is NetworkResult.Success -> responseFlow.emit(NetworkResult.Success(it.data))
+                        is NetworkResult.Error -> responseFlow.emit(NetworkResult.Error(it.error))
+                    }
+                }.collect()
+        }
     }
+
+    fun refresh() = callLogic()
 
     fun getCurrentProduct() = responseFlow
 }

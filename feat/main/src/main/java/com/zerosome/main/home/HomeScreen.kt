@@ -170,9 +170,10 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
     ) {
         ZSImage(
             modifier = Modifier
-                .height(216.dp)
-                .aspectRatio(75 / 56f),
-            imageString = rollOut.image
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            imageString = rollOut.image,
+            scale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(14.dp))
         Text(text = rollOut.categoryD1, style = Label1, color = ZSColor.Neutral500)

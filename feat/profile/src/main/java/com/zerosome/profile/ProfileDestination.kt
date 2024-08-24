@@ -27,10 +27,10 @@ fun NavGraphBuilder.profileNavigation(
 ) {
     navigation(route = Profile().route, startDestination = Main.route) {
         composable(Main.route) {
-//            ProfileScreen {
-//                navController.navigate(ChangeNickname.route)
-//            }
-            ProfileNotLoginScreen()
+            ProfileScreen {
+                navController.navigate(ChangeNickname.route)
+            }
+//            ProfileNotLoginScreen()
         }
         composable(ChangeNickname.route) {
             ChangeNicknameScreen(onBackPressed = {

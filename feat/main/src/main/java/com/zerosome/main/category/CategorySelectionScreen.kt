@@ -53,10 +53,14 @@ internal fun CategorySelectionScreen(
     val state = viewModel.uiState
     val effect by viewModel.uiEffect.collectAsState(initial = null)
     LaunchedEffect(key1 = effect) {
-        when(effect) {
+        when (effect) {
             is CategorySelectionEffect.NavigateToCategorySelectionDetail -> {
-                onCategorySelected((effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth1Id, (effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth2Id)
+                onCategorySelected(
+                    (effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth1Id,
+                    (effect as CategorySelectionEffect.NavigateToCategorySelectionDetail).depth2Id
+                )
             }
+
             else -> {
                 viewModel.clearError()
             }
@@ -142,13 +146,17 @@ fun GridItemSpan(
                 )
             ) {
                 ZSImage(
+                    imageString = categoryItems[it].categoryImage ?: "",
                     modifier = Modifier
                         .aspectRatio(1f)
                         .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8)),
-                    painter = painterResource(id = requireNotNull(categoryItems[it].categoryPainterResId))
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(text = categoryItems[it].categoryName, style = Body3, textAlign = TextAlign.Center)
+                Text(
+                    text = categoryItems[it].categoryName,
+                    style = Body3,
+                    textAlign = TextAlign.Center
+                )
             }
         }
         Column {

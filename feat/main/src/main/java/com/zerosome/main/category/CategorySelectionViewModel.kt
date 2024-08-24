@@ -6,7 +6,7 @@ import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
-import com.zerosome.domain.category.GetAllCategoriesUseCase
+import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.model.CategoryDepth1
 import com.zerosome.domain.model.CategoryDepth2
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +36,7 @@ internal sealed interface CategorySelectionEffect: UIEffect {
 
 @HiltViewModel
 internal class CategorySelectionViewModel @Inject constructor(
-    private val allCategoriesUseCase: GetAllCategoriesUseCase,
+    private val allCategoriesUseCase: GetCategoriesUseCase,
 ): BaseViewModel<CategorySelectionAction, CategorySelectionIntent, CategorySelectionState, CategorySelectionEffect>(
     initialState = CategorySelectionState()
 ) {

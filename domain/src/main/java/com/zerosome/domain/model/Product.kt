@@ -16,12 +16,10 @@ data class Product(
 
 data class CategoryProduct(
     val id: Int,
-    val image: String,
-    val categoryDepth1Id: Int,
-    val categoryDepth2id: Int,
+    val image: String?,
     val name: String,
     val brand: String,
-    val rating: Float,
+    val rating: Float?,
     val reviewCount: Int,
 )
 

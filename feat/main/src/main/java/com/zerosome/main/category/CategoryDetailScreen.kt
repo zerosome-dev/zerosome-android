@@ -19,11 +19,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -55,9 +58,14 @@ internal fun CategoryDetailScreen(
     category1Id: String,
     category2Id: String? = null,
     onBackPressed: () -> Unit,
+    onClickProduct: (productId: Int) -> Unit,
     viewModel: CategoryDetailViewModel = hiltViewModel(),
 ) {
     val effect by viewModel.uiEffect.collectAsState(initial = null)
+
+    LaunchedEffect(key1 = category1Id, key2 = category2Id) {
+        viewModel.setAction(CategoryDetailAction.ViewCreated(category1Id, category2Id))
+    }
     when (effect) {
         is CategoryDetailEffect.OpenSortDialog -> {
             CategorySortBottomSheet(
@@ -90,10 +98,14 @@ internal fun CategoryDetailScreen(
 
         is CategoryDetailEffect.OpenCategoryDialog -> {
             CategoryFilterBottomSheet(
-                selectedCategoryName = "생수/음료",
+                categories = viewModel.uiState.categoryList,
+                selectedCategoryName = viewModel.uiState.depth1Category?.categoryName ?: "",
+                selectedCategory = viewModel.uiState.depth2Category,
                 onSelect = { viewModel.setAction(CategoryDetailAction.ClickSelectCategoryDepth2(it)) },
                 onClear = { viewModel.setAction(CategoryDetailAction.ClearCategory) },
-                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog) })
+                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog).also {
+                    CategoryDetailAction.ClickConfirm
+                } })
         }
 
         else -> {}
@@ -107,7 +119,7 @@ internal fun CategoryDetailScreen(
         ZSAppBar(
             onBackPressed = onBackPressed,
             backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
-            navTitle = "생수/음료"
+            navTitle = viewModel.uiState.depth1Category?.categoryName ?: ""
         )
         LazyRow(
             modifier = Modifier
@@ -118,19 +130,23 @@ internal fun CategoryDetailScreen(
             item {
                 ZSDropdown(
                     onItemSelected = { viewModel.setAction(CategoryDetailAction.ClickOpenCategoryDepth2) },
-                    placeholderText = "카테고리 선택"
+                    placeholderText = viewModel.uiState.depth2Category?.categoryName ?: "카테고리 선택"
                 )
             }
             item {
                 ZSDropdown(
                     onItemSelected = { viewModel.setAction(CategoryDetailAction.ClickOpenBrand) },
-                    placeholderText = "브랜드"
+                    placeholderText = if (viewModel.uiState.selectedBrands.isNotEmpty()) {
+                        "${viewModel.uiState.selectedBrands.first()} 외 ${viewModel.uiState.selectedBrands.size - 1}"
+                    } else "브랜드"
                 )
             }
             item {
                 ZSDropdown(
                     onItemSelected = { viewModel.setAction(CategoryDetailAction.ClickOpenTag) },
-                    placeholderText = "제로태그"
+                    placeholderText = if (viewModel.uiState.selectedTags.isNotEmpty()) {
+                        "${viewModel.uiState.selectedBrands.first()} 외 ${viewModel.uiState.selectedBrands.size - 1}"
+                    } else "브랜드"
                 )
             }
         }
@@ -143,7 +159,7 @@ internal fun CategoryDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "32개의 상품",
+                text = "${viewModel.uiState.productList.count()}개의 상품",
                 style = Body3,
                 color = ZSColor.Neutral900,
                 modifier = Modifier.weight(1f)
@@ -154,7 +170,11 @@ internal fun CategoryDetailScreen(
                 buttonSize = ButtonSize.NONE
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "최신 등록순", color = ZSColor.Neutral900, style = Body3)
+                    Text(
+                        text = viewModel.uiState.sort.sortName,
+                        color = ZSColor.Neutral900,
+                        style = Body3
+                    )
                     Spacer(modifier = Modifier.width(2.dp))
                     Image(
                         painter = painterResource(id = R.drawable.ic_chevron_down),
@@ -169,13 +189,15 @@ internal fun CategoryDetailScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(40) {
+            items(viewModel.uiState.productList, key = { it.id }) {
                 SimpleCardComponent(
-                    title = "아이템 $it",
-                    brandName = "브랜드 $it",
-                    image = "",
+                    title = it.name,
+                    brandName = it.brand,
+                    image = it.image ?: "",
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {})
+                    reviewRating = it.rating,
+                    onClick = { onClickProduct(it.id) }
+                )
             }
         }
     }
@@ -184,7 +206,7 @@ internal fun CategoryDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategorySortBottomSheet(
-    selectedSortItem: SortItem = SortItem.LATEST,
+    selectedSortItem: SortItem = SortItem.RECENT,
     onItemSet: (item: SortItem) -> Unit,
 ) {
     ModalBottomSheet(
@@ -259,7 +281,8 @@ fun BrandFilterBottomSheet(
                 Text(
                     text = "적용",
                     style = SubTitle1,
-                    color = Color.White,)
+                    color = Color.White,
+                )
             }
         }
     }
@@ -275,16 +298,22 @@ fun CategoryFilterBottomSheet(
     onClear: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    ModalBottomSheet(onDismissRequest = onDismissRequest, containerColor = Color.White) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        containerColor = Color.White,
+        properties = ModalBottomSheetDefaults.properties(shouldDismissOnBackPress = false, isFocusable = false)
+    ) {
         Text(
             text = selectedCategoryName,
             style = H2,
+            color = ZSColor.Neutral900,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
         Spacer(modifier = Modifier.height(20.dp))
         NonLazyVerticalGrid(
             columns = 4,
             itemCount = categories.size,
+            modifier = Modifier.padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(18.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
@@ -319,8 +348,7 @@ fun CategoryFilterBottomSheet(
                     text = "적용",
                     style = SubTitle1,
                     color = Color.White,
-
-                    )
+                )
             }
         }
     }

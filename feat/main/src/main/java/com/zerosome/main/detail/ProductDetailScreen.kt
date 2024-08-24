@@ -349,6 +349,7 @@ fun EmptyReviewComponent(onClickWriteReview: () -> Unit) {
         ) {
             Text(text = "리뷰 작성하러 가기", style = Body1, color = ZSColor.Neutral900)
         }
+        Spacer(modifier = Modifier.height(30.dp))
     }
 }
 

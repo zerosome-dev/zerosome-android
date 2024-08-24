@@ -73,7 +73,7 @@ fun MainScreen() {
                 )
             }
             composable(
-                "${CategoryDetail.route}/(${CategoryDetail.category1})/(${CategoryDetail.category2})",
+                "${CategoryDetail.route}/{${CategoryDetail.category1}}/{${CategoryDetail.category2}}",
                 arguments = CategoryDetail.argument
             ) {
                 val firstCategory = it.arguments?.getString(CategoryDetail.category1)
@@ -81,7 +81,10 @@ fun MainScreen() {
                 CategoryDetailScreen(
                     category1Id = requireNotNull(firstCategory) { "Argument Must be passed " },
                     category2Id = secondCategory,
-                    onBackPressed = { navController.popBackStack() }
+                    onBackPressed = { navController.popBackStack() },
+                    onClickProduct = { productId ->
+                        navController.navigate("${ProductDetail.route}/$productId")
+                    }
                 )
             }
             composable(

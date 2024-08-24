@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.component.ZSTextField
 import com.zerosome.design.ui.theme.Body4
 import com.zerosome.design.ui.theme.Label1
@@ -46,80 +47,82 @@ fun ReviewWriteScreen(
             else -> {}
         }
     }
-    Box(
+    ZSScreen(
         modifier = Modifier
-            .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ZSAppBar(
-                navTitle = "리뷰 작성",
-                backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
-                onBackPressed = onBackPressed
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Spacer(
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ZSAppBar(
+                    navTitle = "리뷰 작성",
+                    backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
+                    onBackPressed = onBackPressed
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(25 / 16f)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "[${viewModel.uiState.selectedProduct?.brandName}]",
+                    style = Label1,
+                    color = ZSColor.Neutral500
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = viewModel.uiState.selectedProduct?.productName ?: "",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = SubTitle1,
+                    color = ZSColor.Neutral900
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(text = "상품은 어떠셨나요?", style = SubTitle1, color = ZSColor.Neutral700)
+                Spacer(modifier = Modifier.height(20.dp))
+                StarRatingView(
+                    modifier = Modifier.fillMaxWidth(),
+                    rating = viewModel.uiState.reviewScore,
+                    onRatingChanged = { viewModel.setAction(ReviewWriteAction.ClickReviewScore(it)) })
+                Spacer(modifier = Modifier.height(30.dp))
+                ZSTextField(
+                    text = viewModel.uiState.reviewText,
+                    onTextChanged = { viewModel.setAction(ReviewWriteAction.WriteReview(it)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp),
+                    singleLine = false,
+                    minLines = 3,
+                )
+                Text(
+                    text = "${viewModel.uiState.reviewText.length}/1000",
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(end = 22.dp),
+                    style = Body4,
+                    color = ZSColor.Neutral400
+                )
+                Spacer(modifier = Modifier.height(50.dp))
+            }
+            ZSButton(
+                onClick = { viewModel.setAction(ReviewWriteAction.ClickConfirmButton) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(25 / 16f)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "[${viewModel.uiState.selectedProduct?.brandName}]",
-                style = Label1,
-                color = ZSColor.Neutral500
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = viewModel.uiState.selectedProduct?.productName ?: "",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = SubTitle1,
-                color = ZSColor.Neutral900
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "상품은 어떠셨나요?", style = SubTitle1, color = ZSColor.Neutral700)
-            Spacer(modifier = Modifier.height(20.dp))
-            StarRatingView(
-                modifier = Modifier.fillMaxWidth(),
-                rating = viewModel.uiState.reviewScore,
-                onRatingChanged = { viewModel.setAction(ReviewWriteAction.ClickReviewScore(it)) })
-            Spacer(modifier = Modifier.height(30.dp))
-            ZSTextField(
-                text = viewModel.uiState.reviewText,
-                onTextChanged = { viewModel.setAction(ReviewWriteAction.WriteReview(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 22.dp),
-                singleLine = false,
-                minLines = 3,
-            )
-            Text(
-                text = "${viewModel.uiState.reviewText.length}/1000",
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 22.dp),
-                style = Body4,
-                color = ZSColor.Neutral400
-            )
-            Spacer(modifier = Modifier.height(50.dp))
+                    .padding(22.dp)
+                    .align(Alignment.BottomCenter)
+            ) {
+                Text(text = "작성 완료")
+            }
         }
-        ZSButton(
-            onClick = { viewModel.setAction(ReviewWriteAction.ClickConfirmButton) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(22.dp)
-                .align(Alignment.BottomCenter)
-        ) {
-            Text(text = "작성 완료")
-        }
+
     }
 }
