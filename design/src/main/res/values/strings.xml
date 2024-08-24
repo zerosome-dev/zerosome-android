@@ -21,7 +21,7 @@
     <string name="screen_terms_accept_all_description">서비스 이용을 위해 아래 약관에 모두 동의합니다.</string>
     <string name="screen_terms_watch_page">보기</string>
     <string name="screen_terms_context_service">(필수) 서비스 이용약관 동의</string>
-    <string name="screen_terms_context_privacy">(필수) 개인정보 처리방침 동의</string>
+    <string name="screen_terms_context_privacy">(필수) 개인정보 수집 및 이용 동의</string>
     <string name="screen_terms_context_marketing">(선택) 마케팅 수신 동의</string>
 
     <!--  Nickname Screen  -->
