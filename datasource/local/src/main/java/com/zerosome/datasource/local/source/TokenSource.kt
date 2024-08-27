@@ -2,16 +2,11 @@ package com.zerosome.datasource.local.source
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.zerosome.datasource.local.entity.TokenEntity
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 
 class TokenSource(
     private val tokenPreferenceStore: DataStore<Preferences>,
@@ -34,12 +29,9 @@ class TokenSource(
         Log.d("CPRI", "UPDATE TOKEN :$accessToken REFRESH TOKEN :$refreshToken")
         try {
             tokenPreferenceStore.edit {
-                accessToken?.let { at ->
-                    it[ACCESS_TOKEN] = at
-                }
-                refreshToken?.let { rt ->
-                    it[REFRESH_TOKEN] = rt
-                }
+                it[ACCESS_TOKEN] = accessToken ?: ""
+
+                it[REFRESH_TOKEN] = refreshToken ?: ""
             }
             return true
         } catch (e: Exception) {

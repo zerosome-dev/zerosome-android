@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal sealed interface ProfileAction : UIAction {
@@ -78,8 +79,31 @@ internal class ProfileViewModel @Inject constructor(
         initialValue = null
     ).launchIn(viewModelScope)
 
-    override fun actionPredicate(action: ProfileAction): ProfileIntent = ProfileIntent.Logout
+    override fun actionPredicate(action: ProfileAction): ProfileIntent = when(action) {
+        is ProfileAction.ClickLogout -> ProfileIntent.Logout
+        is ProfileAction.ClickNicknameChange -> ProfileIntent.Navigate(ProfileNavRoute.NICKNAME)
+        is ProfileAction.ClickTerms -> ProfileIntent.Navigate(ProfileNavRoute.TERMS)
+        is ProfileAction.ClickReview -> ProfileIntent.Navigate(ProfileNavRoute.REVIEW)
+        is ProfileAction.ClickNotice -> ProfileIntent.Navigate(ProfileNavRoute.NOTICE)
+        is ProfileAction.ClickPrivacy -> ProfileIntent.Navigate(ProfileNavRoute.PRIVACY)
+        is ProfileAction.ClickFAQ -> ProfileIntent.Navigate(ProfileNavRoute.FAQ)
+        is ProfileAction.ClickRevoke -> ProfileIntent.RevokeAccess
+        is ProfileAction.ClickOpenKakao -> ProfileIntent.Logout
+    }
 
-    override fun collectIntent(intent: ProfileIntent) {}
+    override fun collectIntent(intent: ProfileIntent) {
+        when (intent) {
+            is ProfileIntent.Logout -> viewModelScope.launch {
+                logoutUseCase().collect {
+                    if (it) {
+                        setEffect { ProfileEffect.MoveToLogin }
+                    }
+                }
+            }
+            is ProfileIntent.Navigate -> {}
+            is ProfileIntent.RevokeAccess -> {}
+
+        }
+    }
 
 }

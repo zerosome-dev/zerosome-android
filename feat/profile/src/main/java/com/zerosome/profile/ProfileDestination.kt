@@ -24,18 +24,21 @@ data object ChangeNickname : Profile() {
 
 fun NavGraphBuilder.profileNavigation(
     navController: NavController,
+    onMoveToLogin: () -> Unit
 ) {
     navigation(route = Profile().route, startDestination = Main.route) {
         composable(Main.route) {
-            ProfileScreen {
-                navController.navigate(ChangeNickname.route)
-            }
-//            ProfileNotLoginScreen()
+            ProfileScreen(
+                onClickChangeNickname = {
+                    navController.navigate(ChangeNickname.route)
+                },
+                onMoveToLogin = onMoveToLogin
+            )
         }
-        composable(ChangeNickname.route) {
-            ChangeNicknameScreen(onBackPressed = {
-                navController.popBackStack()
-            })
-        }
+    }
+    composable(ChangeNickname.route) {
+        ChangeNicknameScreen(onBackPressed = {
+            navController.popBackStack()
+        })
     }
 }

@@ -77,8 +77,7 @@ internal class UserRepositoryImpl @Inject constructor(
     }
 
     override fun deleteAccessToken(): Flow<Boolean> = flow {
-        tokenSource.updateToken(null, null)
-        emit(true)
+        emit(tokenSource.updateToken(null, null))
     }.catch {
         emit(false)
     }

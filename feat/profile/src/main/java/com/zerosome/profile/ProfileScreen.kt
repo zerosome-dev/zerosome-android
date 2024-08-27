@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,14 +39,22 @@ import com.zerosome.design.ui.view.CommonListComponent
 internal fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
     onClickChangeNickname: () -> Unit,
+    onMoveToLogin: () -> Unit,
 ) {
     val context = LocalContext.current
+    val effect by viewModel.uiEffect.collectAsState(initial = null)
     val packageManager = context.packageManager
+    LaunchedEffect(key1 = effect) {
+        when (effect) {
+            is ProfileEffect.MoveToLogin -> onMoveToLogin()
+            else -> {}
+        }
+    }
     ZSScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding(), isLoading = false
+            .navigationBarsPadding(), isLoading = viewModel.isLoading
     ) {
         Text(
             modifier = Modifier
@@ -136,7 +147,7 @@ internal fun ProfileScreen(
                 .padding(horizontal = 22.dp), horizontalArrangement = Arrangement.spacedBy(13.dp)
         ) {
             ZSButton(
-                onClick = { },
+                onClick = { viewModel.setAction(ProfileAction.ClickLogout) },
                 buttonType = ButtonType.OUTLINE,
                 buttonSize = ButtonSize.MEDIUM,
                 modifier = Modifier.weight(1f)

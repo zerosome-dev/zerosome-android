@@ -37,7 +37,7 @@ import com.zerosome.review.ReviewWriteScreen
 import com.zerosome.review.reviewNavigation
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onMoveToLogin: () -> Unit) {
     val navController = rememberNavController()
     Column(modifier = Modifier.fillMaxSize()) {
         NavHost(
@@ -60,7 +60,7 @@ fun MainScreen() {
                     }
                 )
             }
-            profileNavigation(navController)
+            profileNavigation(navController, onMoveToLogin = onMoveToLogin)
             composable(Rollout.route) {
                 RolloutScreen(
                     onBackPressed = {
