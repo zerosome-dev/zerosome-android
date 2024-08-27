@@ -115,7 +115,7 @@ internal class ProductDetailViewModel @Inject constructor(
             )
             uiModelList.add(ProductDetailUiModel.Nutrient)
             uiModelList.add(ProductDetailUiModel.Stores(it.onlineStoreList, it.offlineStoreList))
-            if (reviews.isNotEmpty() || it.reviewCount > 0) {
+            if (it.reviewCount > 0) {
                 uiModelList.add(
                     ProductDetailUiModel.Reviews(
                         it.reviewCount,

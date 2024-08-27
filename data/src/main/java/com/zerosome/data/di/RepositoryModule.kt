@@ -1,11 +1,13 @@
 package com.zerosome.data.di
 
 import com.zerosome.data.repository.CategoryRepositoryImpl
+import com.zerosome.data.repository.FilterRepositoryImpl
 import com.zerosome.data.repository.HomeRepositoryImpl
 import com.zerosome.data.repository.ProductRepositoryImpl
 import com.zerosome.data.repository.ReviewRepositoryImpl
 import com.zerosome.data.repository.UserRepositoryImpl
 import com.zerosome.domain.repository.CategoryRepository
+import com.zerosome.domain.repository.FilterRepository
 import com.zerosome.domain.repository.HomeRepository
 import com.zerosome.domain.repository.ProductRepository
 import com.zerosome.domain.repository.ReviewRepository
@@ -39,4 +41,8 @@ internal interface RepositoryModule {
     @Binds
     @Singleton
     fun bindsReviewRepository(impl: ReviewRepositoryImpl): ReviewRepository
+
+    @Binds
+    @Singleton
+    fun bindsFilterRepository(impl: FilterRepositoryImpl): FilterRepository
 }

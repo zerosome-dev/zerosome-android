@@ -1,5 +1,6 @@
 package com.zerosome.datasource.local.source
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
@@ -9,35 +10,28 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.zerosome.datasource.local.entity.TokenEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class TokenSource(
     private val tokenPreferenceStore: DataStore<Preferences>,
 ) {
     private companion object {
-        val ACCESS_TOKEN  = stringPreferencesKey("access_token")
+        val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
     }
 
-    fun getAccessToken(): Flow<TokenEntity?> = tokenPreferenceStore.data.catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
-    }.map { preference ->
-        getToken(preference)
-    }
-
-    private fun getToken(preferences: Preferences): TokenEntity? {
-        val accessToken = preferences[ACCESS_TOKEN]
-        val refreshToken = preferences[REFRESH_TOKEN]
+    suspend fun getTokenEntity(): TokenEntity? {
+        val accessToken = tokenPreferenceStore.data.firstOrNull()?.get(ACCESS_TOKEN)
+        val refreshToken = tokenPreferenceStore.data.firstOrNull()?.get(REFRESH_TOKEN)
+        Log.d("CPRI", "ACCESS : $accessToken REFRESH :$refreshToken")
         return if (accessToken != null && refreshToken != null) {
             TokenEntity(accessToken, refreshToken)
         } else null
     }
 
     suspend fun updateToken(accessToken: String? = null, refreshToken: String? = null): Boolean {
+        Log.d("CPRI", "UPDATE TOKEN :$accessToken REFRESH TOKEN :$refreshToken")
         try {
             tokenPreferenceStore.edit {
                 accessToken?.let { at ->
@@ -52,6 +46,5 @@ class TokenSource(
             e.printStackTrace()
             return false
         }
-
     }
 }

@@ -10,6 +10,7 @@ import com.zerosome.datasource.remote.dto.response.ProductDetailResponse
 import com.zerosome.datasource.remote.dto.response.ProductResponse
 import com.zerosome.datasource.remote.dto.response.ReviewThumbnailResponse
 import com.zerosome.datasource.remote.dto.response.SimilarProductResponse
+import com.zerosome.datasource.remote.dto.response.ZeroCategoryResponse
 import com.zerosome.domain.model.Brand
 import com.zerosome.domain.model.Cafe
 import com.zerosome.domain.model.CategoryProduct
@@ -19,6 +20,7 @@ import com.zerosome.domain.model.RelatedProduct
 import com.zerosome.domain.model.ReviewThumbnail
 import com.zerosome.domain.model.Rollout
 import com.zerosome.domain.model.Store
+import com.zerosome.domain.model.ZeroCategory
 
 val BrandResponse.domainModel
     get() = Brand(brandCode, brandName)
@@ -83,4 +85,10 @@ val ProductResponse.domainModel
         brand = brandName,
         rating = rating,
         reviewCount = reviewCount
+    )
+
+val ZeroCategoryResponse.domainModel
+    get() = ZeroCategory(
+        categoryCode = zeroCategoryCode,
+        categoryName = zeroCategoryName
     )

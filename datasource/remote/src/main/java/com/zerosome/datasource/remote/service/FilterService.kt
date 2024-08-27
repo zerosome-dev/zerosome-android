@@ -22,12 +22,8 @@ class FilterService @Inject constructor(
     suspend fun getDepth2CategoryById(id: String): BaseResponse<List<CategoryDepth2Response>> = apiClient.get("$apiRoute/sub-category/$id").body()
 
 
-    fun getBrandFilter(): Flow<NetworkResult<List<BrandResponse>>> = safeCall {
-        apiClient.get("$apiRoute/brand").body()
-    }
+    suspend fun getBrandFilter(): BaseResponse<List<BrandResponse>> = apiClient.get("$apiRoute/brand").body()
 
-    fun getZeroCategoryFilter(): Flow<NetworkResult<List<ZeroCategoryResponse>>> = safeCall {
-        apiClient.get("$apiRoute/zero-category").body()
-    }
 
+    suspend fun getZeroCategoryFilter(): BaseResponse<List<ZeroCategoryResponse>> = apiClient.get("$apiRoute/zero-category").body()
 }

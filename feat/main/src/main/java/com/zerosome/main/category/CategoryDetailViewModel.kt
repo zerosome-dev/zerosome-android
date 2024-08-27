@@ -10,13 +10,18 @@ import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
 import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.category.GetLowerCategoryUseCase
+import com.zerosome.domain.model.Brand
 import com.zerosome.domain.model.CategoryDepth1
 import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.model.CategoryProduct
 import com.zerosome.domain.model.SortItem
+import com.zerosome.domain.model.ZeroCategory
+import com.zerosome.product.GetBrandsUseCase
+import com.zerosome.product.GetFilterUseCase
 import com.zerosome.product.GetProductsByFilterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -85,10 +90,10 @@ internal data class CategoryDetailState(
     val depth2Category: CategoryDepth2? = null,
     val categoryList: List<CategoryDepth2> = emptyList(),
     val sort: SortItem = SortItem.RECENT,
-    val brands: List<String> = emptyList(),
-    val selectedBrands: List<String> = emptyList(),
-    val zeroTag: List<String> = emptyList(),
-    val selectedTags: List<String> = emptyList(),
+    val brands: List<Brand> = emptyList(),
+    val selectedBrands: List<Brand> = emptyList(),
+    val zeroTag: List<ZeroCategory> = emptyList(),
+    val selectedTags: List<ZeroCategory> = emptyList(),
     val productList: List<CategoryProduct> = emptyList(),
 ) : UIState
 
@@ -104,14 +109,15 @@ internal sealed interface CategoryDetailEffect : UIEffect {
 internal class CategoryDetailViewModel @Inject constructor(
     private val categoryDetailFilterUseCase: GetProductsByFilterUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val getLowerCategoryUseCase: GetLowerCategoryUseCase
+    private val getLowerCategoryUseCase: GetLowerCategoryUseCase,
+    getBrandsUseCase: GetBrandsUseCase,
+    getTagUseCase: GetFilterUseCase,
 ) : BaseViewModel<CategoryDetailAction, CategoryDetailIntent, CategoryDetailState, CategoryDetailEffect>(
     initialState = CategoryDetailState()
 ) {
 
     private val productFlow = snapshotFlow { uiState.depth1CategoryName }.filterNotNull()
         .flatMapLatest {
-            Log.d("CPRI", "CATEGORYCODE : $it")
             getCategoriesUseCase.getSpecificCategory(it)
         }.onEach {
             setState { copy(depth1Category = it) }
@@ -134,6 +140,18 @@ internal class CategoryDetailViewModel @Inject constructor(
             initialValue = emptyList()
         ).launchIn(viewModelScope)
 
+    private val filterFlows = combine(
+        getBrandsUseCase().mapMerge().filterNotNull(),
+        getTagUseCase().mapMerge().filterNotNull()
+    ) { brands, tags ->
+        setState {
+            copy(
+                brands = brands,
+                zeroTag = tags
+            )
+        }
+    }.launchIn(viewModelScope)
+
     override fun actionPredicate(action: CategoryDetailAction): CategoryDetailIntent {
         return when (action) {
             is CategoryDetailAction.ViewCreated -> CategoryDetailIntent.Initialize(
@@ -149,13 +167,13 @@ internal class CategoryDetailViewModel @Inject constructor(
             CategoryDetailAction.ClearTag -> CategoryDetailIntent.Clear(DialogType.TAG)
             CategoryDetailAction.ClearBrand -> CategoryDetailIntent.Clear(DialogType.BRAND)
             CategoryDetailAction.ClickOpenTag -> CategoryDetailIntent.OpenDialog(DialogType.TAG)
-            is CategoryDetailAction.ClickSelectTag -> if (uiState.selectedTags.contains(action.tagName)) {
+            is CategoryDetailAction.ClickSelectTag -> if (uiState.selectedTags.find { it.categoryName == action.tagName } != null) {
                 CategoryDetailIntent.DeleteTag(action.tagName)
             } else {
                 CategoryDetailIntent.AddTag(action.tagName)
             }
 
-            is CategoryDetailAction.ClickSelectBrand -> if (uiState.selectedBrands.contains(action.brandName)) {
+            is CategoryDetailAction.ClickSelectBrand -> if (uiState.selectedBrands.find { it.brandName == action.brandName } != null) {
                 CategoryDetailIntent.DeleteBrand(action.brandName)
             } else {
                 CategoryDetailIntent.AddBrand(action.brandName)
@@ -194,30 +212,39 @@ internal class CategoryDetailViewModel @Inject constructor(
             is CategoryDetailIntent.SelectCategory -> setState { copy(depth2Category = intent.category) }
             is CategoryDetailIntent.SelectSortType -> setState { copy(sort = intent.sortItem) }.also { setEffect { CategoryDetailEffect.Idle } }
             is CategoryDetailIntent.AddBrand -> setState {
-                copy(
-                    brands = selectedBrands.toMutableList().apply { add(intent.brand) })
+                brands.find { it.brandName == intent.brand }?.let {
+                    copy(
+                        selectedBrands = selectedBrands.toMutableList().apply { add(it) })
+                } ?: this
             }
 
             is CategoryDetailIntent.DeleteBrand -> setState {
-                copy(
-                    brands = selectedBrands.toMutableList().apply { remove(intent.brand) })
+                brands.find { it.brandName == intent.brand }?.let {
+                    copy(
+                        selectedBrands = selectedBrands.toMutableList().apply { remove(it) })
+                } ?: this
             }
 
             is CategoryDetailIntent.AddTag -> setState {
-                copy(
-                    zeroTag = selectedTags.toMutableList().apply { add(intent.tagName) })
+                zeroTag.find { it.categoryName == intent.tagName }?.let {
+                    copy(
+                        selectedTags = selectedTags.toMutableList().apply { add(it) })
+                } ?: this
+
             }
 
             is CategoryDetailIntent.DeleteTag -> setState {
-                copy(
-                    zeroTag = selectedTags.toMutableList().apply { remove(intent.tagName) })
+                zeroTag.find { it.categoryName == intent.tagName }?.let {
+                    copy(
+                        selectedTags = selectedTags.toMutableList().apply { remove(it) })
+                } ?: this
             }
 
             is CategoryDetailIntent.Clear -> {
                 when (intent.type) {
                     DialogType.DEPTH2 -> setState { copy(depth2Category = null) }
-                    DialogType.BRAND -> setState { copy(brands = emptyList()) }
-                    DialogType.TAG -> setState { copy(zeroTag = emptyList()) }
+                    DialogType.BRAND -> setState { copy(selectedBrands = emptyList()) }
+                    DialogType.TAG -> setState { copy(selectedTags = emptyList()) }
                     else -> {}
                 }
             }
@@ -228,7 +255,12 @@ internal class CategoryDetailViewModel @Inject constructor(
     }
 
     private fun getChangedData() = withState {
-        categoryDetailFilterUseCase.setFilteringData(category2Code = depth2Category?.categoryCode, sortItem = sort, brandList = brands, zeroTag)
+        categoryDetailFilterUseCase.setFilteringData(
+            category2Code = depth2Category?.categoryCode,
+            sortItem = sort,
+            brandList = selectedBrands.map { it.brandCode },
+            zeroTagList = selectedTags.map { it.categoryCode }
+        )
     }
 }
 

@@ -79,36 +79,37 @@ class NetworkModule {
 
         install(Auth) {
             bearer {
-                val accessToken = runBlocking { dataSource.getAccessToken().firstOrNull() }
-                Log.d("CPRI", "ACCESS TOKEN $accessToken")
-                accessToken?.accessToken?.let { _ ->
-                    loadTokens {
-                        BearerTokens(accessToken.accessToken, accessToken.refreshToken)
-                    }
+                loadTokens {
+                    val token = dataSource.getTokenEntity()
+                    BearerTokens(token?.accessToken ?: "", token?.refreshToken ?: "")
                 }
                 refreshTokens {
                     val refreshToken = client.post(
                         urlString = "http://15.164.6.36:8080/api/v1/auth/refresh",
                     ) {
+                        val token = dataSource.getTokenEntity()
                         markAsRefreshTokenRequest()
                         contentType(ContentType.Application.Json)
+                        accept(ContentType.Application.Json)
                         setBody(
                             TokenEntity(
-                                accessToken?.accessToken ?: "",
-                                accessToken?.refreshToken ?: ""
+                                token?.accessToken ?: "",
+                                token?.refreshToken ?: ""
                             )
                         )
                     }.body<BaseResponse<TokenResponse>>()
 
                     BearerTokens(
-                        "Bearer ${refreshToken.data?.accessToken}",
+                        accessToken = refreshToken.data?.accessToken ?: "",
                         refreshToken = refreshToken.data?.refreshToken ?: ""
                     )
                         .also {
                             dataSource.updateToken(
                                 accessToken = refreshToken.data?.accessToken ?: "",
                                 refreshToken = refreshToken.data?.refreshToken ?: " "
-                            )
+                            ).also {
+                                Log.d("CPRI", "UPDATE : $it")
+                            }
                         }
                 }
             }

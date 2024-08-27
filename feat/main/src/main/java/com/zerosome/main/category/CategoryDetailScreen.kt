@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -50,8 +51,10 @@ import com.zerosome.design.ui.theme.ZSColor
 import com.zerosome.design.ui.view.CategoryComponent
 import com.zerosome.design.ui.view.NonLazyVerticalGrid
 import com.zerosome.design.ui.view.SimpleCardComponent
+import com.zerosome.domain.model.Brand
 import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.model.SortItem
+import com.zerosome.domain.model.ZeroCategory
 
 @Composable
 internal fun CategoryDetailScreen(
@@ -238,53 +241,61 @@ fun CategorySortBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun BrandFilterBottomSheet(
-    brandList: List<String>,
-    selectedBrandList: List<String>,
+    brandList: List<Brand>,
+    selectedBrandList: List<Brand>,
     onSelect: (String) -> Unit,
     onClear: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest, containerColor = Color.White) {
-        Text(text = "브랜드", style = H2, modifier = Modifier.padding(horizontal = 24.dp))
+        Text(text = "브랜드", style = H2, modifier = Modifier.padding(horizontal = 24.dp), color = ZSColor.Neutral900)
         Spacer(modifier = Modifier.height(20.dp))
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.padding(horizontal = 24.dp)
-        ) {
-            brandList.forEach {
-                ZSChip(
-                    enable = selectedBrandList.contains(it),
-                    chipText = it,
-                    onClick = { onSelect(it) })
+        LazyColumn {
+            item {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    brandList.forEach {
+                        ZSChip(
+                            enable = selectedBrandList.contains(it),
+                            chipText = it.brandName,
+                            onClick = { onSelect(it.brandName) })
+                    }
+                }
             }
+            item {
+                Spacer(modifier = Modifier.height(50.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ZSButton(
+                        onClick = onClear,
+                        buttonType = ButtonType.SECONDARY,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "초기화",
+                            style = SubTitle1,
+                            color = ZSColor.Neutral600,
+                        )
+                    }
+                    ZSButton(onClick = onDismissRequest, modifier = Modifier.weight(2f)) {
+                        Text(
+                            text = "적용",
+                            style = SubTitle1,
+                            color = Color.White,
+                        )
+                    }
+                }
+            }
+
         }
-        Spacer(modifier = Modifier.height(50.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ZSButton(
-                onClick = onClear,
-                buttonType = ButtonType.SECONDARY,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = "초기화",
-                    style = SubTitle1,
-                    color = ZSColor.Neutral600,
-                )
-            }
-            ZSButton(onClick = onDismissRequest, modifier = Modifier.weight(2f)) {
-                Text(
-                    text = "적용",
-                    style = SubTitle1,
-                    color = Color.White,
-                )
-            }
-        }
+
     }
 }
 
@@ -357,25 +368,25 @@ fun CategoryFilterBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TagFilter(
-    tagList: List<String>,
-    selectedTagList: List<String> = emptyList(),
+    tagList: List<ZeroCategory>,
+    selectedTagList: List<ZeroCategory> = emptyList(),
     onSelect: (String) -> Unit,
     onClear: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest, containerColor = Color.White) {
-        Text(text = "제로태그", style = H2, modifier = Modifier.padding(horizontal = 24.dp))
+        Text(text = "제로태그", style = H2, modifier = Modifier.padding(horizontal = 24.dp), color = ZSColor.Neutral900)
         Spacer(modifier = Modifier.height(20.dp))
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             tagList.forEach {
                 ZSChip(
                     enable = selectedTagList.contains(it),
-                    chipText = it,
-                    onClick = { onSelect(it) })
+                    chipText = it.categoryName,
+                    onClick = { onSelect(it.categoryName) })
             }
         }
         Spacer(modifier = Modifier.height(50.dp))

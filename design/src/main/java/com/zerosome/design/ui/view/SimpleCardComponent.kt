@@ -80,7 +80,7 @@ fun SimpleCardComponent(
         reviewRating?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ZSImage(painter = painterResource(id = R.drawable.ic_star_filled))
+                ZSImage(painter = painterResource(id = R.drawable.ic_star_filled), modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(text = "$it", style = Body3, color = ZSColor.Neutral400)
                 Spacer(modifier = Modifier.width(2.dp))
