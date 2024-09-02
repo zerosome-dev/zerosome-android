@@ -45,7 +45,8 @@ import com.zerosome.design.ui.view.CommonTitleView
 internal fun TermsScreen(
     onBackPressed: () -> Unit,
     onTermsAgreed: (isMarketingAgreed: Boolean) -> Unit,
-    viewModel: TermsViewModel = hiltViewModel()
+    moveToWeb: () -> Unit,
+    viewModel: TermsViewModel = hiltViewModel(),
 ) {
     ZSScreen(modifier = Modifier.fillMaxSize()) {
         ChangeSystemColor(
@@ -85,17 +86,17 @@ internal fun TermsScreen(
             componentTitle = com.zerosome.design.R.string.screen_terms_context_service,
             isChecked = viewModel.uiState.serviceTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickService) },
-            onClickedWatchPage = {})
+            onClickedWatchPage = moveToWeb)
         TermsAgreementComponent(
             componentTitle = com.zerosome.design.R.string.screen_terms_context_privacy,
             isChecked = viewModel.uiState.privacyTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickPrivacy) },
-            onClickedWatchPage = {})
+            onClickedWatchPage = moveToWeb)
         TermsAgreementComponent(
             componentTitle = com.zerosome.design.R.string.screen_terms_context_marketing,
             isChecked = viewModel.uiState.marketingTermsAgreed,
             onCheckedChange = { viewModel.setAction(TermsAction.ClickMarketing) },
-            onClickedWatchPage = {})
+            onClickedWatchPage = moveToWeb)
 
         Spacer(modifier = Modifier.weight(1f))
 

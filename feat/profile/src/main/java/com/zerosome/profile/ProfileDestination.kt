@@ -4,6 +4,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.zerosome.webview.WebViewDestination
+import com.zerosome.webview.WebViewScreen
 
 open class Profile {
     open val route: String = "Profile"
@@ -24,7 +26,8 @@ data object ChangeNickname : Profile() {
 
 fun NavGraphBuilder.profileNavigation(
     navController: NavController,
-    onMoveToLogin: () -> Unit
+    onMoveToLogin: () -> Unit,
+    onMoveToUrl: (String) -> Unit
 ) {
     navigation(route = Profile().route, startDestination = Main.route) {
         composable(Main.route) {
@@ -32,7 +35,11 @@ fun NavGraphBuilder.profileNavigation(
                 onClickChangeNickname = {
                     navController.navigate(ChangeNickname.route)
                 },
-                onMoveToLogin = onMoveToLogin
+                onMoveToLogin = onMoveToLogin,
+                moveToWeb = {
+//                    navController.navigate(WebViewDestination.route)
+                    onMoveToUrl("https://zerosome.imweb.me/?mode=privacy")
+                },
             )
         }
     }
@@ -40,5 +47,8 @@ fun NavGraphBuilder.profileNavigation(
         ChangeNicknameScreen(onBackPressed = {
             navController.popBackStack()
         })
+    }
+    composable(WebViewDestination.route) {
+        WebViewScreen(url = "")
     }
 }

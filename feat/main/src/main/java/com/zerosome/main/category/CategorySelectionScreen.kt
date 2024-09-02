@@ -134,7 +134,7 @@ fun GridItemSpan(
         NonLazyVerticalGrid(
             modifier = Modifier.padding(horizontal = 22.dp),
             columns = 4,
-            itemCount = if (categoryItems.size > 8) 8 else categoryItems.size,
+            itemCount = if (categoryItems.filter { it.optional.not() }.size > 8) 8 else categoryItems.size,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {

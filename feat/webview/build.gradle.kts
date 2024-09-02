@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zerosome.profile"
+    namespace = "com.zerosome.webview"
     compileSdk = 34
 
     defaultConfig {
@@ -41,12 +41,17 @@ android {
 }
 
 dependencies {
-    implementation(project(":design"))
+
     implementation(project(":core"))
-    implementation(project(":domain"))
+    implementation(project(":design"))
     implementation(project(":domain:onboarding"))
-    implementation(project(":domain:profile"))
-    implementation(project(":feat:webview"))
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -56,10 +61,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
+
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)

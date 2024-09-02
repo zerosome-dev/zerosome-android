@@ -38,6 +38,7 @@ import com.zerosome.design.ui.view.CommonListComponent
 @Composable
 internal fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
+    moveToWeb: () -> Unit,
     onClickChangeNickname: () -> Unit,
     onMoveToLogin: () -> Unit,
 ) {
@@ -133,8 +134,8 @@ internal fun ProfileScreen(
             color = ZSColor.Neutral400,
             modifier = Modifier.padding(start = 22.dp)
         )
-        CommonListComponent(title = "서비스 이용약관", modifier = Modifier, onListClick = {})
-        CommonListComponent(title = "개인정보 처리방침", modifier = Modifier, onListClick = {})
+        CommonListComponent(title = "서비스 이용약관", modifier = Modifier, onListClick = moveToWeb)
+        CommonListComponent(title = "개인정보 처리방침", modifier = Modifier, onListClick = moveToWeb)
         CommonListComponent(
             title = "버전 정보",
             modifier = Modifier,

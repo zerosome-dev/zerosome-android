@@ -57,7 +57,7 @@ fun OnboardingNavScreen(
                 baseViewModel.setAction(OnboardingAction.UserMarketingAgreed(it)).also {
                     navHostController.navigate(Nickname.route)
                 }
-            })
+            }, moveToWeb = {})
         }
         composable(route = Nickname.route) {
             NicknameScreen(

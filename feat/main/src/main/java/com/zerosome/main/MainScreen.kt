@@ -1,5 +1,7 @@
 package com.zerosome.main
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -14,9 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,6 +44,7 @@ import com.zerosome.review.reviewNavigation
 @Composable
 fun MainScreen(onMoveToLogin: () -> Unit) {
     val navController = rememberNavController()
+    val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize()) {
         NavHost(
             modifier = Modifier.weight(1f),
@@ -61,7 +67,10 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
                     }
                 )
             }
-            profileNavigation(navController, onMoveToLogin = onMoveToLogin)
+            profileNavigation(navController) {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                context.startActivity(browserIntent)
+            }
             composable(Rollout.route) {
                 RolloutScreen(
                     onBackPressed = {

@@ -20,6 +20,7 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -73,11 +74,7 @@ class NetworkModule {
         }
         install(Logging) {
             this.level = LogLevel.ALL
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Log.i("HTTP-REQUEST", message)
-                }
-            }
+            logger = Logger.ANDROID
         }
     }
 
@@ -145,11 +142,7 @@ class NetworkModule {
         }
         install(Logging) {
             this.level = LogLevel.ALL
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Log.i("HTTP-REQUEST", message)
-                }
-            }
+            logger = Logger.ANDROID
         }
 
 
