@@ -1,5 +1,6 @@
 package com.zerosome.main.category
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
@@ -56,6 +57,7 @@ internal class CategorySelectionViewModel @Inject constructor(
         }
 
     override fun collectIntent(intent: CategorySelectionIntent) {
+        Log.d("CPRI", "$intent")
         when(intent) {
             is CategorySelectionIntent.SelectMore -> setEffect {
                 CategorySelectionEffect.NavigateToCategorySelectionDetail(intent.depth1.categoryCode, intent.depth2?.categoryCode)

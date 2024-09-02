@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -61,17 +62,18 @@ class NetworkModule {
                 ignoreUnknownKeys = true
                 encodeDefaults = true
                 serializersModule = SerializersModule {
+                    polymorphic(BaseResponse::class) {}
                 }
             })
         }
-        HttpResponseValidator {
-            validateResponse {
-                val body = it.body<BaseResponse<Any>>()
-                if (body.status.not()) {
-                    throw ZSNetworkException(NetworkError.from(body.code))
-                }
-            }
-        }
+//        HttpResponseValidator {
+//            validateResponse {
+//                val body = it.body<BaseResponse<Any>>()
+//                if (body.status.not()) {
+//                    throw ZSNetworkException(NetworkError.from(body.code))
+//                }
+//            }
+//        }
         install(Logging) {
             this.level = LogLevel.ALL
             logger = Logger.ANDROID
@@ -130,7 +132,14 @@ class NetworkModule {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
         }
-
+//        HttpResponseValidator {
+//            validateResponse {
+//                val body = it.body<BaseResponse<*>>()
+//                if (body.status.not()) {
+//                    throw ZSNetworkException(NetworkError.from(body.code))
+//                }
+//            }
+//        }
         install(ContentNegotiation) {
             json(Json {
                 this.prettyPrint = true

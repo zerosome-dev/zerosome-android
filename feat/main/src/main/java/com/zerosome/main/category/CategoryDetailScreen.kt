@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +45,8 @@ import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.component.ZSDropdown
+import com.zerosome.design.ui.component.ZSImage
+import com.zerosome.design.ui.component.ZSVector
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H2
 import com.zerosome.design.ui.theme.SubTitle1
@@ -72,6 +76,7 @@ internal fun CategoryDetailScreen(
     when (effect) {
         is CategoryDetailEffect.OpenSortDialog -> {
             CategorySortBottomSheet(
+                selectedSortItem = viewModel.uiState.sort,
                 onItemSet = {
                     viewModel.setAction(CategoryDetailAction.ClickSelectSort(it))
                 }
@@ -81,34 +86,33 @@ internal fun CategoryDetailScreen(
         is CategoryDetailEffect.OpenBrandDialog -> {
             BrandFilterBottomSheet(
                 brandList = viewModel.uiState.brands,
-                selectedBrandList = viewModel.uiState.selectedBrands,
+                selectedBrandList = viewModel.uiState.tempBrands,
                 onSelect = { viewModel.setAction(CategoryDetailAction.ClickSelectBrand(it)) },
                 onClear = { viewModel.setAction(CategoryDetailAction.ClearBrand) },
-                onDismissRequest = {
-                    viewModel.setAction(CategoryDetailAction.DismissDialog)
-                }
+                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog) },
+                onConfirm = { viewModel.setAction(CategoryDetailAction.ClickConfirm)}
             )
         }
 
         is CategoryDetailEffect.OpenTagDialog -> {
             TagFilter(
                 tagList = viewModel.uiState.zeroTag,
-                selectedTagList = viewModel.uiState.selectedTags,
+                selectedTagList = viewModel.uiState.tempZeroTag,
                 onSelect = { viewModel.setAction(CategoryDetailAction.ClickSelectTag(it)) },
                 onClear = { viewModel.setAction(CategoryDetailAction.ClearTag) },
-                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog) })
+                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog)},
+                onConfirm = { viewModel.setAction(CategoryDetailAction.ClickConfirm )})
         }
 
         is CategoryDetailEffect.OpenCategoryDialog -> {
             CategoryFilterBottomSheet(
                 categories = viewModel.uiState.categoryList,
                 selectedCategoryName = viewModel.uiState.depth1Category?.categoryName ?: "",
-                selectedCategory = viewModel.uiState.depth2Category,
+                selectedCategory = viewModel.uiState.tempCategory,
                 onSelect = { viewModel.setAction(CategoryDetailAction.ClickSelectCategoryDepth2(it)) },
                 onClear = { viewModel.setAction(CategoryDetailAction.ClearCategory) },
-                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog).also {
-                    CategoryDetailAction.ClickConfirm
-                } })
+                onDismissRequest = { viewModel.setAction(CategoryDetailAction.DismissDialog)},
+                onConfirm = { viewModel.setAction(CategoryDetailAction.ClickConfirm )})
         }
 
         else -> {}
@@ -139,17 +143,21 @@ internal fun CategoryDetailScreen(
             item {
                 ZSDropdown(
                     onItemSelected = { viewModel.setAction(CategoryDetailAction.ClickOpenBrand) },
-                    placeholderText = if (viewModel.uiState.selectedBrands.isNotEmpty()) {
-                        "${viewModel.uiState.selectedBrands.first()} 외 ${viewModel.uiState.selectedBrands.size - 1}"
-                    } else "브랜드"
+                    placeholderText = when(viewModel.uiState.selectedBrands.size) {
+                        1 -> viewModel.uiState.selectedBrands.first().brandName
+                        0 -> "브랜드"
+                        else -> "${viewModel.uiState.selectedBrands.first().brandName} 외 ${viewModel.uiState.selectedBrands.size - 1}"
+                    }
                 )
             }
             item {
                 ZSDropdown(
                     onItemSelected = { viewModel.setAction(CategoryDetailAction.ClickOpenTag) },
-                    placeholderText = if (viewModel.uiState.selectedTags.isNotEmpty()) {
-                        "${viewModel.uiState.selectedBrands.first()} 외 ${viewModel.uiState.selectedBrands.size - 1}"
-                    } else "브랜드"
+                    placeholderText = when(viewModel.uiState.selectedTags.size) {
+                        1 -> viewModel.uiState.selectedTags.first().categoryName
+                        0 -> "제로태그"
+                        else -> "${viewModel.uiState.selectedTags.first().categoryName} 외 ${viewModel.uiState.selectedTags.size - 1}"
+                    }
                 )
             }
         }
@@ -179,9 +187,11 @@ internal fun CategoryDetailScreen(
                         style = Body3
                     )
                     Spacer(modifier = Modifier.width(2.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_chevron_down),
-                        contentDescription = "DROPDOWN_DOWN"
+                    ZSVector(
+                        imageVectorResource = R.drawable.ic_chevron_down,
+                        contentDescription = "DROPDOWN_DOWN",
+                        scale = ContentScale.Crop,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
@@ -245,7 +255,8 @@ fun BrandFilterBottomSheet(
     selectedBrandList: List<Brand>,
     onSelect: (String) -> Unit,
     onClear: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest, containerColor = Color.White) {
         Text(text = "브랜드", style = H2, modifier = Modifier.padding(horizontal = 24.dp), color = ZSColor.Neutral900)
@@ -284,7 +295,7 @@ fun BrandFilterBottomSheet(
                             color = ZSColor.Neutral600,
                         )
                     }
-                    ZSButton(onClick = onDismissRequest, modifier = Modifier.weight(2f)) {
+                    ZSButton(onClick = onConfirm, modifier = Modifier.weight(2f)) {
                         Text(
                             text = "적용",
                             style = SubTitle1,
@@ -307,7 +318,8 @@ fun CategoryFilterBottomSheet(
     selectedCategory: CategoryDepth2? = null,
     onSelect: (CategoryDepth2?) -> Unit,
     onClear: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -354,7 +366,7 @@ fun CategoryFilterBottomSheet(
 
                     )
             }
-            ZSButton(onClick = onDismissRequest, modifier = Modifier.weight(2f)) {
+            ZSButton(onClick = onConfirm, modifier = Modifier.weight(2f)) {
                 Text(
                     text = "적용",
                     style = SubTitle1,
@@ -372,7 +384,8 @@ fun TagFilter(
     selectedTagList: List<ZeroCategory> = emptyList(),
     onSelect: (String) -> Unit,
     onClear: () -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest, containerColor = Color.White) {
         Text(text = "제로태그", style = H2, modifier = Modifier.padding(horizontal = 24.dp), color = ZSColor.Neutral900)
@@ -407,7 +420,7 @@ fun TagFilter(
                     color = ZSColor.Neutral600,
                 )
             }
-            ZSButton(onClick = onDismissRequest, modifier = Modifier.weight(2f)) {
+            ZSButton(onClick = onConfirm, modifier = Modifier.weight(2f)) {
                 Text(
                     text = "적용",
                     style = SubTitle1,

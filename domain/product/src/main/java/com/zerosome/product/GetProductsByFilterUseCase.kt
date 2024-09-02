@@ -1,5 +1,6 @@
 package com.zerosome.product
 
+import android.util.Log
 import com.zerosome.domain.model.SortItem
 import com.zerosome.domain.repository.ProductRepository
 import com.zerosome.network.NetworkResult

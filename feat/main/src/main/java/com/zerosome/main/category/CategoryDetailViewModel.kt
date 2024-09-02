@@ -95,6 +95,10 @@ internal data class CategoryDetailState(
     val zeroTag: List<ZeroCategory> = emptyList(),
     val selectedTags: List<ZeroCategory> = emptyList(),
     val productList: List<CategoryProduct> = emptyList(),
+
+    val tempCategory: CategoryDepth2? = null,
+    val tempBrands: List<Brand> = emptyList(),
+    val tempZeroTag: List<ZeroCategory> = emptyList(),
 ) : UIState
 
 internal sealed interface CategoryDetailEffect : UIEffect {
@@ -129,9 +133,10 @@ internal class CategoryDetailViewModel @Inject constructor(
             setState { copy(categoryList = it) }
         }.flatMapLatest {
             val category =
-                it.find { category -> category.categoryCode == uiState.depth2CategoryName }?.categoryCode
-                    ?: it.first().categoryCode
-            categoryDetailFilterUseCase(category)
+                it.find { category -> category.categoryCode == uiState.depth2CategoryName } ?: it.first()
+            categoryDetailFilterUseCase(category.categoryCode).also {
+                setState { copy(depth2Category = category) }
+            }
         }.mapMerge().onEach {
             setState { copy(productList = it ?: emptyList()) }
         }.stateIn(
@@ -167,13 +172,13 @@ internal class CategoryDetailViewModel @Inject constructor(
             CategoryDetailAction.ClearTag -> CategoryDetailIntent.Clear(DialogType.TAG)
             CategoryDetailAction.ClearBrand -> CategoryDetailIntent.Clear(DialogType.BRAND)
             CategoryDetailAction.ClickOpenTag -> CategoryDetailIntent.OpenDialog(DialogType.TAG)
-            is CategoryDetailAction.ClickSelectTag -> if (uiState.selectedTags.find { it.categoryName == action.tagName } != null) {
+            is CategoryDetailAction.ClickSelectTag -> if (uiState.tempZeroTag.find { it.categoryName == action.tagName } != null) {
                 CategoryDetailIntent.DeleteTag(action.tagName)
             } else {
                 CategoryDetailIntent.AddTag(action.tagName)
             }
 
-            is CategoryDetailAction.ClickSelectBrand -> if (uiState.selectedBrands.find { it.brandName == action.brandName } != null) {
+            is CategoryDetailAction.ClickSelectBrand -> if (uiState.tempBrands.find { it.brandName == action.brandName } != null) {
                 CategoryDetailIntent.DeleteBrand(action.brandName)
             } else {
                 CategoryDetailIntent.AddBrand(action.brandName)
@@ -209,42 +214,42 @@ internal class CategoryDetailViewModel @Inject constructor(
                 }
             }
 
-            is CategoryDetailIntent.SelectCategory -> setState { copy(depth2Category = intent.category) }
+            is CategoryDetailIntent.SelectCategory -> setState { copy(tempCategory = intent.category) }
             is CategoryDetailIntent.SelectSortType -> setState { copy(sort = intent.sortItem) }.also { setEffect { CategoryDetailEffect.Idle } }
             is CategoryDetailIntent.AddBrand -> setState {
                 brands.find { it.brandName == intent.brand }?.let {
                     copy(
-                        selectedBrands = selectedBrands.toMutableList().apply { add(it) })
+                        tempBrands = tempBrands.toMutableList().apply { add(it) })
                 } ?: this
             }
 
             is CategoryDetailIntent.DeleteBrand -> setState {
-                brands.find { it.brandName == intent.brand }?.let {
+                tempBrands.find { it.brandName == intent.brand }?.let {
                     copy(
-                        selectedBrands = selectedBrands.toMutableList().apply { remove(it) })
+                        tempBrands = tempBrands.toMutableList().apply { remove(it) })
                 } ?: this
             }
 
             is CategoryDetailIntent.AddTag -> setState {
                 zeroTag.find { it.categoryName == intent.tagName }?.let {
                     copy(
-                        selectedTags = selectedTags.toMutableList().apply { add(it) })
+                        tempZeroTag = tempZeroTag.toMutableList().apply { add(it) })
                 } ?: this
 
             }
 
             is CategoryDetailIntent.DeleteTag -> setState {
-                zeroTag.find { it.categoryName == intent.tagName }?.let {
+                tempZeroTag.find { it.categoryName == intent.tagName }?.let {
                     copy(
-                        selectedTags = selectedTags.toMutableList().apply { remove(it) })
+                        tempZeroTag = tempZeroTag.toMutableList().apply { remove(it) })
                 } ?: this
             }
 
             is CategoryDetailIntent.Clear -> {
                 when (intent.type) {
-                    DialogType.DEPTH2 -> setState { copy(depth2Category = null) }
-                    DialogType.BRAND -> setState { copy(selectedBrands = emptyList()) }
-                    DialogType.TAG -> setState { copy(selectedTags = emptyList()) }
+                    DialogType.DEPTH2 -> setState { copy(tempCategory = null) }
+                    DialogType.BRAND -> setState { copy(tempBrands = emptyList()) }
+                    DialogType.TAG -> setState { copy(tempZeroTag = emptyList()) }
                     else -> {}
                 }
             }
@@ -254,13 +259,20 @@ internal class CategoryDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getChangedData() = withState {
-        categoryDetailFilterUseCase.setFilteringData(
-            category2Code = depth2Category?.categoryCode,
-            sortItem = sort,
-            brandList = selectedBrands.map { it.brandCode },
-            zeroTagList = selectedTags.map { it.categoryCode }
-        )
+    private fun getChangedData() = setState {
+        copy(depth2Category = tempCategory,
+            selectedBrands = tempBrands,
+            selectedTags = tempZeroTag,
+        ).also { it ->
+            categoryDetailFilterUseCase.setFilteringData(
+                category2Code = it.depth2Category?.categoryCode,
+                sortItem = sort,
+                brandList = it.selectedBrands.map { it.brandCode },
+                zeroTagList = it.zeroTag.map { it.categoryCode }
+            )
+        }.also {
+            setEffect { CategoryDetailEffect.Idle }
+        }
     }
 }
 

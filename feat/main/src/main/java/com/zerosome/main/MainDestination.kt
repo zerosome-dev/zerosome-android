@@ -27,12 +27,18 @@ internal object CategoryDetail : MainDestination() {
     override val route: String
         get() = "${super.route}/CategoryDetail"
 
-    const val category1 = "category_first"
-    const val category2 = "category_second"
+    const val CATEGORY_FIRST = "category_first"
+    const val CATEGORY_SECOND = "category_second"
 
     val argument = listOf(
-        navArgument(category1) { type = NavType.StringType },
-        navArgument(category2) { type = NavType.StringType }
+        navArgument(CATEGORY_FIRST) {
+            type = NavType.StringType
+        },
+        navArgument(CATEGORY_SECOND) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = ""
+        }
     )
 }
 

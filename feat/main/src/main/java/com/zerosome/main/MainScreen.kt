@@ -60,8 +60,9 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
             composable(Category.route) {
                 CategorySelectionScreen(
                     onCategorySelected = { depth1, depth2 ->
-                        Log.d("CPRI", "ROUTE : \"${CategoryDetail.route}/$depth1/$depth2\"")
-                        navController.navigate("${CategoryDetail.route}/$depth1/$depth2")
+                        navController.navigate(
+                            "${CategoryDetail.route}?${CategoryDetail.CATEGORY_FIRST}=$depth1&${CategoryDetail.CATEGORY_SECOND}=$depth2"
+                        )
                     }
                 )
             }
@@ -81,11 +82,11 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
                 )
             }
             composable(
-                "${CategoryDetail.route}/{${CategoryDetail.category1}}/{${CategoryDetail.category2}}",
+                "${CategoryDetail.route}?${CategoryDetail.CATEGORY_FIRST}={${CategoryDetail.CATEGORY_FIRST}}&${CategoryDetail.CATEGORY_SECOND}={${CategoryDetail.CATEGORY_SECOND}}",
                 arguments = CategoryDetail.argument
             ) {
-                val firstCategory = it.arguments?.getString(CategoryDetail.category1)
-                val secondCategory = it.arguments?.getString(CategoryDetail.category2)
+                val firstCategory = it.arguments?.getString(CategoryDetail.CATEGORY_FIRST)
+                val secondCategory = it.arguments?.getString(CategoryDetail.CATEGORY_SECOND)
                 CategoryDetailScreen(
                     category1Id = requireNotNull(firstCategory) { "Argument Must be passed " },
                     category2Id = secondCategory,
