@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ZSImage
+import com.zerosome.design.ui.component.ZSVector
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.SubTitle1
 import com.zerosome.design.ui.theme.SubTitle2
@@ -36,8 +37,8 @@ fun SimpleCardComponent(
     modifier: Modifier = Modifier,
     title: String,
     brandName: String? = null,
-    reviewRating: Float? = null,
-    reviewCount: Int? = null,
+    reviewRating: Float = 0f,
+    reviewCount: Int = 0,
     image: String,
     onClick: () -> Unit
 ) {
@@ -77,17 +78,18 @@ fun SimpleCardComponent(
             color = ZSColor.Neutral900,
             modifier = Modifier.width(150.dp)
         )
-        reviewRating?.let {
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ZSImage(painter = painterResource(id = R.drawable.ic_star_filled), modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(text = "$it", style = Body3, color = ZSColor.Neutral400)
-                Spacer(modifier = Modifier.width(2.dp))
-                reviewCount?.let {
-                    Text(text = "($reviewCount)", style = Body3, color = ZSColor.Neutral400)
-                }
-            }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            ZSVector(
+                imageVectorResource = R.drawable.ic_star_filled,
+                modifier = Modifier.size(16.dp),
+                scale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(text = "$reviewRating", style = Body3, color = ZSColor.Neutral400)
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(text = "($reviewCount)", style = Body3, color = ZSColor.Neutral400)
+
         }
     }
 }

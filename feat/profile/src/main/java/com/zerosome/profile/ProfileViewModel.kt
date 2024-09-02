@@ -100,7 +100,9 @@ internal class ProfileViewModel @Inject constructor(
                     }
                 }
             }
-            is ProfileIntent.Navigate -> {}
+            is ProfileIntent.Navigate -> {
+
+            }
             is ProfileIntent.RevokeAccess -> {}
 
         }

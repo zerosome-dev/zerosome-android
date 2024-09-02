@@ -198,7 +198,7 @@ internal fun CategoryDetailScreen(
                     brandName = it.brand,
                     image = it.image ?: "",
                     modifier = Modifier.fillMaxWidth(),
-                    reviewRating = it.rating,
+                    reviewRating = it.rating ?: 0f,
                     onClick = { onClickProduct(it.id) }
                 )
             }

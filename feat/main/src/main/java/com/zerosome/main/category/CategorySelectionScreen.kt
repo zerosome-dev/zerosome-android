@@ -28,6 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -66,43 +70,41 @@ internal fun CategorySelectionScreen(
             }
         }
     }
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-    ) {
 
-        Column {
-            Row(modifier = Modifier.padding(horizontal = 22.dp, vertical = 10.dp)) {
-                Text(text = "카테고리", style = H1)
-            }
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(state.categories) {
-                    GridItemSpan(
-                        categoryName = it.categoryName,
-                        categoryItems = it.categoryDepth2,
-                        onClickCategory = { depth2 ->
-                            viewModel.setAction(
-                                CategorySelectionAction.ClickSpecificCategory(
-                                    it,
-                                    depth2
-                                )
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .statusBarsPadding()
+        .drawBehind {
+            drawRect(color = Color.White)
+        }) {
+        Row(modifier = Modifier.padding(horizontal = 22.dp, vertical = 10.dp)) {
+            Text(text = "카테고리", style = H1, color = ZSColor.Neutral900)
+        }
+        LazyColumn(modifier = Modifier.weight(1f)) {
+            items(state.categories) {
+                GridItemSpan(
+                    categoryName = it.categoryName,
+                    categoryItems = it.categoryDepth2,
+                    onClickCategory = { depth2 ->
+                        viewModel.setAction(
+                            CategorySelectionAction.ClickSpecificCategory(
+                                it,
+                                depth2
                             )
-                        },
-                        onClickCategoryAll = {
-                            viewModel.setAction(
-                                CategorySelectionAction.ClickCategoryMore(
-                                    it
-                                )
+                        )
+                    },
+                    onClickCategoryAll = {
+                        viewModel.setAction(
+                            CategorySelectionAction.ClickCategoryMore(
+                                it
                             )
-                        }
-                    )
-                }
+                        )
+                    }
+                )
             }
         }
     }
 }
-
 
 @Composable
 fun GridItemSpan(
@@ -120,7 +122,7 @@ fun GridItemSpan(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = categoryName, style = H2, modifier = Modifier
+                text = categoryName, style = H2, color = ZSColor.Neutral900, modifier = Modifier
                     .weight(1f)
             )
             Image(
@@ -149,33 +151,42 @@ fun GridItemSpan(
                     imageString = categoryItems[it].categoryImage ?: "",
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .background(color = ZSColor.Neutral50, shape = RoundedCornerShape(8)),
+                        .drawBehind {
+                            drawRoundRect(
+                                color = ZSColor.Neutral50,
+                                cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                            )
+                        },
+                    scale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = categoryItems[it].categoryName,
                     style = Body3,
+                    color = ZSColor.Neutral900,
                     textAlign = TextAlign.Center
                 )
             }
         }
-        Column {
-            Spacer(modifier = Modifier.height(30.dp))
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(12.dp)
-                    .background(ZSColor.Neutral50)
-            )
-        }
         if (categoryItems.size > 8) {
+            Spacer(modifier = Modifier.height(10.dp))
             ZSButton(
                 onClick = onClickCategoryAll,
                 buttonType = ButtonType.SECONDARY,
-                buttonSize = ButtonSize.SMALL
+                buttonSize = ButtonSize.SMALL,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text(text = "전체 보기", style = Body3, color = ZSColor.Neutral900)
             }
         }
+        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+                .drawBehind {
+                    drawRect(color = ZSColor.Neutral50)
+                }
+        )
     }
 }

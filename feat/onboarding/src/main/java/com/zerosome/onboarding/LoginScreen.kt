@@ -90,23 +90,23 @@ internal fun LoginScreen(
                 contentDescription = "KAKAO_LOGIN"
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = stringResource(id = com.zerosome.design.R.string.screen_login_context01),
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clickable { viewModel.setAction(LoginAction.ClickSkip) }
-                    .drawBehind {
-                        val strokeWidthPx = 1.dp.toPx()
-                        val verticalOffset = size.height
-                        drawLine(
-                            color = Color.White,
-                            strokeWidth = strokeWidthPx,
-                            start = Offset(0f, verticalOffset),
-                            end = Offset(size.width, verticalOffset)
-                        )
-                    },
-                textAlign = TextAlign.Center, style = Body2,
-            )
+//            Text(
+//                text = stringResource(id = com.zerosome.design.R.string.screen_login_context01),
+//                modifier = Modifier
+//                    .align(Alignment.CenterHorizontally)
+//                    .clickable { viewModel.setAction(LoginAction.ClickSkip) }
+//                    .drawBehind {
+//                        val strokeWidthPx = 1.dp.toPx()
+//                        val verticalOffset = size.height
+//                        drawLine(
+//                            color = Color.White,
+//                            strokeWidth = strokeWidthPx,
+//                            start = Offset(0f, verticalOffset),
+//                            end = Offset(size.width, verticalOffset)
+//                        )
+//                    },
+//                textAlign = TextAlign.Center, style = Body2,
+//            )
             Spacer(modifier = Modifier.weight(1f))
 
         }

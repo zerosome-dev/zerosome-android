@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -42,6 +43,7 @@ import com.zerosome.design.ImageHorizontalPager
 import com.zerosome.design.R
 import com.zerosome.design.extension.ChangeSystemColor
 import com.zerosome.design.ui.component.ZSImage
+import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.component.ZSTag
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.Caption
@@ -62,44 +64,47 @@ internal fun HomeScreen(
     ChangeSystemColor(
         statusBarColor = Color.Transparent
     )
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+    ZSScreen(
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
+        isLoading = viewModel.isLoading
     ) {
-        item {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.img_app_logo),
-                    contentDescription = "",
-                    modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 9.dp)
-                )
-            }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_app_logo),
+                contentDescription = "",
+                modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 9.dp)
+            )
         }
-        items(viewModel.uiState.uiModels, key = { it.keyId }) {
-            when (it) {
-                is HomeUiModel.Banners -> {
-                    ImageHorizontalPager(
-                        listItems = it.bannerList.map { it.url }, modifier = Modifier
-                            .fillMaxWidth()
-                            .height(240.dp)
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f),
+        ) {
+            items(viewModel.uiState.uiModels, key = { it.keyId }) {
+                when (it) {
+                    is HomeUiModel.Banners -> {
+                        ImageHorizontalPager(
+                            listItems = it.bannerList.map { it.url }, modifier = Modifier
+                                .fillMaxWidth()
+                                .height(240.dp)
+                        )
+                    }
+
+                    is HomeUiModel.Rollouts -> NewItemComponent(
+                        products = it.rollout,
+                        onClickProduct = onClickProduct,
+                        onClickMore = onClickMore
+                    )
+
+                    is HomeUiModel.Cafes -> CafeCategoryComponent(
+                        cafeList = it.cafe,
+                        onClickCafe = onClickMore,
+                        onClickMore = onClickMore
                     )
                 }
-
-                is HomeUiModel.Rollouts -> NewItemComponent(
-                    products = it.rollout,
-                    onClickProduct = onClickProduct,
-                    onClickMore = onClickMore
-                )
-
-                is HomeUiModel.Cafes -> CafeCategoryComponent(
-                    cafeList = it.cafe,
-                    onClickCafe = onClickMore,
-                    onClickMore = onClickMore
-                )
             }
         }
     }
+
 }
 
 
@@ -233,7 +238,7 @@ private fun CafeCategoryComponent(
                     brandName = "[${cafe.brand}]",
                     image = cafe.image,
                     onClick = onClickCafe,
-                    reviewRating = cafe.rating,
+                    reviewRating = cafe.rating ?: 0f,
                     reviewCount = cafe.reviewCount
                 )
             }

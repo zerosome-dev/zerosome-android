@@ -5,6 +5,8 @@ import com.zerosome.datasource.local.entity.TokenEntity
 import com.zerosome.datasource.local.source.TokenSource
 import com.zerosome.datasource.remote.dto.response.TokenResponse
 import com.zerosome.network.BaseResponse
+import com.zerosome.network.NetworkError
+import com.zerosome.network.ZSNetworkException
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -59,6 +62,14 @@ class NetworkModule {
                 serializersModule = SerializersModule {
                 }
             })
+        }
+        HttpResponseValidator {
+            validateResponse {
+                val body = it.body<BaseResponse<Any>>()
+                if (body.status.not()) {
+                    throw ZSNetworkException(NetworkError.from(body.code))
+                }
+            }
         }
         install(Logging) {
             this.level = LogLevel.ALL

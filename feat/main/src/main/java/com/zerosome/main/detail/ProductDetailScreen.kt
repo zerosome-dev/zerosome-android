@@ -571,7 +571,7 @@ private fun SimilarComponent(
                 SimpleCardComponent(
                     title = it.productName,
                     image = it.image ?: "",
-                    reviewRating = it.rating,
+                    reviewRating = it.rating ?: 0f,
                     reviewCount = it.reviewCount,
                     onClick = { productClicked(it.productId) })
             }

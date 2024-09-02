@@ -32,9 +32,11 @@ fun ZSScreen(
     isDialogShown: Boolean = false,
     errorMessage: String? = null,
     onDismiss: (() -> Unit)? = null,
+    onInputEnabled: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize().imePadding(), contentAlignment = Alignment.Center) {
+    val optionalImePaddingModifier = if (onInputEnabled) Modifier.imePadding() else Modifier
+    Box(modifier = modifier.fillMaxSize().then(optionalImePaddingModifier), contentAlignment = Alignment.Center) {
         Column(modifier.fillMaxSize()) {
             content()
         }

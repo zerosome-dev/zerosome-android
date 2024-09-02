@@ -56,6 +56,7 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
             composable(Category.route) {
                 CategorySelectionScreen(
                     onCategorySelected = { depth1, depth2 ->
+                        Log.d("CPRI", "ROUTE : \"${CategoryDetail.route}/$depth1/$depth2\"")
                         navController.navigate("${CategoryDetail.route}/$depth1/$depth2")
                     }
                 )
