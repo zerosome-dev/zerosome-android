@@ -51,7 +51,6 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
         ) {
             composable(Home.route) {
                 HomeScreen(onClickProduct = { productId ->
-                    Log.d("CPRI", "PRODUCT ID $productId")
                     navController.navigate("${ProductDetail.route}/$productId")
                 }, onClickMore = {
                     navController.navigate(Rollout.route)
@@ -76,7 +75,6 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
                         navController.popBackStack()
                     },
                     onClickProduct = {
-                        Log.d("CPRI", "PRODUCT $it")
                         navController.navigate("${ProductDetail.route}/$it")
                     }
                 )
@@ -119,7 +117,7 @@ fun MainScreen(onMoveToLogin: () -> Unit) {
                     navController.popBackStack()
                 }
             }
-            reviewNavigation(0, navController) {
+            reviewNavigation(navController) {
                 navController.navigate(ReportDestination().route)
             }
             reportNavigation(0) {

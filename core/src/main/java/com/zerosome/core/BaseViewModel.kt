@@ -85,7 +85,6 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     }
 
     protected fun <T> Flow<NetworkResult<T>>.mapMerge(): Flow<T?> = flatMapConcat {
-        Log.d("CPRI", "$it")
         when (it) {
             is NetworkResult.Loading -> {
                 _isLoading = true

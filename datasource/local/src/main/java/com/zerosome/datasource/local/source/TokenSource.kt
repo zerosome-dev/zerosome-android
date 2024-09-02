@@ -19,14 +19,12 @@ class TokenSource(
     suspend fun getTokenEntity(): TokenEntity? {
         val accessToken = tokenPreferenceStore.data.firstOrNull()?.get(ACCESS_TOKEN)
         val refreshToken = tokenPreferenceStore.data.firstOrNull()?.get(REFRESH_TOKEN)
-        Log.d("CPRI", "ACCESS : $accessToken REFRESH :$refreshToken")
         return if (accessToken != null && refreshToken != null) {
             TokenEntity(accessToken, refreshToken)
         } else null
     }
 
     suspend fun updateToken(accessToken: String? = null, refreshToken: String? = null): Boolean {
-        Log.d("CPRI", "UPDATE TOKEN :$accessToken REFRESH TOKEN :$refreshToken")
         try {
             tokenPreferenceStore.edit {
                 it[ACCESS_TOKEN] = accessToken ?: ""

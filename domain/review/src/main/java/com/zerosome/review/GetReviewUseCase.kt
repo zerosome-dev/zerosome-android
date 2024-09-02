@@ -9,12 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,7 +26,7 @@ class GetReviewUseCase @Inject constructor(
 
     private val _idFlow: MutableStateFlow<Int?> = MutableStateFlow(null)
     private val idFlow: StateFlow<Int> = _idFlow.filterNotNull().distinctUntilChanged().onEach {
-        callLogic()
+        callLogic(true)
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -65,7 +62,7 @@ class GetReviewUseCase @Inject constructor(
                     when (it) {
                         is NetworkResult.Loading -> responseFlow.emit(NetworkResult.Loading)
                         is NetworkResult.Success -> {
-                            val list = _listFlow.value.toMutableList().apply {
+                            val list = if (isRefresh) it.data else _listFlow.value.toMutableList().apply {
                                 addAll(it.data)
                             }
                             responseFlow.emit(

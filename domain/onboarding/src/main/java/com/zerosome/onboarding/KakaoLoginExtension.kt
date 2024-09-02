@@ -11,10 +11,8 @@ suspend fun Context.requestKakaoLogin(): String {
         suspendCancellableCoroutine {
             UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
                 error?.let { throwable ->
-                    Log.d("CPRI", "ERROR CAUSE $it")
                     it.cancel(throwable)
                 } ?: token?.let { safeToken ->
-                    Log.d("CPRI", "TOKEN RECEIVED $it")
                     it.resume(safeToken.accessToken)
                 } ?: it.cancel()
             }
@@ -23,10 +21,8 @@ suspend fun Context.requestKakaoLogin(): String {
         suspendCancellableCoroutine {
             UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
                 error?.let { throwable ->
-                    Log.d("CPRI", "ERROR CAUSE $it")
                     it.cancel(throwable)
                 } ?: token?.let { safeToken ->
-                    Log.d("CPRI", "TOKEN RECEIVED $it")
                     it.resume(safeToken.accessToken)
                 } ?: it.cancel()
             }

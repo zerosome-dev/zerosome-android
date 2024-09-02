@@ -72,7 +72,6 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override fun checkUserLogin(): Flow<Boolean> = flow {
         val token = tokenSource.getTokenEntity()
-        Log.d("CPRI", "ON SPLASH : ${token?.accessToken}, REFRESH :$${token?.refreshToken}")
         emit(token?.accessToken.isNullOrEmpty().not())
     }
 

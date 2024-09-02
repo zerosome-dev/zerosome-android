@@ -20,6 +20,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zerosome.design.R
 import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
+import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.component.ZSScreen
 import com.zerosome.design.ui.component.ZSTextField
 import com.zerosome.design.ui.theme.Body4
@@ -50,25 +54,33 @@ fun ReviewWriteScreen(
     ZSScreen(
         modifier = Modifier
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        onInputEnabled = true
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        ZSAppBar(
+            navTitle = "리뷰 작성",
+            backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
+            onBackPressed = onBackPressed
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(modifier = Modifier.weight(1f)) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ZSAppBar(
-                    navTitle = "리뷰 작성",
-                    backNavigationIcon = painterResource(id = R.drawable.ic_chevron_left),
-                    onBackPressed = onBackPressed
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Spacer(
+                ZSImage(
+                    imageString = viewModel.uiState.selectedProduct?.image ?: "",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(25 / 16f)
+                        .aspectRatio(1f)
+                        .drawBehind {
+                            drawRoundRect(
+                                color = ZSColor.Neutral50,
+                                cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
+                            )
+                        },
+                    scale = ContentScale.Crop
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -92,7 +104,9 @@ fun ReviewWriteScreen(
                 StarRatingView(
                     modifier = Modifier.fillMaxWidth(),
                     rating = viewModel.uiState.reviewScore,
-                    onRatingChanged = { viewModel.setAction(ReviewWriteAction.ClickReviewScore(it)) })
+                    onRatingChanged = {
+                        viewModel.setAction(ReviewWriteAction.ClickReviewScore(it))
+                    })
                 Spacer(modifier = Modifier.height(30.dp))
                 ZSTextField(
                     text = viewModel.uiState.reviewText,
@@ -111,7 +125,7 @@ fun ReviewWriteScreen(
                     style = Body4,
                     color = ZSColor.Neutral400
                 )
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(100.dp))
             }
             ZSButton(
                 onClick = { viewModel.setAction(ReviewWriteAction.ClickConfirmButton) },
@@ -123,6 +137,5 @@ fun ReviewWriteScreen(
                 Text(text = "작성 완료")
             }
         }
-
     }
 }

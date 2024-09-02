@@ -65,7 +65,9 @@ internal fun HomeScreen(
         statusBarColor = Color.Transparent
     )
     ZSScreen(
-        modifier = Modifier.fillMaxSize().statusBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding(),
         isLoading = viewModel.isLoading
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -97,7 +99,7 @@ internal fun HomeScreen(
 
                     is HomeUiModel.Cafes -> CafeCategoryComponent(
                         cafeList = it.cafe,
-                        onClickCafe = onClickMore,
+                        onClickCafe = onClickProduct,
                         onClickMore = onClickMore
                     )
                 }
@@ -206,7 +208,7 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
 @Composable
 private fun CafeCategoryComponent(
     cafeList: List<Cafe>,
-    onClickCafe: () -> Unit,
+    onClickCafe: (productId: Int) -> Unit,
     onClickMore: () -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 30.dp)) {
@@ -237,7 +239,7 @@ private fun CafeCategoryComponent(
                     title = cafe.name,
                     brandName = "[${cafe.brand}]",
                     image = cafe.image,
-                    onClick = onClickCafe,
+                    onClick = { onClickCafe(cafe.id) },
                     reviewRating = cafe.rating ?: 0f,
                     reviewCount = cafe.reviewCount
                 )

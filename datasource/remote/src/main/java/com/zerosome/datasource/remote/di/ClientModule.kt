@@ -117,9 +117,7 @@ class NetworkModule {
                             dataSource.updateToken(
                                 accessToken = refreshToken.data?.accessToken ?: "",
                                 refreshToken = refreshToken.data?.refreshToken ?: " "
-                            ).also {
-                                Log.d("CPRI", "UPDATE : $it")
-                            }
+                            )
                         }
                 }
             }

@@ -71,7 +71,6 @@ internal class HomeViewModel @Inject constructor(
 ){
     private val rolloutFlow = getRolloutUseCase().mapMerge()
         .onEach {
-            Log.d("CPRI", "$it")
             setState {
                 copy(rolloutList = it ?: emptyList())
             }
@@ -84,7 +83,6 @@ internal class HomeViewModel @Inject constructor(
 
     private val cafeFlow = getCafeMenuUseCase().mapMerge()
         .onEach {
-            Log.d("CPRI", "$it")
             setState {
                 copy(cafeList = it ?: emptyList())
             }

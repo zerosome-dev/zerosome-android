@@ -46,7 +46,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,6 +77,7 @@ import com.zerosome.domain.model.RelatedProduct
 import com.zerosome.domain.model.ReviewThumbnail
 import com.zerosome.domain.model.Store
 import com.zerosome.review.ReviewRatingComponent
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -238,7 +242,8 @@ fun ItemDetailComponent(
             .aspectRatio(1f)
             .drawBehind {
                 drawRect(Color.White)
-            }
+            },
+        scale = ContentScale.Crop
     )
     Column(
         modifier = Modifier
@@ -467,9 +472,10 @@ private fun ReviewComponent(
                 Row {
                     repeat(5) {
                         Image(
-                            painter = if (it - 1 < totalRating) painterResource(id = R.drawable.ic_star_filled) else painterResource(
+                            imageVector = if (it < totalRating) ImageVector.vectorResource(id = R.drawable.ic_star_filled) else ImageVector.vectorResource(
                                 id = R.drawable.ic_star_gray
-                            ), contentDescription = "REVIEW RATING",
+                            ),
+                            contentDescription = "USER RATING",
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -485,7 +491,7 @@ private fun ReviewComponent(
         ) {
             items(reviewThumbnails) {
                 SimpleReviewComponent(
-                    rating = it.rating.toInt(),
+                    rating = it.rating.roundToInt(),
                     description = it.reviewContents ?: "",
                     writtenAt = it.regDate,
                     onclick = { onClickReview(it.reviewId) }
@@ -516,9 +522,10 @@ fun SimpleReviewComponent(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 repeat(5) {
                     Image(
-                        painter = if (it - 1 < rating) painterResource(id = R.drawable.ic_star_filled) else painterResource(
+                        imageVector = if (it < rating) ImageVector.vectorResource(id = R.drawable.ic_star_filled) else ImageVector.vectorResource(
                             id = R.drawable.ic_star_gray
-                        ), contentDescription = "REVIEW RATING",
+                        ),
+                        contentDescription = "USER RATING",
                         modifier = Modifier.size(16.dp)
                     )
                 }
