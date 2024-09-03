@@ -8,6 +8,8 @@ import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
+import com.zerosome.core.analytics.LogName
+import com.zerosome.core.analytics.LogProperty
 import com.zerosome.domain.model.Product
 import com.zerosome.domain.model.Review
 import com.zerosome.product.GetProductDetailUseCase
@@ -135,11 +137,41 @@ internal class ProductDetailViewModel @Inject constructor(
 
     override fun actionPredicate(action: ProductDetailAction): ProductDetailIntent =
         when (action) {
-            is ProductDetailAction.ViewCreated -> ProductDetailIntent.Initialize(action.id)
-            is ProductDetailAction.ClickReview -> ProductDetailIntent.SelectReview(action.reviewId)
-            is ProductDetailAction.ClickSimilarProduct -> ProductDetailIntent.SelectSimilarId(action.productId)
-            is ProductDetailAction.ClickReviewWrite -> ProductDetailIntent.WriteReview
-            is ProductDetailAction.ClickNutrients -> ProductDetailIntent.SeeNutrients
+            is ProductDetailAction.ViewCreated -> ProductDetailIntent.Initialize(action.id).also {
+                analyticsLogger.logEvent(
+                    LogName.VIEW_PRODUCT_DETAIL, mapOf(
+                        LogProperty.PRODUCT_ID to action.id)
+                )
+            }
+            is ProductDetailAction.ClickReview -> ProductDetailIntent.SelectReview(action.reviewId).also {
+                analyticsLogger.logEvent(
+                    LogName.CLICK_PRODUCT_DETAIL_REVIEW, mapOf(
+                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                    )
+                )
+            }
+            is ProductDetailAction.ClickSimilarProduct -> ProductDetailIntent.SelectSimilarId(action.productId).also {
+                analyticsLogger.logEvent(
+                    LogName.CLICK_PRODUCT_DETAIL_RELATED_PRODUCT, mapOf(
+                        LogProperty.RELATED_PRODUCT_ID to action.productId,
+                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                    )
+                )
+            }
+            is ProductDetailAction.ClickReviewWrite -> ProductDetailIntent.WriteReview.also {
+                analyticsLogger.logEvent(
+                    LogName.CLICK_PRODUCT_DETAIL_REVIEW_WRITE, mapOf(
+                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                    )
+                )
+            }
+            is ProductDetailAction.ClickNutrients -> ProductDetailIntent.SeeNutrients.also {
+                analyticsLogger.logEvent(
+                    LogName.CLICK_PRODUCT_DETAIL_SHOW_NUTRIENT, mapOf(
+                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                    )
+                )
+            }
         }
 
 

@@ -10,6 +10,7 @@ import com.zerosome.domain.model.Product
 import com.zerosome.product.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -52,7 +53,7 @@ internal class ReviewWriteViewModel @Inject constructor(
 ): BaseViewModel<ReviewWriteAction, ReviewWriteIntent, ReviewWriteState, ReviewWriteEffect>(
     initialState = ReviewWriteState()
 ) {
-    private val productFlow = productDetailUseCase.getCurrentProduct().mapMerge().onEach {
+    private val productFlow = productDetailUseCase.getCurrentProduct().mapMerge().filterNotNull().onEach {
         setState { copy(selectedProduct = it) }
     }.stateIn(
         viewModelScope,

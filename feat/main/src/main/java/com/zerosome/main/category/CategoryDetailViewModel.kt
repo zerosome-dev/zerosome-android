@@ -8,6 +8,8 @@ import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
+import com.zerosome.core.analytics.LogName
+import com.zerosome.core.analytics.LogProperty
 import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.category.GetLowerCategoryUseCase
 import com.zerosome.domain.model.Brand
@@ -133,7 +135,8 @@ internal class CategoryDetailViewModel @Inject constructor(
             setState { copy(categoryList = it) }
         }.flatMapLatest {
             val category =
-                it.find { category -> category.categoryCode == uiState.depth2CategoryName } ?: it.first()
+                it.find { category -> category.categoryCode == uiState.depth2CategoryName }
+                    ?: it.first()
             categoryDetailFilterUseCase(category.categoryCode).also {
                 setState { copy(depth2Category = category) }
             }
@@ -260,7 +263,8 @@ internal class CategoryDetailViewModel @Inject constructor(
     }
 
     private fun getChangedData() = setState {
-        copy(depth2Category = tempCategory,
+        copy(
+            depth2Category = tempCategory,
             selectedBrands = tempBrands,
             selectedTags = tempZeroTag,
         ).also { it ->

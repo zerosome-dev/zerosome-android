@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zerosome.core.analytics.AnalyticsLogger
 import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,6 +38,9 @@ interface UIEffect
 abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffect>(
     initialState: S
 ) : ViewModel() {
+
+
+    protected val analyticsLogger = AnalyticsLogger()
 
     private var _uiState by mutableStateOf(initialState)
     val uiState

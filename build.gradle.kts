@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinJvm) apply false
     alias(libs.plugins.androidTest) apply false
     alias(libs.plugins.baselineprofile) apply false
+    alias(libs.plugins.googleGms) apply false
 }

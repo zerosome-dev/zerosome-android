@@ -1,10 +1,12 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.googleGms)
+
 }
 
 android {
-    namespace = "com.zerosome.core"
+    namespace = "com.zerosome.core.analytics"
     compileSdk = 34
 
     defaultConfig {
@@ -33,9 +35,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":network"))
-
-    api(project(":core:analytics"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -44,7 +43,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose.ktx)
-
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }

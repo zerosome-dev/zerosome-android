@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.googleKsp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.googleGms)
 }
 
 android {
@@ -88,6 +89,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
     implementation(libs.kakao.auth)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
