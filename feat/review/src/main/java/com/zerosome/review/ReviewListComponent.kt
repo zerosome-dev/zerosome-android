@@ -1,7 +1,6 @@
 package com.zerosome.review
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -23,11 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zerosome.design.R
 import com.zerosome.design.ui.theme.Body2
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.Body4
@@ -114,14 +115,14 @@ fun ReviewRatingComponent(modifier: Modifier = Modifier, rating: Float) {
     Row(modifier = modifier) {
         repeat(5) {
             Image(
-                painter = if (it < rating) painterResource(com.zerosome.design.R.drawable.ic_star_filled) else painterResource(
-                    com.zerosome.design.R.drawable.ic_star_gray
+                imageVector = if (it < rating) ImageVector.vectorResource(id = R.drawable.ic_star_filled) else ImageVector.vectorResource(
+                    id = R.drawable.ic_star_gray
                 ),
                 contentDescription = "USER RATING",
                 modifier = Modifier.size(16.dp)
             )
         }
         Spacer(modifier = Modifier.width(4.dp))
-        Text("$rating", color = ZSColor.Neutral700, style = Body4)
+        Text("$rating", color = ZSColor.Neutral900, style = SubTitle2)
     }
 }

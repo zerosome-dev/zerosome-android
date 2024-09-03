@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zerosome.core.analytics.AnalyticsLogger
 import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlin.reflect.KProperty
 
 /**
  * User의 직접적인 액션으로만 바꿀 수 있습니다.
@@ -39,6 +39,9 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     initialState: S
 ) : ViewModel() {
 
+
+    protected val analyticsLogger = AnalyticsLogger()
+
     private var _uiState by mutableStateOf(initialState)
     val uiState
         get() = _uiState
@@ -46,8 +49,8 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     private val _uiAction: MutableSharedFlow<A> = MutableSharedFlow()
     private val uiAction = _uiAction
 
-    private val _uiEffect: MutableSharedFlow<E> = MutableSharedFlow()
-    val uiEffect: SharedFlow<E> = _uiEffect
+    private val _uiEffect: MutableSharedFlow<E?> = MutableSharedFlow()
+    val uiEffect: SharedFlow<E?> = _uiEffect
 
     private var _isLoading by mutableStateOf(false)
     val isLoading
@@ -86,7 +89,6 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
     }
 
     protected fun <T> Flow<NetworkResult<T>>.mapMerge(): Flow<T?> = flatMapConcat {
-        Log.d("CPRI", "$it")
         when (it) {
             is NetworkResult.Loading -> {
                 _isLoading = true
@@ -111,11 +113,18 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
         }
     }
 
+    fun clearEffect() {
+        viewModelScope.launch {
+            _uiEffect.emit(null)
+        }
+    }
+
     fun setAction(action: A) {
         viewModelScope.launch {
             _uiAction.emit(action)
         }
     }
+
     protected fun setIntent(intent: I) = viewModelScope.launch {
         collectIntent(intent)
     }

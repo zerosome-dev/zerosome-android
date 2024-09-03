@@ -1,5 +1,6 @@
 package com.zerosome.onboarding
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction
@@ -7,6 +8,7 @@ import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,8 +69,8 @@ internal class LoginViewModel @Inject constructor(
 
     private fun userLogin(accessToken: String, userType: LoginType) {
         viewModelScope.launch {
-            loginUseCase(socialType = userType.name, socialToken = accessToken).mapMerge().collect {
-                if (it == true) {
+            loginUseCase(socialType = userType.name, socialToken = accessToken).mapMerge().filterNotNull().collect {
+                if (it) {
                     setEffect { LoginEffect.NavigateToMain }
                 } else {
                     setEffect { LoginEffect.NavigateToTermsAgree(accessToken, userType) }

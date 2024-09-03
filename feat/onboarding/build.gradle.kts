@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":design"))
     implementation(project(":domain:onboarding"))
     implementation(project(":core"))
+    implementation(project(":feat:webview"))
 
 
     implementation(libs.androidx.core.ktx)

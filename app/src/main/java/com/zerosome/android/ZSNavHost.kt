@@ -21,7 +21,13 @@ fun ZSNavHost(
         startDestination = Splash.route
     ) {
         composable(Main.route) {
-            MainScreen()
+            MainScreen {
+                navController.navigate(Splash.route) {
+                    popUpTo(Main.route) {
+                        inclusive = true
+                    }
+                }
+            }
         }
         composable(Onboarding.route) {
             OnboardingNavScreen(onUserLoggedIn = {

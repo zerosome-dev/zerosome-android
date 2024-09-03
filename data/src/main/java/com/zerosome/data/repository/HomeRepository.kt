@@ -1,6 +1,5 @@
 package com.zerosome.data.repository
 
-import android.util.Log
 import com.zerosome.data.mapper.domainModel
 import com.zerosome.data.mapper.mapToDomain
 import com.zerosome.datasource.local.source.TokenSource
@@ -22,20 +21,7 @@ import javax.inject.Inject
 
 internal class HomeRepositoryImpl @Inject constructor(
     private val homeService: HomeService,
-    tokenSource: TokenSource
 ) : HomeRepository {
-    private val currentAccessToken = tokenSource.getAccessToken().stateIn(
-        scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
-
-    init {
-        CoroutineScope(Dispatchers.IO)
-            .launch {
-                currentAccessToken.collect()
-            }
-    }
 
     override fun getBanner(): Flow<NetworkResult<List<Banner>>> = safeCall { homeService.getBanners() }.mapToDomain { it.map { data -> data.domainModel } }
 

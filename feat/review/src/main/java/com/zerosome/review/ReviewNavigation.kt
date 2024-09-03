@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 
 fun NavGraphBuilder.reviewNavigation(
-    reviewId: Int,
     navController: NavController,
     onClickReport: () -> Unit,
 ) {
@@ -17,11 +16,13 @@ fun NavGraphBuilder.reviewNavigation(
             }
         }
         composable(ReviewListDestination.route) {
-            ReviewScreen(onBackPressed = {
-                navController.popBackStack()
-            }, onReviewWrite = {
-                navController.navigate(ReviewWriteDestination.route)
-            }, onReviewReport = onClickReport)
+            ReviewScreen(
+                onBackPressed = {
+                    navController.popBackStack()
+                }, onReviewWrite = {
+                    navController.navigate(ReviewWriteDestination.route)
+                }, onReviewReport = onClickReport
+            )
         }
     }
 }

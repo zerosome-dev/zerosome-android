@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CategoryProductRequest(
-    @SerialName("d2CategoryCode")
-    val categoryDepth2Code: String,
     @SerialName("orderType")
     val orderType: String,
     @SerialName("brandList")

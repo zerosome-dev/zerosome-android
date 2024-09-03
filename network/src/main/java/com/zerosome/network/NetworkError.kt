@@ -14,3 +14,5 @@ enum class NetworkError(val errorCode: String, val code: Int) {
                 = entries.find { error -> error.errorCode == code } ?: UNKNOWN
     }
 }
+
+class ZSNetworkException(val error: NetworkError): Exception()

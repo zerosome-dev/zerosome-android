@@ -8,6 +8,8 @@ import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
+import com.zerosome.core.analytics.LogName
+import com.zerosome.core.analytics.LogProperty
 import com.zerosome.domain.model.Banner
 import com.zerosome.domain.model.Cafe
 import com.zerosome.domain.model.CategoryDepth1
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.logging.LoggingPermission
 import javax.inject.Inject
 
 internal sealed interface HomeAction: UIAction {
@@ -71,7 +74,6 @@ internal class HomeViewModel @Inject constructor(
 ){
     private val rolloutFlow = getRolloutUseCase().mapMerge()
         .onEach {
-            Log.d("CPRI", "$it")
             setState {
                 copy(rolloutList = it ?: emptyList())
             }
@@ -84,7 +86,6 @@ internal class HomeViewModel @Inject constructor(
 
     private val cafeFlow = getCafeMenuUseCase().mapMerge()
         .onEach {
-            Log.d("CPRI", "$it")
             setState {
                 copy(cafeList = it ?: emptyList())
             }
@@ -109,8 +110,19 @@ internal class HomeViewModel @Inject constructor(
     override fun actionPredicate(action: HomeAction): HomeIntent = when(action) {
         is HomeAction.ClickBanner -> HomeIntent.MoveToBanner(action.banner)
         is HomeAction.ClickRollout -> HomeIntent.MoveToDetail(action.rollout.id)
-        is HomeAction.ClickRolloutMore -> HomeIntent.MoveToRollout
-        is HomeAction.ClickCafe -> HomeIntent.MoveToDetail(action.cafe.id)
+            .also {
+                analyticsLogger.logEvent(LogName.CLICK_NEW_PRODUCT, mapOf(
+                    LogProperty.PRODUCT_ID to action.rollout.id
+                ))
+            }
+        is HomeAction.ClickRolloutMore -> HomeIntent.MoveToRollout.also {
+            analyticsLogger.logEvent(LogName.CLICK_NEW_PRODUCT_MORE)
+        }
+        is HomeAction.ClickCafe -> HomeIntent.MoveToDetail(action.cafe.id).also {
+            analyticsLogger.logEvent(LogName.CLICK_CAFE_PRODUCT, mapOf(
+                LogProperty.PRODUCT_ID to action.cafe.id
+            ))
+        }
         else -> HomeIntent.Initialize
     }
 

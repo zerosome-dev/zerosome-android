@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.zerosome.design.ui.component.ZSImage
@@ -25,7 +27,7 @@ fun CategoryComponent(
     onCategoryClick: (cardTitle: String) -> Unit
 ) {
     val optionalBorder: Modifier = if (isSelected) Modifier
-        .border(1.dp, ZSColor.Primary)
+        .border(1.dp, ZSColor.Primary, RoundedCornerShape(8.dp))
         .clip(
             RoundedCornerShape(8.dp)
         ) else Modifier
@@ -38,6 +40,12 @@ fun CategoryComponent(
             imageString = cardImage, scale = ContentScale.Crop, modifier = Modifier
                 .then(optionalBorder)
                 .aspectRatio(1f)
+                .drawBehind {
+                    drawRoundRect(
+                        color = ZSColor.Neutral100,
+                        cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                    )
+                }
         )
         Text(text = cardTitle, style = Body3, color = ZSColor.Neutral900)
     }

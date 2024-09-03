@@ -2,7 +2,6 @@ package com.zerosome.main
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.navigation.NavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.zerosome.profile.Profile
@@ -28,12 +27,18 @@ internal object CategoryDetail : MainDestination() {
     override val route: String
         get() = "${super.route}/CategoryDetail"
 
-    const val category1 = "category_first"
-    const val category2 = "category_second"
+    const val CATEGORY_FIRST = "category_first"
+    const val CATEGORY_SECOND = "category_second"
 
     val argument = listOf(
-        navArgument(category1) { type = NavType.StringType },
-        navArgument(category2) { type = NavType.StringType }
+        navArgument(CATEGORY_FIRST) {
+            type = NavType.StringType
+        },
+        navArgument(CATEGORY_SECOND) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = ""
+        }
     )
 }
 
@@ -44,7 +49,7 @@ internal object ProductDetail : MainDestination() {
     const val argumentTypeArg = "product_id"
 
     val argument = listOf(
-        navArgument(argumentTypeArg) { type = NavType.StringType}
+        navArgument(argumentTypeArg) { type = NavType.IntType }
     )
 }
 
@@ -60,21 +65,21 @@ sealed class BottomNavItem(
     val screenRoute: String
 ) {
     data object Home : BottomNavItem(
-        title = R.string.nav_title_home,
+        title = com.zerosome.design.R.string.nav_title_home,
         unselectedIcon = com.zerosome.design.R.drawable.ic_nav_home,
         selectedIcon = com.zerosome.design.R.drawable.ic_nav_home_selected,
         screenRoute = com.zerosome.main.Home.route
     )
 
     data object Category : BottomNavItem(
-        title = R.string.nav_title_category,
+        title = com.zerosome.design.R.string.nav_title_category,
         unselectedIcon = com.zerosome.design.R.drawable.ic_nav_category,
         selectedIcon = com.zerosome.design.R.drawable.ic_nav_category_selected,
         screenRoute = com.zerosome.main.Category.route
     )
 
     data object MyPage : BottomNavItem(
-        title = R.string.nav_title_profile,
+        title = com.zerosome.design.R.string.nav_title_profile,
         unselectedIcon = com.zerosome.design.R.drawable.ic_nav_mypage,
         selectedIcon = com.zerosome.design.R.drawable.ic_nav_mypage_selected,
         screenRoute = Profile().startDestination

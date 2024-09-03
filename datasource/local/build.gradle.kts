@@ -46,6 +46,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.kotlin.serialization)
+
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 }

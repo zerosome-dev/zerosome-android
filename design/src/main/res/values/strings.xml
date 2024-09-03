@@ -4,4 +4,40 @@
     <string name="common_confirm">확인</string>
 
     <string name="error_dialog_description">예상치 못한 에러가 발생했습니다.\n%s</string>
+
+    <string name="screen_change_nickname_description">최소 2자 ~ 12자 이내의 닉네임을 입력해 주세요\n한글/영문/숫자/특수문자 모두 가능해요</string>
+    <string name="screen_change_nickname_textfield_hint">닉네임을 입력해 주세요</string>
+    <string name="screen_change_nickname_textfield_positive">사용 가능한 닉네임입니다.</string>
+    <string name="screen_change_nickname_textfield_negative_validation">2자 ~ 12자 내외의 닉네임만 입력해주세요.</string>
+    <string name="screen_change_nickname_textfield_negative">이미 사용중인 닉네임입니다.</string>
+
+
+    <string name="screen_login_context01">일단 둘러볼게요</string>
+
+    <!--  Terms Screen  -->
+    <string name="screen_terms_title">약관에 동의해 주세요</string>
+    <string name="screen_terms_description">여러분의 개인정보와 서비스 이용 관리\n잘 지켜드릴게요</string>
+    <string name="screen_terms_accept_all">모두 동의</string>
+    <string name="screen_terms_accept_all_description">서비스 이용을 위해 아래 약관에 모두 동의합니다.</string>
+    <string name="screen_terms_watch_page">보기</string>
+    <string name="screen_terms_context_service">(필수) 서비스 이용약관 동의</string>
+    <string name="screen_terms_context_privacy">(필수) 개인정보 수집 및 이용 동의</string>
+    <string name="screen_terms_context_marketing">(선택) 마케팅 수신 동의</string>
+
+    <!--  Nickname Screen  -->
+    <string name="screen_nickname_title">닉네임을 설정해 주세요</string>
+    <string name="screen_nickname_description">최소 2자 ~ 12자 이내의 닉네임을 입력해 주세요\n한글/영문/숫자/특수문자 모두 가능해요</string>
+    <string name="screen_nickname_textfield_hint">닉네임을 입력해 주세요</string>
+    <string name="screen_nickname_textfield_positive">사용 가능한 닉네임입니다.</string>
+    <string name="screen_nickname_textfield_negative_validation">2자 ~ 12자 내외의 닉네임만 입력해주세요.</string>
+    <string name="screen_nickname_textfield_negative">이미 사용중인 닉네임입니다.</string>
+    <string name="screen_nickname_finish_signup">회원가입 완료</string>
+
+    <string name="nav_title_home">홈</string>
+    <string name="nav_title_category">카테고리</string>
+    <string name="nav_title_profile">마이페이지</string>
+
+    <string name="home_rollout_title">출시 예정 신상품</string>
+    <string name="home_rollout_description">새롭게 발매된 상품과 발매 예정 상품을 확인해보세요</string>
+
 </resources>

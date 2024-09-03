@@ -9,6 +9,6 @@ data class ReviewCreateRequest(
     val productId: Int,
     @SerialName("rating")
     val rating: Float,
-    @SerialName("content")
-    val content: String? = null,
+    @SerialName("contents")
+    val contents: String? = null,
 )

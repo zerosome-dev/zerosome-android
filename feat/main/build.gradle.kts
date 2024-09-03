@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feat:profile"))
     implementation(project(":feat:report"))
     implementation(project(":domain:category"))
+    implementation(project(":domain:review"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

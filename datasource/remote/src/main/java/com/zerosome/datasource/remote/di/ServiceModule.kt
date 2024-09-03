@@ -5,6 +5,8 @@ import com.zerosome.datasource.remote.service.CategoryService
 import com.zerosome.datasource.remote.service.FilterService
 import com.zerosome.datasource.remote.service.HomeService
 import com.zerosome.datasource.remote.service.ProductService
+import com.zerosome.datasource.remote.service.ReviewService
+import com.zerosome.datasource.remote.service.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,23 +19,34 @@ import javax.inject.Singleton
 internal class ServiceModule {
 
     @Provides
-    fun providesAuthService(httpClient: HttpClient): AuthService =
+    fun providesAuthService(@DefaultProvider httpClient: HttpClient): AuthService =
         AuthService(client = httpClient)
 
     @Provides
-    fun providesCategoryService(httpClient: HttpClient): CategoryService =
+    fun providesCategoryService(@AuthProvider httpClient: HttpClient): CategoryService =
         CategoryService(httpClient)
 
     @Provides
-    fun providesFilterService(httpClient: HttpClient): FilterService =
+    fun providesFilterService(@AuthProvider httpClient: HttpClient): FilterService =
         FilterService(httpClient)
 
     @Provides
     @Singleton
-    fun providesHomeService(httpClient: HttpClient): HomeService =
+    fun providesHomeService(@AuthProvider httpClient: HttpClient): HomeService =
         HomeService(httpClient)
 
     @Provides
-    fun providesProductService(httpClient: HttpClient): ProductService =
+    @Singleton
+    fun providesProductService(@AuthProvider httpClient: HttpClient): ProductService =
        ProductService(httpClient)
+
+    @Provides
+    @Singleton
+    fun providesReviewService(@AuthProvider httpClient: HttpClient): ReviewService =
+        ReviewService(httpClient)
+
+    @Provides
+    @Singleton
+    fun providesUserService(@AuthProvider httpClient: HttpClient): UserService =
+        UserService(httpClient)
 }

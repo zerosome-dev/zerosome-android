@@ -3,11 +3,9 @@ package com.zerosome.datasource.remote.service
 import com.zerosome.datasource.remote.dto.request.JoinRequest
 import com.zerosome.datasource.remote.dto.response.LoginResponse
 import com.zerosome.datasource.remote.dto.response.TokenResponse
-import com.zerosome.network.BaseResponse
 import com.zerosome.network.BaseService
 import com.zerosome.network.NetworkResult
 import com.zerosome.network.safeCall
-import com.zerosome.network.safeDelete
 import com.zerosome.network.safePost
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -17,7 +15,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.headers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -32,7 +29,7 @@ class AuthService @Inject constructor(
         socialType: String
     ): Flow<NetworkResult<LoginResponse>> = safeCall {
         client.post(urlString = apiRoute) {
-            header("Authorization", socialToken)
+            header("Authorization", "Bearer $socialToken")
             parameter("socialType", socialType)
         }.body()
     }
@@ -51,7 +48,7 @@ class AuthService @Inject constructor(
         marketingAgreement: Boolean
     ): Flow<NetworkResult<TokenResponse>> = safeCall {
         client.post(urlString = "$apiRoute/join") {
-            header("Authorization", socialToken)
+            header("Authorization", "Bearer $socialToken")
             parameter("socialType", socialType)
             setBody(JoinRequest(nickname, marketingAgreement))
         }.body()

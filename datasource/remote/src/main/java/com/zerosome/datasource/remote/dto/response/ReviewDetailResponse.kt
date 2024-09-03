@@ -10,7 +10,7 @@ data class ReviewDetailResponse(
     @SerialName("rating")
     val rating: Float,
     @SerialName("reviewContents")
-    val reviewContents: String,
+    val reviewContents: String? = null,
     @SerialName("regDate")
     val regDate: String, // CHANGE TO KOTLINX_DATETIME
     @SerialName("nickname")

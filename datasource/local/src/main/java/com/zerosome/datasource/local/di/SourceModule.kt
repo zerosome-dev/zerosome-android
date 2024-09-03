@@ -18,6 +18,7 @@ import javax.inject.Singleton
 internal class SourceModule {
 
     @Provides
+    @Singleton
     internal fun providesUserStore(@ApplicationContext context: Context) = PreferenceDataStoreFactory.create(
         produceFile = {
             context.preferencesDataStoreFile("zerosome_preference")
