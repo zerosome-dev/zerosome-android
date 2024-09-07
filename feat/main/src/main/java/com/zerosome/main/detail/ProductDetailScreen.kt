@@ -310,14 +310,48 @@ fun NutrientBottomDialog(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
             ) {
-                items(nutrientList) {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(text = it.nutrientName, style = Body2)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "(${it.amount})${it.amountStandard} ((${it.percentage})${it.serviceStandard})")
+                if (nutrientList.isNotEmpty()) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .drawBehind {
+                                    drawRoundRect(
+                                        color = ZSColor.Neutral50,
+                                        cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                                    )
+                                }
+                                .padding(14.dp)) {
+                            val first = nutrientList.first()
+                            Text(
+                                text = "${first.amount}${first.amountStandard}당",
+                                color = ZSColor.Neutral600,
+                                style = Body2
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "${first.percentage}${first.serviceStandard}",
+                                color = ZSColor.Neutral600,
+                                style = Body2
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    HorizontalDivider(thickness = 1.dp, color = ZSColor.Neutral100)
+
+                }
+                if (nutrientList.size > 1) {
+                    items(nutrientList.drop(1)) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(text = it.nutrientName, style = Body2, color = ZSColor.Neutral600)
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "${it.amount}${it.amountStandard}(${it.percentage}${it.serviceStandard})",
+                                color = ZSColor.Neutral600,
+                                style = Body2
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(14.dp))
+                        HorizontalDivider(thickness = 1.dp, color = ZSColor.Neutral100)
+                    }
                 }
             }
         }
