@@ -8,6 +8,12 @@ local.properties
 # Log/OS Files
 *.log
 
+/keystore
+app/debug
+app/nonMinifiedRelease
+app/release
+app/nonMinifiedDebug
+
 # Android Studio generated files and folders
 captures/
 .externalNativeBuild/
