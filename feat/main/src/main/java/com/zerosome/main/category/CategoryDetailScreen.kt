@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
@@ -30,7 +31,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +48,6 @@ import com.zerosome.design.ui.component.ZSAppBar
 import com.zerosome.design.ui.component.ZSButton
 import com.zerosome.design.ui.component.ZSChip
 import com.zerosome.design.ui.component.ZSDropdown
-import com.zerosome.design.ui.component.ZSImage
 import com.zerosome.design.ui.component.ZSVector
 import com.zerosome.design.ui.theme.Body3
 import com.zerosome.design.ui.theme.H2
@@ -70,6 +72,19 @@ internal fun CategoryDetailScreen(
 ) {
     val effect by viewModel.uiEffect.collectAsState(initial = null)
 
+    val lazyListState = rememberLazyGridState()
+
+    val reachedBottom: Boolean by remember {
+
+        derivedStateOf {
+            val lastVisibleItem = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem?.index != 0 && lastVisibleItem?.index == lazyListState.layoutInfo.totalItemsCount - 4
+        }
+    }
+
+    LaunchedEffect(key1 = reachedBottom) {
+        viewModel.setAction(CategoryDetailAction.AttachBottom)
+    }
     LaunchedEffect(key1 = category1Id, key2 = category2Id) {
         viewModel.setAction(CategoryDetailAction.ViewCreated(category1Id, category2Id))
     }
@@ -197,6 +212,7 @@ internal fun CategoryDetailScreen(
             }
         }
         LazyVerticalGrid(
+            state = lazyListState,
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(horizontal = 22.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),

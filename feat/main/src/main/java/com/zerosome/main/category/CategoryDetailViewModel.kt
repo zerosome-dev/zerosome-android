@@ -1,6 +1,5 @@
 package com.zerosome.main.category
 
-import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
@@ -8,8 +7,6 @@ import com.zerosome.core.UIAction
 import com.zerosome.core.UIEffect
 import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
-import com.zerosome.core.analytics.LogName
-import com.zerosome.core.analytics.LogProperty
 import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.category.GetLowerCategoryUseCase
 import com.zerosome.domain.model.Brand
@@ -22,6 +19,7 @@ import com.zerosome.product.GetBrandsUseCase
 import com.zerosome.product.GetFilterUseCase
 import com.zerosome.product.GetProductsByFilterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -59,6 +57,8 @@ internal sealed interface CategoryDetailAction : UIAction {
     data object DismissDialog : CategoryDetailAction
 
     data object ClickConfirm : CategoryDetailAction
+
+    data object AttachBottom : CategoryDetailAction
 }
 
 internal sealed interface CategoryDetailIntent : UIIntent {
@@ -83,6 +83,8 @@ internal sealed interface CategoryDetailIntent : UIIntent {
     data object ClearEffect : CategoryDetailIntent
 
     data object ChangeConfirm : CategoryDetailIntent
+
+    data object LoadMore : CategoryDetailIntent
 }
 
 internal data class CategoryDetailState(
@@ -111,6 +113,7 @@ internal sealed interface CategoryDetailEffect : UIEffect {
     data object Idle : CategoryDetailEffect
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class CategoryDetailViewModel @Inject constructor(
     private val categoryDetailFilterUseCase: GetProductsByFilterUseCase,
@@ -196,6 +199,7 @@ internal class CategoryDetailViewModel @Inject constructor(
             is CategoryDetailAction.ClickSelectSort -> CategoryDetailIntent.SelectSortType(action.sortItem)
             CategoryDetailAction.DismissDialog -> CategoryDetailIntent.ClearEffect
             CategoryDetailAction.ClickConfirm -> CategoryDetailIntent.ChangeConfirm
+            is CategoryDetailAction.AttachBottom -> CategoryDetailIntent.LoadMore
         }
     }
 
@@ -218,7 +222,8 @@ internal class CategoryDetailViewModel @Inject constructor(
             }
 
             is CategoryDetailIntent.SelectCategory -> setState { copy(tempCategory = intent.category) }
-            is CategoryDetailIntent.SelectSortType -> setState { copy(sort = intent.sortItem) }.also { setEffect { CategoryDetailEffect.Idle } }
+            is CategoryDetailIntent.SelectSortType -> setState { copy(sort = intent.sortItem) }.also { setEffect { CategoryDetailEffect.Idle } }.also { getChangedData() }
+
             is CategoryDetailIntent.AddBrand -> setState {
                 brands.find { it.brandName == intent.brand }?.let {
                     copy(
@@ -259,6 +264,7 @@ internal class CategoryDetailViewModel @Inject constructor(
 
             is CategoryDetailIntent.ClearEffect -> setEffect { CategoryDetailEffect.Idle }
             is CategoryDetailIntent.ChangeConfirm -> getChangedData()
+            is CategoryDetailIntent.LoadMore -> categoryDetailFilterUseCase.loadMore()
         }
     }
 

@@ -4,7 +4,8 @@ import android.os.Bundle
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 
-public enum class LogName {
+@Suppress("UNUSED")
+enum class LogName {
     OPEN_APP,
     VIEW_LOGIN,
     CLICK_LOGIN_KAKAO,
@@ -31,6 +32,8 @@ public enum class LogName {
     VIEW_REVIEW_WRITE,
     CLICK_REVIEW_WRITE_CONFIRM
 }
+
+@Suppress("UNUSED")
 enum class LogProperty {
     AUTH_TYPE,
     WEB_URL,

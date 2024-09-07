@@ -15,7 +15,7 @@ fun NonLazyVerticalGrid(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    content: @Composable() (Int) -> Unit
+    content: @Composable (Int) -> Unit
 ) {
     Column(modifier = modifier, verticalArrangement = verticalArrangement) {
         var rows = (itemCount / columns)

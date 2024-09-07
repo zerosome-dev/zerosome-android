@@ -1,6 +1,5 @@
 package com.zerosome.main.category
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.BaseViewModel
 import com.zerosome.core.UIAction

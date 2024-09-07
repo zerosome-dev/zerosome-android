@@ -1,20 +1,24 @@
 package com.zerosome.product
 
-import android.util.Log
 import com.zerosome.domain.model.SortItem
 import com.zerosome.domain.repository.ProductRepository
 import com.zerosome.network.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
 class GetProductsByFilterUseCase @Inject constructor(
     private val productRepository: ProductRepository
@@ -29,15 +33,21 @@ class GetProductsByFilterUseCase @Inject constructor(
     )
 
     private val offsetFlow = MutableStateFlow<Int?>(null)
+    private val offsetCountFlow = MutableSharedFlow<Int>()
     private val _cacheFlow = MutableStateFlow<RequestCache?>(null)
-    private val cacheFlow = _cacheFlow.filterNotNull().distinctUntilChanged().flatMapLatest {
+    private val cacheFlow = combine(
+        _cacheFlow.filterNotNull().distinctUntilChanged(),
+        offsetCountFlow.distinctUntilChanged()
+    ) { cache, count ->
+        cache to count
+    }.flatMapLatest { (cache, _) ->
         productRepository.getProductsByCategory(
-            categoryCode = it.categoryCode,
+            categoryCode = cache.categoryCode,
             offset = offsetFlow.value,
             limit = null,
-            orderType = it.orderType,
-            brandList = it.brandList,
-            zeroTagList = it.tagList
+            orderType = cache.orderType,
+            brandList = cache.brandList,
+            zeroTagList = cache.tagList
         ).map { result ->
             when (result) {
                 is NetworkResult.Loading -> NetworkResult.Loading
@@ -54,6 +64,13 @@ class GetProductsByFilterUseCase @Inject constructor(
         coroutineScope.launch {
             _cacheFlow.emit(RequestCache(categoryCode))
             offsetFlow.emit(null)
+            offsetCountFlow.emit(0)
+        }
+    }
+
+    fun loadMore() {
+        coroutineScope.launch {
+            offsetCountFlow.emit(offsetCountFlow.first() + 1)
         }
     }
 

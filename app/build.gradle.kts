@@ -61,14 +61,16 @@ android {
 }
 
 dependencies {
+    // FOR DEPENDENCY INJECTION
     implementation(project(":design"))
     implementation(project(":network"))
     implementation(project(":data"))
 
-    // FOR DEPENDENCY INJECTION
     implementation(project(":feat:onboarding"))
     implementation(project(":feat:main"))
     implementation(project(":feat:splash"))
+
+    implementation(project(":core:analytics"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
