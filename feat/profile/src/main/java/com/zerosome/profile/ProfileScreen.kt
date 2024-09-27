@@ -55,7 +55,8 @@ internal fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding(), isLoading = viewModel.isLoading
+            .navigationBarsPadding(), isLoading = viewModel.isLoading,
+        errorMessage = viewModel.error
     ) {
         Text(
             modifier = Modifier
@@ -156,7 +157,7 @@ internal fun ProfileScreen(
                 Text(text = "로그아웃", style = Body3, color = ZSColor.Neutral400)
             }
             ZSButton(
-                onClick = { },
+                onClick = { viewModel.setAction(ProfileAction.ClickRevoke) },
                 buttonType = ButtonType.OUTLINE,
                 buttonSize = ButtonSize.MEDIUM,
                 modifier = Modifier.weight(1f)

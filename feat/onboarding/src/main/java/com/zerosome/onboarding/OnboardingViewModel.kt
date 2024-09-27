@@ -10,6 +10,7 @@ import com.zerosome.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -95,7 +96,7 @@ internal class OnboardingViewModel @Inject constructor(
             socialToken = userToken,
             nickname = nickname,
             marketingAgreed = userMarketingAgreed
-        ).mapMerge()
+        ).mapMerge().filterNotNull()
             .collect {
                 setEffect { OnboardingEffect.NavigateToMain }
             }

@@ -1,4 +1,4 @@
-package com.zerosome.onboarding
+package com.zerosome.domain.profile
 
 import com.zerosome.domain.repository.UserRepository
 import com.zerosome.network.NetworkError
@@ -7,11 +7,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class LogoutUseCase @Inject constructor(
-    private val userRepository: UserRepository
+class RevokeUseCase @Inject constructor(
+    private val profileRepository: UserRepository
 ) {
-    operator fun invoke() = userRepository.logout().flatMapLatest {
-        userRepository.deleteAccessToken()
+
+    operator fun invoke() = profileRepository.revoke().flatMapLatest {
+        profileRepository.deleteAccessToken()
     }.map {
         if (it) {
             NetworkResult.Success(true)

@@ -10,7 +10,7 @@ import io.ktor.http.headers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-fun<T> safeCall(
+fun <T> safeCall(
     apiCall: suspend () -> BaseResponse<T>
 ): Flow<NetworkResult<T>> = flow {
     emit(NetworkResult.Loading)
@@ -22,7 +22,18 @@ fun<T> safeCall(
     }
 }
 
-fun<T> HttpClient.safeGet(
+fun safeCompletion(
+    apiCall: suspend () -> BaseResponse<Boolean>
+): Flow<NetworkResult<Boolean>> = flow {
+    val response = apiCall.invoke()
+    if (response.status) {
+        emit(NetworkResult.Success(true))
+    } else {
+        emit(NetworkResult.Error(NetworkError.from(response.code)))
+    }
+}
+
+fun <T> HttpClient.safeGet(
     token: String? = null,
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}
@@ -43,7 +54,7 @@ fun<T> HttpClient.safeGet(
 }
 
 
-fun<T> HttpClient.safePost(
+fun <T> HttpClient.safePost(
     token: String? = null,
     url: String,
     builder: HttpRequestBuilder.() -> Unit = {}

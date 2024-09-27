@@ -28,7 +28,6 @@ class TokenSource(
         try {
             tokenPreferenceStore.edit {
                 it[ACCESS_TOKEN] = accessToken ?: ""
-
                 it[REFRESH_TOKEN] = refreshToken ?: ""
             }
             return true

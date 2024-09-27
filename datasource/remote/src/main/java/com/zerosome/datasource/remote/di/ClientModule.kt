@@ -103,19 +103,16 @@ class NetworkModule {
                         )
                     }.body<BaseResponse<TokenResponse>>()
 
-                    refreshToken.data?.let {
-                        BearerTokens(
-                            accessToken = refreshToken.data?.accessToken ?: "",
-                            refreshToken = refreshToken.data?.refreshToken ?: ""
-                        )
-                            .also {
-                                dataSource.updateToken(
-                                    accessToken = refreshToken.data?.accessToken ?: "",
-                                    refreshToken = refreshToken.data?.refreshToken ?: " "
-                                )
-                            }
-                    } ?: throw ZSNetworkException(NetworkError.UNAUTHORIZED)
-
+                    BearerTokens(
+                        accessToken = refreshToken.data?.accessToken ?: "",
+                        refreshToken = refreshToken.data?.refreshToken ?: ""
+                    )
+                        .also {
+                            dataSource.updateToken(
+                                accessToken = refreshToken.data?.accessToken ?: "",
+                                refreshToken = refreshToken.data?.refreshToken ?: " "
+                            )
+                        }
                 }
             }
         }

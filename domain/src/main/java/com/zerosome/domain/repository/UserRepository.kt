@@ -8,7 +8,7 @@ interface UserRepository {
 
     fun validateNickname(nickname: String): Flow<NetworkResult<Boolean>>
 
-    fun signUp(socialToken: String, socialType: String, nickname: String, marketingAgreement: Boolean): Flow<NetworkResult<Unit>>
+    fun signUp(socialToken: String, socialType: String, nickname: String, marketingAgreement: Boolean): Flow<NetworkResult<Boolean>>
 
     fun login(socialToken: String, socialType: String): Flow<NetworkResult<Boolean>>
 
@@ -17,6 +17,8 @@ interface UserRepository {
     fun deleteAccessToken(): Flow<Boolean>
 
     fun getUserData(): Flow<NetworkResult<UserBasicInfo>>
+
+    fun logout(): Flow<NetworkResult<Boolean>>
 
     fun revoke(): Flow<NetworkResult<Boolean>>
 }

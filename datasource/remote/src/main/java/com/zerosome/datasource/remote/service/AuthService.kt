@@ -6,6 +6,7 @@ import com.zerosome.datasource.remote.dto.response.TokenResponse
 import com.zerosome.network.BaseService
 import com.zerosome.network.NetworkResult
 import com.zerosome.network.safeCall
+import com.zerosome.network.safeCompletion
 import com.zerosome.network.safePost
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -54,10 +55,16 @@ class AuthService @Inject constructor(
         }.body()
     }
 
-    fun revoke(token: String): Flow<NetworkResult<Unit>> = safeCall {
-        client.delete(urlString = "$apiRoute/logout") {}.body()
+    fun revoke(token: String): Flow<NetworkResult<Boolean>> = safeCompletion {
+        client.delete(urlString = apiRoute) {
+            header("Authorization", "Bearer $token")
+        }.body()
+
     }
 
-    fun logout(token: String): Flow<NetworkResult<Unit>> = client.safePost(token, apiRoute)
-
+    fun logout(token: String): Flow<NetworkResult<Boolean>> = safeCompletion {
+        client.post(urlString = "$apiRoute/logout") {
+            header("Authorization", "Bearer $token")
+        }.body()
+    }
 }

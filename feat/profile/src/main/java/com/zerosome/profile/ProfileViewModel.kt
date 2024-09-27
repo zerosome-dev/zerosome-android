@@ -8,10 +8,12 @@ import com.zerosome.core.UIIntent
 import com.zerosome.core.UIState
 import com.zerosome.domain.model.UserBasicInfo
 import com.zerosome.domain.profile.GetUserDataUseCase
+import com.zerosome.domain.profile.RevokeUseCase
 import com.zerosome.onboarding.CheckUserUseCase
 import com.zerosome.onboarding.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -66,7 +68,8 @@ internal enum class ProfileNavRoute {
 internal class ProfileViewModel @Inject constructor(
     private val checkUserUseCase: CheckUserUseCase,
     getUserDataUseCase: GetUserDataUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val revokeUseCase: RevokeUseCase,
 ) : BaseViewModel<ProfileAction, ProfileIntent, ProfileState, ProfileEffect>(
     initialState = ProfileState()
 ) {
@@ -79,7 +82,7 @@ internal class ProfileViewModel @Inject constructor(
         initialValue = null
     ).launchIn(viewModelScope)
 
-    override fun actionPredicate(action: ProfileAction): ProfileIntent = when(action) {
+    override fun actionPredicate(action: ProfileAction): ProfileIntent = when (action) {
         is ProfileAction.ClickLogout -> ProfileIntent.Logout
         is ProfileAction.ClickNicknameChange -> ProfileIntent.Navigate(ProfileNavRoute.NICKNAME)
         is ProfileAction.ClickTerms -> ProfileIntent.Navigate(ProfileNavRoute.TERMS)
@@ -94,16 +97,18 @@ internal class ProfileViewModel @Inject constructor(
     override fun collectIntent(intent: ProfileIntent) {
         when (intent) {
             is ProfileIntent.Logout -> viewModelScope.launch {
-                logoutUseCase().collect {
-                    if (it) {
-                        setEffect { ProfileEffect.MoveToLogin }
-                    }
+                logoutUseCase().mapMerge().filterNotNull().collect {
+                    setEffect { ProfileEffect.MoveToLogin }
                 }
             }
-            is ProfileIntent.Navigate -> {
 
+            is ProfileIntent.Navigate -> {}
+
+            is ProfileIntent.RevokeAccess -> viewModelScope.launch {
+                revokeUseCase().mapMerge().filterNotNull().collect {
+                    setEffect { ProfileEffect.MoveToLogin }
+                }
             }
-            is ProfileIntent.RevokeAccess -> {}
 
         }
     }

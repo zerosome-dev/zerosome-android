@@ -13,9 +13,11 @@ import com.zerosome.network.NetworkResult
 import com.zerosome.network.safeCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 internal class UserRepositoryImpl @Inject constructor(
@@ -31,7 +33,7 @@ internal class UserRepositoryImpl @Inject constructor(
         socialType: String,
         nickname: String,
         marketingAgreement: Boolean
-    ): Flow<NetworkResult<Unit>> = userService.join(
+    ): Flow<NetworkResult<Boolean>> = userService.join(
         socialToken,
         socialType = socialType,
         nickname = nickname,
@@ -41,7 +43,7 @@ internal class UserRepositoryImpl @Inject constructor(
             NetworkResult.Loading -> NetworkResult.Loading
             is NetworkResult.Success -> {
                 if (tokenSource.updateToken(it.data.accessToken, it.data.refreshToken)) {
-                    NetworkResult.Success(Unit)
+                    NetworkResult.Success(true)
                 } else {
                     NetworkResult.Error(NetworkError.UNAUTHORIZED)
                 }
@@ -56,7 +58,11 @@ internal class UserRepositoryImpl @Inject constructor(
             when (it) {
                 NetworkResult.Loading -> NetworkResult.Loading
                 is NetworkResult.Success -> {
-                    if (tokenSource.updateToken(it.data.token?.accessToken, it.data.token?.refreshToken)) {
+                    if (tokenSource.updateToken(
+                            it.data.token?.accessToken,
+                            it.data.token?.refreshToken
+                        )
+                    ) {
                         NetworkResult.Success(it.data.isMember)
                     } else {
                         NetworkResult.Error(NetworkError.UNAUTHORIZED)
@@ -85,7 +91,16 @@ internal class UserRepositoryImpl @Inject constructor(
         userDetailService.getUserDetailData()
     }.mapToDomain { it.domainModel }
 
-    // 차후 탈퇴 관련 수정 예정
-    override fun revoke(): Flow<NetworkResult<Boolean>> = flowOf(NetworkResult.Loading)
 
+    override fun revoke(): Flow<NetworkResult<Boolean>> {
+        val token = runBlocking { tokenSource.getTokenEntity() }
+        if (token?.accessToken.isNullOrEmpty()) return flowOf(NetworkResult.Error(NetworkError.UNAUTHORIZED))
+        return userService.revoke(token?.accessToken ?: "")
+    }
+
+    override fun logout(): Flow<NetworkResult<Boolean>> {
+        val token = runBlocking { tokenSource.getTokenEntity() }
+        if (token?.accessToken.isNullOrEmpty()) return flowOf(NetworkResult.Error(NetworkError.UNAUTHORIZED))
+        return userService.logout(token?.accessToken ?: "")
+    }
 }
