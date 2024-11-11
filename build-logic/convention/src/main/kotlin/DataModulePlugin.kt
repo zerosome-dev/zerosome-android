@@ -8,6 +8,7 @@ class DataModulePlugin : Plugin<Project>{
         with(target) {
             with(pluginManager) {
                 apply("zerosome.library")
+                apply("zerosome.hilt")
             }
 
             dependencies {
