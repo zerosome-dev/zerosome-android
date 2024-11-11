@@ -28,7 +28,6 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         resValue("string", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
-        resValue("string", "KAKAO_REDIRECT", properties.getProperty("KAKAO_APP_REDIRECT_KEY"))
     }
 
     buildTypes {
