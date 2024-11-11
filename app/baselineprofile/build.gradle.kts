@@ -2,27 +2,12 @@ plugins {
     alias(libs.plugins.androidTest)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.compose.gradlePlugin)
 }
 
 android {
     namespace = "com.zerosome.baselineprofile"
     compileSdk = 34
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    defaultConfig {
-        minSdk = 28
-        targetSdk = 34
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 
     targetProjectPath = ":app"
 

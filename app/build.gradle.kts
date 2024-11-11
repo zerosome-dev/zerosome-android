@@ -1,12 +1,11 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.zerosome.application)
     alias(libs.plugins.googleKsp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.googleGms)
+    alias(libs.plugins.zerosome.hilt)
 }
 
 android {
@@ -28,7 +27,6 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         resValue("string", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
-        resValue("string", "KAKAO_REDIRECT", properties.getProperty("KAKAO_APP_REDIRECT_KEY"))
     }
 
     buildTypes {
@@ -93,7 +91,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 }
