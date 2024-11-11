@@ -16,6 +16,7 @@ class FeaturePlugin : Plugin<Project> {
                 add("implementation", project(":core"))
                 add("implementation", project(":design"))
 
+                add("implementation", libs.findLibrary("navigation-compose").get())
                 add("implementation", libs.findLibrary("hilt-compose").get())
             }
         }

@@ -99,6 +99,8 @@ googleGms = { id = "com.google.gms.google-services", version.ref = "google-servi
 # Plugins by project
 zerosome-hilt = { id = "zerosome.hilt" }
 zerosome-application = { id = "zerosome.application"}
+zerosome-library = { id = "zerosome.library"}
+zerosome-feature = { id = "zerosome.feature"}
 
 [bundles]
 ktor = ["ktor-core", "ktor-android", "ktor-content-negotiation", "ktor-serialization-json", "ktor-logging", "ktor-auth"]
