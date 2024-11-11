@@ -1,8 +1,7 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.zerosome.application)
     alias(libs.plugins.googleKsp)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.googleGms)

@@ -37,5 +37,10 @@ gradlePlugin {
             id = "zerosome.hilt"
             implementationClass = "HiltConventionPlugin"
         }
+
+        register("application") {
+            id = "zerosome.application"
+            implementationClass = "AndroidApplicationPlugin"
+        }
     }
 }

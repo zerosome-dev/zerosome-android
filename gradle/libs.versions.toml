@@ -86,6 +86,7 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-gradlePlugin = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin"}
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 googleKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
@@ -97,6 +98,7 @@ googleGms = { id = "com.google.gms.google-services", version.ref = "google-servi
 
 # Plugins by project
 zerosome-hilt = { id = "zerosome.hilt" }
+zerosome-application = { id = "zerosome.application"}
 
 [bundles]
 ktor = ["ktor-core", "ktor-android", "ktor-content-negotiation", "ktor-serialization-json", "ktor-logging", "ktor-auth"]
