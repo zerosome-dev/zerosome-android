@@ -77,5 +77,10 @@ gradlePlugin {
             id = "zerosome.datasource.local"
             implementationClass = "LocalDataSourcePlugin"
         }
+
+        register("datasource-remote") {
+            id = "zerosome.datasource.remote"
+            implementationClass = "RemoteDataSourcePlugin"
+        }
     }
 }
