@@ -42,5 +42,30 @@ gradlePlugin {
             id = "zerosome.application"
             implementationClass = "AndroidApplicationPlugin"
         }
+
+        register("library") {
+            id = "zerosome.library"
+            implementationClass = "AndroidLibraryPlugin"
+        }
+
+        register("design") {
+            id = "zerosome.design"
+            implementationClass = "DesignPlugin"
+        }
+
+        register("domain") {
+            id = "zerosome.domain"
+            implementationClass = "DomainPlugin"
+        }
+
+        register("domain-specified") {
+            id = "zerosome.domain.specification"
+            implementationClass = "DomainSpecifiedPlugin"
+        }
+
+        register("feature") {
+            id = "zerosome.feature"
+            implementationClass = "FeaturePlugin"
+        }
     }
 }
