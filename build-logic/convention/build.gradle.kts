@@ -73,6 +73,11 @@ gradlePlugin {
             implementationClass = "DatabasePlugin"
         }
 
+        register("data") {
+            id = "zerosome.data"
+            implementationClass = "DataModulePlugin"
+        }
+
         register("datasource-local") {
             id = "zerosome.datasource.local"
             implementationClass = "LocalDataSourcePlugin"

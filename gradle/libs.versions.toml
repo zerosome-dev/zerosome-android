@@ -104,6 +104,7 @@ zerosome-feature = { id = "zerosome.feature"}
 zerosome-database = { id = "zerosome.database" }
 zerosome-datasource-local = { id = "zerosome.datasource.local" }
 zerosome-datasource-remote = { id = "zerosome.datasource.remote" }
+zerosome-data = { id = "zerosome.data"}
 
 [bundles]
 ktor = ["ktor-core", "ktor-android", "ktor-content-negotiation", "ktor-serialization-json", "ktor-logging", "ktor-auth"]
