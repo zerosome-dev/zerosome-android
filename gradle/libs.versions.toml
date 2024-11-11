@@ -101,7 +101,7 @@ zerosome-hilt = { id = "zerosome.hilt" }
 zerosome-application = { id = "zerosome.application"}
 zerosome-library = { id = "zerosome.library"}
 zerosome-feature = { id = "zerosome.feature"}
-
+zerosome-database = { id = "zerosome.database" }
 [bundles]
 ktor = ["ktor-core", "ktor-android", "ktor-content-negotiation", "ktor-serialization-json", "ktor-logging", "ktor-auth"]
 

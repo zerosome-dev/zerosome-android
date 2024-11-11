@@ -67,5 +67,10 @@ gradlePlugin {
             id = "zerosome.feature"
             implementationClass = "FeaturePlugin"
         }
+
+        register("databse") {
+            id = "zerosome.database"
+            implementationClass = "DatabasePlugin"
+        }
     }
 }
