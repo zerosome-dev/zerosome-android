@@ -7,6 +7,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 
 internal fun Project.configureKotlinAndroid(
@@ -31,12 +32,11 @@ private inline fun <reified T: KotlinTopLevelExtension> Project.configureKotlin(
     val warningAsErrors: String? by project
     when (this) {
         is KotlinAndroidProjectExtension -> compilerOptions
+        is KotlinJvmProjectExtension -> compilerOptions
         else -> TODO("Unsupported project extension $this ${T::class}")
     }.apply {
-        jvmTarget = JvmTarget.JVM_17
-        allWarningsAsErrors = warningAsErrors.toBoolean()
-        freeCompilerArgs.add(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
+        jvmTarget.set(JvmTarget.JVM_17)
+        allWarningsAsErrors.set(warningAsErrors.toBoolean())
+        freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }

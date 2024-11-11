@@ -14,7 +14,7 @@ class HiltConventionPlugin : Plugin<Project>{
             pluginManager.withPlugin("com.android.base") {
                 pluginManager.apply("dagger.hilt.android.plugin")
                 dependencies {
-                    add("implementation", libs.findLibrary("hilt-android").get())
+                    add("implementation", libs.findLibrary("hilt").get())
                 }
             }
         }

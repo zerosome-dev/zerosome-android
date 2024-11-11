@@ -4,9 +4,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleKsp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.googleGms)
+    alias(libs.plugins.zerosome.hilt)
 }
 
 android {
@@ -92,7 +92,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 }

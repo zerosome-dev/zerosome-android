@@ -95,6 +95,9 @@ androidTest = { id = "com.android.test", version.ref = "agp" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 googleGms = { id = "com.google.gms.google-services", version.ref = "google-services" }
 
+# Plugins by project
+zerosome-hilt = { id = "zerosome.hilt" }
+
 [bundles]
 ktor = ["ktor-core", "ktor-android", "ktor-content-negotiation", "ktor-serialization-json", "ktor-logging", "ktor-auth"]
 

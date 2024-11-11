@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.zerosome.hilt)
     alias(libs.plugins.googleKsp)
 }
 
@@ -68,7 +68,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.navigation.compose)
 
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 }
