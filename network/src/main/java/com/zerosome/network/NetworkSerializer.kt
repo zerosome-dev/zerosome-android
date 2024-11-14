@@ -11,7 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 
 class NetworkResultSerializer<T : Any>(
     tSerializer: KSerializer<T>
-) : KSerializer<NetworkResult<T>> {
+) : KSerializer<com.zerosome.domain.NetworkResult<T>> {
     @Serializable
     @SerialName("NetworkResult")
     data class ServiceResultSurrogate<T : Any>(
@@ -32,28 +32,28 @@ class NetworkResultSerializer<T : Any>(
 
     override val descriptor: SerialDescriptor = surrogateSerializer.descriptor
 
-    override fun deserialize(decoder: Decoder): NetworkResult<T> {
+    override fun deserialize(decoder: Decoder): com.zerosome.domain.NetworkResult<T> {
         val surrogate = surrogateSerializer.deserialize(decoder)
         return when (surrogate.type) {
             ServiceResultSurrogate.Type.SUCCESS ->
                 if (surrogate.data != null)
-                    NetworkResult.Success(surrogate.data)
+                    com.zerosome.domain.NetworkResult.Success(surrogate.data)
                 else
                     throw SerializationException("Missing data for successful result")
             ServiceResultSurrogate.Type.ERROR ->
-                NetworkResult.Error(NetworkError.from("${surrogate.code}"))
-            ServiceResultSurrogate.Type.LOADING -> NetworkResult.Loading
+                com.zerosome.domain.NetworkResult.Error(NetworkError.from("${surrogate.code}"))
+            ServiceResultSurrogate.Type.LOADING -> com.zerosome.domain.NetworkResult.Loading
         }
     }
 
-    override fun serialize(encoder: Encoder, value: NetworkResult<T>) {
+    override fun serialize(encoder: Encoder, value: com.zerosome.domain.NetworkResult<T>) {
         val surrogate = when (value) {
-            is NetworkResult.Error -> ServiceResultSurrogate(
+            is com.zerosome.domain.NetworkResult.Error -> ServiceResultSurrogate(
                 type = ServiceResultSurrogate.Type.ERROR,
                 code = value.error.errorCode,
                 status = false
             )
-            is NetworkResult.Success -> ServiceResultSurrogate(
+            is com.zerosome.domain.NetworkResult.Success -> ServiceResultSurrogate(
                 type = ServiceResultSurrogate.Type.SUCCESS,
                 status = true,
                 data = value.data

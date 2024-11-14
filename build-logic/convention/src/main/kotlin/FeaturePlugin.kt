@@ -13,7 +13,7 @@ class FeaturePlugin : Plugin<Project> {
 
 
             dependencies {
-                add("implementation", project(":core"))
+                add("implementation", project(":feat:core"))
                 add("implementation", project(":design"))
 
                 add("implementation", libs.findLibrary("navigation-compose").get())

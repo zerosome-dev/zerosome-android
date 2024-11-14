@@ -3,13 +3,11 @@ package com.zerosome.domain.repository
 import com.zerosome.domain.model.Banner
 import com.zerosome.domain.model.Cafe
 import com.zerosome.domain.model.Rollout
-import com.zerosome.network.NetworkResult
-import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
-    fun getBanner(): Flow<NetworkResult<List<Banner>>>
+    suspend fun getBanner(): List<Banner>
 
-    fun getRollout(): Flow<NetworkResult<List<Rollout>>>
+    suspend fun getRollout(): List<Rollout>
 
-    fun getCafe(): Flow<NetworkResult<List<Cafe>>>
+    suspend fun getCafe(): List<Cafe>
 }

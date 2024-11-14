@@ -2,7 +2,7 @@ package com.zerosome.review
 
 import com.zerosome.domain.model.Review
 import com.zerosome.domain.repository.ReviewRepository
-import com.zerosome.network.NetworkResult
+import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

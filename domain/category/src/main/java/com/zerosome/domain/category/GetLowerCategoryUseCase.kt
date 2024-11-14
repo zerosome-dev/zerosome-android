@@ -3,10 +3,9 @@ package com.zerosome.domain.category
 import com.zerosome.domain.UseCase
 import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.repository.CategoryRepository
-import com.zerosome.network.NetworkResult
+import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton

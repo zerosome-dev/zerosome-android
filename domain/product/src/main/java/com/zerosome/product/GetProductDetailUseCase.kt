@@ -2,7 +2,7 @@ package com.zerosome.product
 
 import com.zerosome.domain.model.Product
 import com.zerosome.domain.repository.ProductRepository
-import com.zerosome.network.NetworkResult
+import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

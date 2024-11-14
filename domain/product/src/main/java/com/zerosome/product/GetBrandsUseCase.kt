@@ -2,7 +2,7 @@ package com.zerosome.product
 
 import com.zerosome.domain.UseCase
 import com.zerosome.domain.repository.FilterRepository
-import com.zerosome.network.NetworkResult
+import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.stateIn

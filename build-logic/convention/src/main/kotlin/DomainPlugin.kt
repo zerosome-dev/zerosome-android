@@ -8,8 +8,6 @@ class DomainPlugin : Plugin<Project>{
             pluginManager.apply("zerosome.library")
 
             extensions.apply {
-                add("api", project(":network")) // 차후 삭제 예정
-
                 add("implementation", libs.findLibrary("androidx-core-ktx"))
             }
         }

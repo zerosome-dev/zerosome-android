@@ -1,7 +1,7 @@
 package com.zerosome.onboarding
 
 import com.zerosome.domain.repository.UserRepository
-import com.zerosome.network.NetworkResult
+import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge

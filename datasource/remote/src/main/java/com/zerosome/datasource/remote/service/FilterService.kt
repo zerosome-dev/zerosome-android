@@ -5,12 +5,9 @@ import com.zerosome.datasource.remote.dto.response.CategoryDepth2Response
 import com.zerosome.datasource.remote.dto.response.ZeroCategoryResponse
 import com.zerosome.network.BaseResponse
 import com.zerosome.network.BaseService
-import com.zerosome.network.NetworkResult
-import com.zerosome.network.safeCall
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FilterService @Inject constructor(
