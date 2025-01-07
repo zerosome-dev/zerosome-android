@@ -25,8 +25,8 @@ class ZSNetworkException(val error: NetworkError) : Exception() {
         NetworkError.METHOD_NOT_ALLOWED,
         NetworkError.SYSTEM,
         NetworkError.API_FORBIDDEN,
-        NetworkError.UNKNOWN -> ClientExceptions(clientErrors = ClientError.NETWORK_UNVALIDATED_INVALID)
+        NetworkError.UNKNOWN -> ClientExceptions(clientError = ClientError.NETWORK_UNVALIDATED_INVALID)
 
-        NetworkError.UNAUTHORIZED -> ClientExceptions(clientErrors = ClientError.AUTH_NOT_VALIDATED)
+        NetworkError.UNAUTHORIZED -> ClientExceptions(clientError = ClientError.AUTH_NOT_VALIDATED)
     }
 }

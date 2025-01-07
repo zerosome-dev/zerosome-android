@@ -87,5 +87,10 @@ gradlePlugin {
             id = "zerosome.datasource.remote"
             implementationClass = "RemoteDataSourcePlugin"
         }
+
+        register("library-compose") {
+            id = "zerosome.android.compose"
+            implementationClass = "AndroidComposeLibraryPlugin"
+        }
     }
 }

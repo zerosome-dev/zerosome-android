@@ -7,7 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
     implementation(project(":domain:product"))
     implementation(project(":feat:review"))
     implementation(project(":feat:profile"))

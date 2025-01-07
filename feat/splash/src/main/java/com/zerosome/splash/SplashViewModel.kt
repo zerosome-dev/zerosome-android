@@ -2,29 +2,35 @@ package com.zerosome.splash
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.domain.NetworkResult
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import com.zerosome.onboarding.CheckUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface SplashAction: UIAction
-
-sealed interface SplashIntent: UIIntent {
-    data object Initialize: SplashIntent
+sealed interface SplashAction : UIAction {
+    data object Initializer : SplashAction
 }
 
-data object SplashState: UIState
+sealed interface SplashIntent : UIIntent {
+    data object Initialize : SplashIntent
+}
 
-sealed interface SplashEffect: UIEffect {
-    data object MoveToLogin: SplashEffect
+data object SplashState : UIState
 
-    data object MoveToMain: SplashEffect
+sealed interface SplashEffect : UIEffect {
+    data object MoveToLogin : SplashEffect
+
+    data object MoveToMain : SplashEffect
 }
 
 @HiltViewModel
@@ -33,24 +39,34 @@ class SplashViewModel @Inject constructor(
 ) : BaseViewModel<SplashAction, SplashIntent, SplashState, SplashEffect>(
     initialState = SplashState
 ) {
+    private val checkUser = checkUserUseCase().mapMerge(
+        { it.printStackTrace() }, {
+        Log.d("CPRI", "RESULT")
+        if (it) {
+            setEffect { SplashEffect.MoveToMain }
+        } else {
+            setEffect { SplashEffect.MoveToLogin }
+        }
+    }).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = NetworkResult.Loading
+    )
 
     init {
-        setIntent(SplashIntent.Initialize)
+        setAction(SplashAction.Initializer)
+        checkUser.launchIn(viewModelScope)
     }
-    override fun actionPredicate(action: SplashAction): SplashIntent = SplashIntent.Initialize
 
-    override fun collectIntent(intent: SplashIntent) {
-        when(intent) {
+    override suspend fun actionPredicate(action: SplashAction): SplashIntent =
+        SplashIntent.Initialize
+
+    override suspend fun collectIntent(intent: SplashIntent) {
+        when (intent) {
             is SplashIntent.Initialize -> {
                 viewModelScope.launch {
                     delay(1000)
-                    checkUserUseCase().collect {
-                        if (it) {
-                            setEffect { SplashEffect.MoveToMain }
-                        } else {
-                            setEffect { SplashEffect.MoveToLogin }
-                        }
-                    }
+                    +checkUserUseCase
                 }
             }
         }

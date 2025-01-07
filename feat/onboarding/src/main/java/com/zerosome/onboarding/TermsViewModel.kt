@@ -1,11 +1,10 @@
 package com.zerosome.onboarding
 
-import androidx.compose.ui.res.stringResource
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,16 +39,14 @@ internal data class TermsState(
         get() = serviceTermsAgreed && privacyTermsAgreed
 }
 
-internal sealed interface TermsEffect : UIEffect {
-
-}
+internal sealed interface TermsEffect : UIEffect
 
 @HiltViewModel
 internal class TermsViewModel @Inject constructor() :
     BaseViewModel<TermsAction, TermsIntent, TermsState, TermsEffect>(
         initialState = TermsState()
     ) {
-    override fun actionPredicate(action: TermsAction): TermsIntent =
+    override suspend fun actionPredicate(action: TermsAction): TermsIntent =
         when (action) {
             TermsAction.ClickAll -> TermsIntent.SetAll
             TermsAction.ClickService -> TermsIntent.SetService
@@ -58,7 +55,7 @@ internal class TermsViewModel @Inject constructor() :
         }
 
 
-    override fun collectIntent(intent: TermsIntent) {
+    override suspend fun collectIntent(intent: TermsIntent) {
         when (intent){
             TermsIntent.SetAll -> setState {
                 if (allChecked) {

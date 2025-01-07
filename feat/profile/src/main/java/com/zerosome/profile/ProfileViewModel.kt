@@ -1,19 +1,18 @@
 package com.zerosome.profile
 
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.domain.model.UserBasicInfo
 import com.zerosome.domain.profile.GetUserDataUseCase
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import com.zerosome.onboarding.CheckUserUseCase
 import com.zerosome.onboarding.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,7 +70,7 @@ internal class ProfileViewModel @Inject constructor(
     initialState = ProfileState()
 ) {
 
-    private val userFlow = getUserDataUseCase().mapMerge().onEach {
+    private val userFlow = getUserDataUseCase().mapMerge {
         setState { copy(profile = it) }
     }.stateIn(
         scope = viewModelScope,
@@ -79,7 +78,17 @@ internal class ProfileViewModel @Inject constructor(
         initialValue = null
     ).launchIn(viewModelScope)
 
-    override fun actionPredicate(action: ProfileAction): ProfileIntent = when(action) {
+    private val logout = logoutUseCase().mapMerge {
+        if (it) {
+            setEffect { ProfileEffect.MoveToLogin }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    ).launchIn(viewModelScope)
+
+    override suspend fun actionPredicate(action: ProfileAction): ProfileIntent = when(action) {
         is ProfileAction.ClickLogout -> ProfileIntent.Logout
         is ProfileAction.ClickNicknameChange -> ProfileIntent.Navigate(ProfileNavRoute.NICKNAME)
         is ProfileAction.ClickTerms -> ProfileIntent.Navigate(ProfileNavRoute.TERMS)
@@ -91,14 +100,10 @@ internal class ProfileViewModel @Inject constructor(
         is ProfileAction.ClickOpenKakao -> ProfileIntent.Logout
     }
 
-    override fun collectIntent(intent: ProfileIntent) {
+    override suspend fun collectIntent(intent: ProfileIntent) {
         when (intent) {
             is ProfileIntent.Logout -> viewModelScope.launch {
-                logoutUseCase().collect {
-                    if (it) {
-                        setEffect { ProfileEffect.MoveToLogin }
-                    }
-                }
+                +logoutUseCase
             }
             is ProfileIntent.Navigate -> {
 

@@ -3,13 +3,9 @@ package com.zerosome.main.category
 import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.core.analytics.LogName
 import com.zerosome.core.analytics.LogProperty
+import com.zerosome.domain.NetworkResult
 import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.category.GetLowerCategoryUseCase
 import com.zerosome.domain.model.Brand
@@ -18,17 +14,29 @@ import com.zerosome.domain.model.CategoryDepth2
 import com.zerosome.domain.model.CategoryProduct
 import com.zerosome.domain.model.SortItem
 import com.zerosome.domain.model.ZeroCategory
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import com.zerosome.product.GetBrandsUseCase
 import com.zerosome.product.GetFilterUseCase
 import com.zerosome.product.GetProductsByFilterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal sealed interface CategoryDetailAction : UIAction {
@@ -121,46 +129,53 @@ internal class CategoryDetailViewModel @Inject constructor(
 ) : BaseViewModel<CategoryDetailAction, CategoryDetailIntent, CategoryDetailState, CategoryDetailEffect>(
     initialState = CategoryDetailState()
 ) {
+//
+//    private val productsFlow = viewModelScope.launch {
+//        val firstDepth = uiState.depth1Category?.let { getCategoriesUseCase.getSpecificCategories(it.categoryName) }
+//        firstDepth?.let {
+//            setState { copy(depth1Category = it) }
+//            getLowerCategoryUseCase += it.categoryName
+//        }
+//    }
 
-    private val productFlow = snapshotFlow { uiState.depth1CategoryName }.filterNotNull()
-        .flatMapLatest {
-            getCategoriesUseCase.getSpecificCategory(it)
-        }.onEach {
+    private val productFlow = snapshotFlow { uiState.depth1Category }.filterNotNull().distinctUntilChanged().onEach {
+        val category = getCategoriesUseCase.getSpecificCategories(it.categoryName)
+        getLowerCategoryUseCase += it.categoryName
+        category?.let {
             setState { copy(depth1Category = it) }
-        }.filterNotNull()
-        .flatMapLatest {
-            getLowerCategoryUseCase(it.categoryCode)
-        }.mapMerge()
-        .filterNotNull().onEach {
-            setState { copy(categoryList = it) }
-        }.flatMapLatest {
-            val category =
-                it.find { category -> category.categoryCode == uiState.depth2CategoryName }
-                    ?: it.first()
-            categoryDetailFilterUseCase(category.categoryCode).also {
-                setState { copy(depth2Category = category) }
-            }
-        }.mapMerge().onEach {
-            setState { copy(productList = it ?: emptyList()) }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        ).launchIn(viewModelScope)
-
-    private val filterFlows = combine(
-        getBrandsUseCase().mapMerge().filterNotNull(),
-        getTagUseCase().mapMerge().filterNotNull()
-    ) { brands, tags ->
-        setState {
-            copy(
-                brands = brands,
-                zeroTag = tags
-            )
         }
     }.launchIn(viewModelScope)
 
-    override fun actionPredicate(action: CategoryDetailAction): CategoryDetailIntent {
+    private val firstCategoryFlow = getCategoriesUseCase().mapMerge {  }
+    private val productName = firstCategoryFlow.zip(snapshotFlow { uiState.depth1CategoryName }.filterNotNull()) { _, categoryName ->
+        getCategoriesUseCase.getSpecificCategories(categoryName)
+    }.filterNotNull().onEach { category ->
+        setState { copy(depth1Category = category) }.also {
+            getLowerCategoryUseCase += category.categoryName
+        }
+    }.launchIn(viewModelScope,)
+
+    private val lowerCategories = getLowerCategoryUseCase().mapMerge {
+        val category = it.find { category -> category.categoryCode == uiState.depth2CategoryName } ?: it.first()
+        categoryDetailFilterUseCase += category.categoryCode
+        setState { copy(
+            categoryList = it,
+            depth2Category = category
+        ) }
+    }
+
+    private val categoryDetailFilter = categoryDetailFilterUseCase().mapMerge {
+        setState { copy(productList = it.page) }
+    }
+
+    private val brands = getBrandsUseCase().mapMerge { setState { copy(brands = it) } }
+    private val tags = getTagUseCase().mapMerge { setState { copy(zeroTag = it) } }
+
+    init {
+        init(lowerCategories, categoryDetailFilter, brands, tags)
+    }
+
+    override suspend fun actionPredicate(action: CategoryDetailAction): CategoryDetailIntent {
         return when (action) {
             is CategoryDetailAction.ViewCreated -> CategoryDetailIntent.Initialize(
                 action.category1Id,
@@ -199,7 +214,7 @@ internal class CategoryDetailViewModel @Inject constructor(
         }
     }
 
-    override fun collectIntent(intent: CategoryDetailIntent) {
+    override suspend fun collectIntent(intent: CategoryDetailIntent) {
         when (intent) {
             is CategoryDetailIntent.Initialize -> setState {
                 copy(

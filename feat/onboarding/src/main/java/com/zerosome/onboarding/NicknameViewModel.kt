@@ -3,11 +3,11 @@ package com.zerosome.onboarding
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -58,34 +59,29 @@ internal class NicknameViewModel @Inject constructor(
     initialState = NicknameState()
 ) {
 
+    private val reasonFlow = validateNicknameUseCase().mapMerge {
+        setState { copy(isConfirmed = it == ValidateReason.SUCCESS, reason = it) }
+    }
+
     private val nicknameFlow = snapshotFlow { uiState.nickname }.distinctUntilChanged().onEach {
         setState {
             copy(isConfirmed = null)
         }
     }.filter { it.isNotEmpty() }.debounce(200)
-       .flatMapConcat { validateNicknameUseCase(it) }
-        .mapMerge()
-        .onEach {
-            setState { copy(isConfirmed = it == ValidateReason.SUCCESS, reason = it) }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
+        .onEach { validateNicknameUseCase += it }
+        .launchIn(viewModelScope)
+
 
     init {
-        viewModelScope.launch {
-            nicknameFlow.collect()
-        }
+        init(reasonFlow)
     }
 
-    override fun actionPredicate(action: NicknameAction): NicknameIntent =
+    override suspend fun actionPredicate(action: NicknameAction): NicknameIntent =
         when (action) {
             is NicknameAction.SetNickname -> NicknameIntent.SetNickname(action.name)
         }
 
-    override fun collectIntent(intent: NicknameIntent) {
+    override suspend fun collectIntent(intent: NicknameIntent) {
         when (intent) {
             is NicknameIntent.SetNickname -> setState {
                 copy(nickname = intent.nickname)

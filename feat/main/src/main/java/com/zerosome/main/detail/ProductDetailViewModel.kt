@@ -3,15 +3,16 @@ package com.zerosome.main.detail
 import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.core.analytics.LogName
 import com.zerosome.core.analytics.LogProperty
+import com.zerosome.domain.NetworkResult
 import com.zerosome.domain.model.Product
 import com.zerosome.domain.model.Review
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import com.zerosome.product.GetProductDetailUseCase
 import com.zerosome.review.GetReviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,39 +74,35 @@ internal class ProductDetailViewModel @Inject constructor(
     initialState = ProductDetailState()
 ) {
 
-    private val productIdFlow = snapshotFlow { uiState.productId }.filterNotNull().flatMapConcat {
-        getProductDetailUseCase(it)
-    }.mapMerge().onEach {
-        setState {
-            copy(selectedProduct = it)
+    private val productFlow =
+        getProductDetailUseCase().mapMerge {
+            setState { copy(selectedProduct = it) }.also {
+                handleUiModel()
+            }
         }
+            .stateIn(
+                viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = NetworkResult.Loading
+            )
+
+    private val productIdFlow =
+        snapshotFlow { uiState.productId }.filterNotNull().distinctUntilChanged().onEach {
+            getProductDetailUseCase += it
+            getReviewUseCase += it
+        }
+
+    private val reviews = getReviewUseCase().mapMerge {
+        setState { copy(reviews = it) }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
+        initialValue = NetworkResult.Loading
     ).launchIn(viewModelScope)
 
-    private val productFlow = snapshotFlow { uiState.selectedProduct }.filterNotNull().onEach {
-        handleUiModel()
-    }.stateIn(
-        viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    ).launchIn(viewModelScope)
-
-    private val reviews = snapshotFlow { uiState.productId }.filterNotNull().distinctUntilChanged().flatMapConcat {
-        getReviewUseCase(it)
-    }.mapMerge().onEach {
-        setState { copy(reviews = it ?: emptyList()) }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    ).launchIn(viewModelScope)
-
-    private fun handleUiModel() = withState {
+    private fun handleUiModel() {
         val uiModelList = mutableListOf<ProductDetailUiModel>()
-        selectedProduct?.let {
+        uiState.selectedProduct?.let {
             uiModelList.add(
                 ProductDetailUiModel.Introduction(
                     it.image,
@@ -135,29 +132,35 @@ internal class ProductDetailViewModel @Inject constructor(
         }
     }
 
-    override fun actionPredicate(action: ProductDetailAction): ProductDetailIntent =
+    override suspend fun actionPredicate(action: ProductDetailAction): ProductDetailIntent =
         when (action) {
             is ProductDetailAction.ViewCreated -> ProductDetailIntent.Initialize(action.id).also {
                 analyticsLogger.logEvent(
                     LogName.VIEW_PRODUCT_DETAIL, mapOf(
-                        LogProperty.PRODUCT_ID to action.id)
-                )
-            }
-            is ProductDetailAction.ClickReview -> ProductDetailIntent.SelectReview(action.reviewId).also {
-                analyticsLogger.logEvent(
-                    LogName.CLICK_PRODUCT_DETAIL_REVIEW, mapOf(
-                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                        LogProperty.PRODUCT_ID to action.id
                     )
                 )
             }
-            is ProductDetailAction.ClickSimilarProduct -> ProductDetailIntent.SelectSimilarId(action.productId).also {
-                analyticsLogger.logEvent(
-                    LogName.CLICK_PRODUCT_DETAIL_RELATED_PRODUCT, mapOf(
-                        LogProperty.RELATED_PRODUCT_ID to action.productId,
-                        LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+
+            is ProductDetailAction.ClickReview -> ProductDetailIntent.SelectReview(action.reviewId)
+                .also {
+                    analyticsLogger.logEvent(
+                        LogName.CLICK_PRODUCT_DETAIL_REVIEW, mapOf(
+                            LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                        )
                     )
-                )
-            }
+                }
+
+            is ProductDetailAction.ClickSimilarProduct -> ProductDetailIntent.SelectSimilarId(action.productId)
+                .also {
+                    analyticsLogger.logEvent(
+                        LogName.CLICK_PRODUCT_DETAIL_RELATED_PRODUCT, mapOf(
+                            LogProperty.RELATED_PRODUCT_ID to action.productId,
+                            LogProperty.PRODUCT_ID to (uiState.productId ?: 0)
+                        )
+                    )
+                }
+
             is ProductDetailAction.ClickReviewWrite -> ProductDetailIntent.WriteReview.also {
                 analyticsLogger.logEvent(
                     LogName.CLICK_PRODUCT_DETAIL_REVIEW_WRITE, mapOf(
@@ -165,6 +168,7 @@ internal class ProductDetailViewModel @Inject constructor(
                     )
                 )
             }
+
             is ProductDetailAction.ClickNutrients -> ProductDetailIntent.SeeNutrients.also {
                 analyticsLogger.logEvent(
                     LogName.CLICK_PRODUCT_DETAIL_SHOW_NUTRIENT, mapOf(
@@ -175,7 +179,7 @@ internal class ProductDetailViewModel @Inject constructor(
         }
 
 
-    override fun collectIntent(intent: ProductDetailIntent) {
+    override suspend fun collectIntent(intent: ProductDetailIntent) {
         when (intent) {
             is ProductDetailIntent.SeeNutrients -> setEffect { ProductDetailEffect.OpenNutrientDialog }
             is ProductDetailIntent.SelectReview -> setEffect {
@@ -191,7 +195,7 @@ internal class ProductDetailViewModel @Inject constructor(
                 )
             }
 
-            is ProductDetailIntent.Initialize -> setState { copy(productId = intent.id) }
+            is ProductDetailIntent.Initialize -> getProductDetailUseCase += intent.id
         }
     }
 }

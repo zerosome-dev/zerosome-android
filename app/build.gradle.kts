@@ -10,11 +10,11 @@ plugins {
 
 android {
     namespace = "com.zerosome.android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.zerosome.android"
-        minSdk = 24
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "0.0.1"
@@ -27,6 +27,7 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         resValue("string", "KAKAO_APP_KEY", properties.getProperty("KAKAO_APP_KEY"))
+        resValue("string", "KAKAO_REDIRECT_URL", properties.getProperty("KAKAO_APP_REDIRECT_URL"))
     }
 
     buildTypes {
@@ -39,11 +40,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "21"
     }
     buildFeatures {
         compose = true
@@ -59,11 +60,12 @@ android {
 }
 
 dependencies {
+    // FOR DEPENDENCY INJECTION
     implementation(project(":design"))
     implementation(project(":network"))
     implementation(project(":data"))
 
-    // FOR DEPENDENCY INJECTION
+    // MAIN BRANCHED LOCATION
     implementation(project(":feat:onboarding"))
     implementation(project(":feat:main"))
     implementation(project(":feat:splash"))

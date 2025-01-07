@@ -34,8 +34,8 @@ import com.zerosome.design.ui.theme.ZSColor
 internal fun LoginScreen(
     moveToNext: (customAccessToken: String, userType: LoginType) -> Unit,
     moveToMain: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel()
 ) {
+    val viewModel = hiltViewModel<LoginViewModel>()
     val context = LocalContext.current
     val effect by viewModel.uiEffect.collectAsState(initial = null)
     LaunchedEffect(key1 = effect) {
@@ -90,23 +90,23 @@ internal fun LoginScreen(
                 contentDescription = "KAKAO_LOGIN"
             )
             Spacer(modifier = Modifier.height(20.dp))
-//            Text(
-//                text = stringResource(id = com.zerosome.design.R.string.screen_login_context01),
-//                modifier = Modifier
-//                    .align(Alignment.CenterHorizontally)
-//                    .clickable { viewModel.setAction(LoginAction.ClickSkip) }
-//                    .drawBehind {
-//                        val strokeWidthPx = 1.dp.toPx()
-//                        val verticalOffset = size.height
-//                        drawLine(
-//                            color = Color.White,
-//                            strokeWidth = strokeWidthPx,
-//                            start = Offset(0f, verticalOffset),
-//                            end = Offset(size.width, verticalOffset)
-//                        )
-//                    },
-//                textAlign = TextAlign.Center, style = Body2,
-//            )
+            Text(
+                text = stringResource(id = com.zerosome.design.R.string.screen_login_context01),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable { viewModel.setAction(LoginAction.ClickSkip) }
+                    .drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height
+                        drawLine(
+                            color = Color.White,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
+                textAlign = TextAlign.Center, style = Body2,
+            )
             Spacer(modifier = Modifier.weight(1f))
 
         }

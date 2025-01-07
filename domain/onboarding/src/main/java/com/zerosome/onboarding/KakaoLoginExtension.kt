@@ -11,6 +11,7 @@ suspend fun Context.requestKakaoLogin(): String {
         suspendCancellableCoroutine {
             UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
                 error?.let { throwable ->
+                    error.printStackTrace()
                     it.cancel(throwable)
                 } ?: token?.let { safeToken ->
                     it.resume(safeToken.accessToken)
@@ -21,6 +22,7 @@ suspend fun Context.requestKakaoLogin(): String {
         suspendCancellableCoroutine {
             UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
                 error?.let { throwable ->
+                    throwable.printStackTrace()
                     it.cancel(throwable)
                 } ?: token?.let { safeToken ->
                     it.resume(safeToken.accessToken)

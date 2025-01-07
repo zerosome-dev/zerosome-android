@@ -1,11 +1,11 @@
 package com.zerosome.report
 
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.domain.model.ReportReason
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,14 +30,12 @@ internal data class ReportState(
     val reasonDescription: String = ""
 ) : UIState
 
-internal sealed interface ReportEffect : UIEffect
+internal sealed interface ReportEffect : UIEffect {}
 
 @HiltViewModel
 internal class ReportViewModel @Inject constructor() :
-    BaseViewModel<ReportAction, ReportIntent, ReportState, ReportEffect>(
-        initialState = ReportState()
-    ) {
-    override fun actionPredicate(action: ReportAction): ReportIntent {
+    BaseViewModel<ReportAction, ReportIntent, ReportState, ReportEffect>(initialState = ReportState()) {
+    override suspend fun actionPredicate(action: ReportAction): ReportIntent {
         return when (action) {
             is ReportAction.ClickSelectReason -> ReportIntent.SetReason(action.reason)
             is ReportAction.WriteReasonDescription -> ReportIntent.SetDescription(action.description)
@@ -45,7 +43,7 @@ internal class ReportViewModel @Inject constructor() :
         }
     }
 
-    override fun collectIntent(intent: ReportIntent) {
+    override suspend fun collectIntent(intent: ReportIntent) {
         when (intent) {
             is ReportIntent.SetReason -> setState {
                 copy(

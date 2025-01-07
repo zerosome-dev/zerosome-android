@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,8 +50,9 @@ import com.zerosome.domain.model.ReportReason
 @Composable
 internal fun ReportReasonScreen(
     onBackPressed: () -> Unit,
-    reportViewModel: ReportViewModel = hiltViewModel(),
 ) {
+    val reportViewModel = hiltViewModel<ReportViewModel>()
+
     ZSScreen(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +130,7 @@ fun ReasonItemComponent(
             .padding(vertical = 10.dp, horizontal = 22.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(),
+                indication = ripple(),
                 role = Role.DropdownList,
                 onClick = onItemSelect
             ),

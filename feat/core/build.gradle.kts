@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.zerosome.library)
+    alias(libs.plugins.zerosome.hilt)
+    alias(libs.plugins.zerosome.library.compose)
 }
 
 android {
@@ -8,7 +9,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":core:analytics"))
+    api(project(":core:analytics"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -1,18 +1,16 @@
 package com.zerosome.review
 
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.domain.model.Product
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import com.zerosome.product.GetProductDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,7 +51,7 @@ internal class ReviewWriteViewModel @Inject constructor(
 ): BaseViewModel<ReviewWriteAction, ReviewWriteIntent, ReviewWriteState, ReviewWriteEffect>(
     initialState = ReviewWriteState()
 ) {
-    private val productFlow = productDetailUseCase.getCurrentProduct().mapMerge().filterNotNull().onEach {
+    private val productFlow = productDetailUseCase().mapMerge {
         setState { copy(selectedProduct = it) }
     }.stateIn(
         viewModelScope,
@@ -61,13 +59,14 @@ internal class ReviewWriteViewModel @Inject constructor(
         initialValue = null
     ).launchIn(viewModelScope)
 
-    override fun actionPredicate(action: ReviewWriteAction): ReviewWriteIntent = when(action) {
+
+    override suspend fun actionPredicate(action: ReviewWriteAction): ReviewWriteIntent = when(action) {
         is ReviewWriteAction.WriteReview -> ReviewWriteIntent.SetReviewText(action.text)
         is ReviewWriteAction.ClickReviewScore -> ReviewWriteIntent.SetReviewScore(action.score)
         ReviewWriteAction.ClickConfirmButton -> ReviewWriteIntent.Confirm
     }
 
-    override fun collectIntent(intent: ReviewWriteIntent) {
+    override suspend fun collectIntent(intent: ReviewWriteIntent) {
         when (intent) {
             is ReviewWriteIntent.SetReviewText -> setState { copy(reviewText = intent.text) }
             is ReviewWriteIntent.SetReviewScore -> setState { copy(reviewScore = intent.score) }
@@ -75,7 +74,7 @@ internal class ReviewWriteViewModel @Inject constructor(
         }
     }
 
-    private fun addReview() = withState {
+    private fun addReview() = with(uiState) {
         val product = requireNotNull(selectedProduct)
         viewModelScope.launch {
             createReviewUseCase(product.productId, reviewText, reviewScore)

@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -174,7 +175,7 @@ fun TermsAgreementComponent(
                 interactionSource = remember {
                     MutableInteractionSource()
                 },
-                indication = rememberRipple(),
+                indication = ripple(),
                 role = Role.Checkbox,
                 onClick = { onCheckedChange() })
     ) {
@@ -204,7 +205,7 @@ fun TermsAgreementComponent(
                 color = ZSColor.Neutral400,
                 modifier = Modifier.clickable(interactionSource = remember {
                     MutableInteractionSource()
-                }, indication = rememberRipple(), role = Role.Button, onClick = onClickedWatchPage)
+                }, indication = ripple(), role = Role.Button, onClick = onClickedWatchPage)
             )
         }
     }

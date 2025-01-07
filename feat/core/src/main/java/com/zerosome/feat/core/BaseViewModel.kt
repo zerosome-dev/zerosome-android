@@ -1,17 +1,24 @@
 package com.zerosome.feat.core
 
+import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zerosome.core.analytics.AnalyticsLogger
+import com.zerosome.core.constants.ClientExceptions
 import com.zerosome.domain.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 
 /**
@@ -34,76 +41,77 @@ interface UIState
  */
 interface UIEffect
 
-abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffect>(
+open class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffect>(
     initialState: S
 ) : ViewModel() {
 
-
     protected val analyticsLogger = AnalyticsLogger()
 
-    private var _uiState by mutableStateOf(initialState)
-    val uiState
-        get() = _uiState
+    var uiState by mutableStateOf(initialState)
+        protected set
+
 
     private val _uiAction: MutableSharedFlow<A> = MutableSharedFlow()
-    private val uiAction = _uiAction
+    private val uiAction = _uiAction.onEach {
+        _uiIntent.emit(actionPredicate(it))
+    }.launchIn(viewModelScope)
+
+    private val _uiIntent: MutableSharedFlow<I> = MutableSharedFlow()
+    private val uiIntent = _uiIntent.onEach {
+        isLoading = true
+        collectIntent(it)
+    }.launchIn(viewModelScope)
 
     private val _uiEffect: MutableSharedFlow<E?> = MutableSharedFlow()
     val uiEffect: SharedFlow<E?> = _uiEffect
 
-    private var _isLoading by mutableStateOf(false)
-    val isLoading
-        get() = _isLoading
+    var isLoading by mutableStateOf(false)
+        private set
 
     private var _error by mutableStateOf("")
     val error = _error
 
+    open suspend fun actionPredicate(action: A): I = _uiIntent.single()
 
-    init {
-        viewModelScope.launch {
-            uiAction.collect {
-                collectIntent(actionPredicate(it))
-            }
-        }
-    }
-
-    abstract fun actionPredicate(action: A): I
-
-    abstract fun collectIntent(intent: I)
+    open suspend fun collectIntent(intent: I) {}
 
     protected fun setState(transform: S.() -> S) {
-        _uiState = transform(uiState)
-    }
-
-    protected fun withState(block: suspend S.() -> Unit) {
-        viewModelScope.launch {
-            block(uiState)
-        }
+        isLoading = false
+        uiState = transform(uiState)
     }
 
     protected fun setEffect(transform: () -> E) {
+        isLoading = false
         viewModelScope.launch {
             _uiEffect.emit(transform())
         }
     }
 
-    protected fun <T> Flow<com.zerosome.domain.NetworkResult<T>>.mapMerge(): Flow<T?> = flatMapConcat {
+    protected fun init(vararg flows: Flow<NetworkResult<*>>) {
+        combine(*flows) { flowList ->
+            isLoading = flowList.any { it is NetworkResult.Loading }
+        }
+        flows.forEach {
+            it.launchIn(viewModelScope)
+        }
+    }
+
+    protected fun <T> Flow<NetworkResult<T>>.mapMerge(
+        onFailure: (ClientExceptions) -> Unit = {},
+        onSuccess: (T) -> Unit,
+    ): Flow<NetworkResult<T>> = onEach {
+        Log.d("CPRI", "VIEWMODEL RESULT $it")
         when (it) {
-            is com.zerosome.domain.NetworkResult.Loading -> {
-                _isLoading = true
-                flowOf(null)
+            is NetworkResult.Loading -> {
             }
-            is com.zerosome.domain.NetworkResult.Success -> {
-                _isLoading = false
-                flowOf(it.data)
+            is NetworkResult.Success -> {
+                onSuccess(it.data)
             }
-            is com.zerosome.domain.NetworkResult.Error -> {
-                _isLoading = false
+            is NetworkResult.Error -> {
                 _error = "\"${it.error.message}"
-                flowOf(null)
+                onFailure(it.error)
             }
         }
-
     }
 
     fun clearError() {
@@ -122,9 +130,5 @@ abstract class BaseViewModel<A : UIAction, I : UIIntent, S : UIState, E : UIEffe
         viewModelScope.launch {
             _uiAction.emit(action)
         }
-    }
-
-    protected fun setIntent(intent: I) = viewModelScope.launch {
-        collectIntent(intent)
     }
 }

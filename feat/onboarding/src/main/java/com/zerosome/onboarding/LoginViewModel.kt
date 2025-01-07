@@ -1,81 +1,104 @@
 package com.zerosome.onboarding
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.core.constants.ClientError
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-internal sealed interface LoginAction: UIAction {
-    data object ClickKakaoLogin: LoginAction
+internal sealed interface LoginAction : UIAction {
+    data object ClickKakaoLogin : LoginAction
 
-    data object ClickSkip: LoginAction
+    data object ClickSkip : LoginAction
 
-    data class CheckKakaoLogin(val accessToken: String): LoginAction
+    data class CheckKakaoLogin(val accessToken: String) : LoginAction
 
-    data class CheckAppleLogin(val accessToken: String): LoginAction
+    data class CheckAppleLogin(val accessToken: String) : LoginAction
 }
 
-internal sealed interface LoginIntent: UIIntent {
-    data object LoginWithKakao: LoginIntent
+internal sealed interface LoginIntent : UIIntent {
+    data object LoginWithKakao : LoginIntent
 
-    data object SkipLogin: LoginIntent
+    data object SkipLogin : LoginIntent
 
-    data class CheckUser(val loginType: LoginType, val accessToken: String): LoginIntent
+    data class CheckUser(val loginType: LoginType, val accessToken: String) : LoginIntent
 
 
 }
 
 internal data class LoginState(
+    val userToken: LoginType? = null,
+    val accessToken: String = "",
     val isAlreadySignedUp: Boolean? = null,
-): UIState
+) : UIState
 
-internal sealed interface LoginEffect: UIEffect {
+internal sealed interface LoginEffect : UIEffect {
 
-    data object OpenKakao: LoginEffect
+    data object OpenKakao : LoginEffect
 
-    data object NavigateToMain: LoginEffect
+    data object NavigateToMain : LoginEffect
 
-    data class NavigateToTermsAgree(val accessToken: String, val userType: LoginType): LoginEffect
+    data class NavigateToTermsAgree(val accessToken: String, val userType: LoginType) : LoginEffect
 }
 
 @HiltViewModel
 internal class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-): BaseViewModel<LoginAction, LoginIntent, LoginState, LoginEffect>(
+) : BaseViewModel<LoginAction, LoginIntent, LoginState, LoginEffect>(
     initialState = LoginState()
-){
-    override fun actionPredicate(action: LoginAction): LoginIntent =
+) {
+    override suspend fun actionPredicate(action: LoginAction): LoginIntent =
         when (action) {
             LoginAction.ClickKakaoLogin -> LoginIntent.LoginWithKakao
             LoginAction.ClickSkip -> LoginIntent.SkipLogin
-            is LoginAction.CheckAppleLogin -> LoginIntent.CheckUser(loginType = LoginType.APPLE, accessToken = action.accessToken)
-            is LoginAction.CheckKakaoLogin -> LoginIntent.CheckUser(loginType = LoginType.KAKAO, accessToken = action.accessToken)
+            is LoginAction.CheckAppleLogin -> LoginIntent.CheckUser(
+                loginType = LoginType.APPLE,
+                accessToken = action.accessToken
+            )
+
+            is LoginAction.CheckKakaoLogin -> LoginIntent.CheckUser(
+                loginType = LoginType.KAKAO,
+                accessToken = action.accessToken
+            )
         }
 
-    override fun collectIntent(intent: LoginIntent) {
+    private val loginFlow = loginUseCase().mapMerge(onSuccess = {
+        setEffect { LoginEffect.NavigateToMain }
+    }, onFailure = {
+        if (it.clientError == ClientError.LOGIN_NOT_VALIDATED_EXCEPTION) {
+            setEffect {
+                LoginEffect.NavigateToTermsAgree(
+                    uiState.accessToken,
+                    userType = requireNotNull(uiState.userToken)
+                )
+            }
+        }
+    })
+
+    init {
+        init(loginFlow)
+    }
+
+    override suspend fun collectIntent(intent: LoginIntent) {
         when (intent) {
             LoginIntent.LoginWithKakao -> setEffect { LoginEffect.OpenKakao }
             LoginIntent.SkipLogin -> setEffect { LoginEffect.NavigateToMain }
-            is LoginIntent.CheckUser -> userLogin(accessToken = intent.accessToken, userType = intent.loginType)
+            is LoginIntent.CheckUser -> userLogin(
+                accessToken = intent.accessToken,
+                userType = intent.loginType
+            ).also {
+                setState { copy(userToken = intent.loginType, accessToken = accessToken) }
+            }
         }
     }
 
     private fun userLogin(accessToken: String, userType: LoginType) {
-        viewModelScope.launch {
-            loginUseCase(socialType = userType.name, socialToken = accessToken).mapMerge().filterNotNull().collect {
-                if (it) {
-                    setEffect { LoginEffect.NavigateToMain }
-                } else {
-                    setEffect { LoginEffect.NavigateToTermsAgree(accessToken, userType) }
-                }
-            }
-        }
+        loginUseCase.plusAssign(accessToken, userType)
     }
 }

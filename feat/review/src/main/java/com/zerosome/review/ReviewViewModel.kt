@@ -1,20 +1,16 @@
 package com.zerosome.review
 
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.domain.NetworkResult
 import com.zerosome.domain.model.Review
-import com.zerosome.product.GetProductDetailUseCase
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -48,22 +44,22 @@ internal class ReviewViewModel @Inject constructor(
 ): BaseViewModel<ReviewAction, ReviewIntent, ReviewState, ReviewEffect>(
     initialState = ReviewState()
 ) {
-    val reviewFlow = getReviewUseCase.getCurrentReviews().mapMerge().onEach {
-        setState { copy(reviewList = it ?: emptyList()) }
+    val reviewFlow = getReviewUseCase().mapMerge {
+        setState { copy(reviewList = it) }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
+        initialValue = NetworkResult.Loading
     ).launchIn(viewModelScope)
 
-    override fun actionPredicate(action: ReviewAction): ReviewIntent =
+    override suspend fun actionPredicate(action: ReviewAction): ReviewIntent =
         when (action) {
             is ReviewAction.GetProductId -> ReviewIntent.Initialize(action.id)
             is ReviewAction.ClickWriteReview -> ReviewIntent.WriteReview
             is ReviewAction.ScrollToBottom -> ReviewIntent.LoadMore
         }
 
-    override fun collectIntent(intent: ReviewIntent) {
+    override suspend fun collectIntent(intent: ReviewIntent) {
         when (intent) {
             is ReviewIntent.Initialize -> setState { copy(productId = intent.id) }
             is ReviewIntent.WriteReview -> setEffect {

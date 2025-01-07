@@ -1,17 +1,13 @@
 package com.zerosome.onboarding
 
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
 import javax.inject.Inject
 
 internal sealed interface OnboardingAction : UIAction {
@@ -37,7 +33,11 @@ internal data class OnboardingState(
     val userType: LoginType = LoginType.NONE,
     val userMarketingAgreed: Boolean = false,
     val nickname: String = ""
-) : UIState
+) : UIState {
+    val confirmable: Boolean = run {
+        nickname.isNotEmpty() && userToken.isNotEmpty()
+    }
+}
 
 internal sealed interface OnboardingEffect : UIEffect {
     data object NavigateToMain : OnboardingEffect
@@ -50,19 +50,11 @@ internal class OnboardingViewModel @Inject constructor(
     initialState = OnboardingState()
 ) {
 
-    private val confirmable =
-        snapshotFlow { uiState }.filter { it.nickname.isNotEmpty() && it.userToken.isNotEmpty() }
-            .onEach {
-                setIntent(OnboardingIntent.Confirm)
-            }
+    private val signUpResultUseCase = signUpUseCase()
+        .mapMerge { setEffect { OnboardingEffect.NavigateToMain } }
+        .launchIn(viewModelScope)
 
-    init {
-        viewModelScope.launch {
-            confirmable.collect()
-        }
-    }
-
-    override fun actionPredicate(action: OnboardingAction): OnboardingIntent {
+    override suspend fun actionPredicate(action: OnboardingAction): OnboardingIntent {
         return when (action) {
             is OnboardingAction.UserDateReceived -> OnboardingIntent.SetUserToken(
                 accessToken = action.accessToken,
@@ -74,7 +66,7 @@ internal class OnboardingViewModel @Inject constructor(
         }
     }
 
-    override fun collectIntent(intent: OnboardingIntent) {
+    override suspend fun collectIntent(intent: OnboardingIntent) {
         when (intent) {
             is OnboardingIntent.SetUserToken -> setState {
                 copy(
@@ -89,15 +81,7 @@ internal class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun signUp() = withState {
-        signUpUseCase(
-            socialType = userType.name,
-            socialToken = userToken,
-            nickname = nickname,
-            marketingAgreed = userMarketingAgreed
-        ).mapMerge()
-            .collect {
-                setEffect { OnboardingEffect.NavigateToMain }
-            }
+    private fun signUp() = with(uiState) {
+        signUpUseCase.plusAssign(userToken, userType.name, nickname, userMarketingAgreed)
     }
 }

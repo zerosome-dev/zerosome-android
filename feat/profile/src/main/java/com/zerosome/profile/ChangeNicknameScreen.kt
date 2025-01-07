@@ -29,8 +29,8 @@ import com.zerosome.design.ui.theme.ZSColor
 @Composable
 internal fun ChangeNicknameScreen(
     onBackPressed: () -> Unit,
-    viewModel: ChangeNicknameViewModel = hiltViewModel()
 ) {
+    val viewModel = hiltViewModel<ChangeNicknameViewModel>()
     BackHandler {
         onBackPressed()
     }

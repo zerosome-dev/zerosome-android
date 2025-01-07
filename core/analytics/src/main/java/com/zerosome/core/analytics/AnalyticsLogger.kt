@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 
-public enum class LogName {
+enum class LogName {
     OPEN_APP,
     VIEW_LOGIN,
     CLICK_LOGIN_KAKAO,

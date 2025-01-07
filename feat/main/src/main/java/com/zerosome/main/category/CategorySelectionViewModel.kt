@@ -1,18 +1,16 @@
 package com.zerosome.main.category
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.zerosome.core.BaseViewModel
-import com.zerosome.core.UIAction
-import com.zerosome.core.UIEffect
-import com.zerosome.core.UIIntent
-import com.zerosome.core.UIState
 import com.zerosome.domain.category.GetCategoriesUseCase
 import com.zerosome.domain.model.CategoryDepth1
 import com.zerosome.domain.model.CategoryDepth2
+import com.zerosome.feat.core.BaseViewModel
+import com.zerosome.feat.core.UIAction
+import com.zerosome.feat.core.UIEffect
+import com.zerosome.feat.core.UIIntent
+import com.zerosome.feat.core.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,19 +42,19 @@ internal class CategorySelectionViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            allCategoriesUseCase().mapMerge().onEach {
-                setState { copy(categories = it ?: emptyList()) }
+            allCategoriesUseCase().mapMerge {
+                setState { copy(categories = it) }
             }.collect()
         }
     }
 
-    override fun actionPredicate(action: CategorySelectionAction): CategorySelectionIntent =
+    override suspend fun actionPredicate(action: CategorySelectionAction): CategorySelectionIntent =
         when(action) {
             is CategorySelectionAction.ClickCategoryMore -> CategorySelectionIntent.SelectMore(action.depth1, null)
             is CategorySelectionAction.ClickSpecificCategory -> CategorySelectionIntent.SelectMore(action.depth1, action.depth2)
         }
 
-    override fun collectIntent(intent: CategorySelectionIntent) {
+    override suspend fun collectIntent(intent: CategorySelectionIntent) {
         when(intent) {
             is CategorySelectionIntent.SelectMore -> setEffect {
                 CategorySelectionEffect.NavigateToCategorySelectionDetail(intent.depth1.categoryCode, intent.depth2?.categoryCode)

@@ -1,13 +1,17 @@
 package com.zerosome.product
 
+import com.zerosome.core.constants.ClientError
+import com.zerosome.core.constants.ClientExceptions
 import com.zerosome.domain.model.Product
 import com.zerosome.domain.repository.ProductRepository
 import com.zerosome.domain.NetworkResult
+import com.zerosome.domain.UseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,32 +19,22 @@ import javax.inject.Singleton
 @Singleton
 class GetProductDetailUseCase @Inject constructor(
     private val productRepository: ProductRepository
-) {
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+): UseCase<Product>() {
 
     private val _idFlow: MutableStateFlow<Int?> = MutableStateFlow(null)
-    private val responseFlow: MutableStateFlow<NetworkResult<Product>> =
-        MutableStateFlow(NetworkResult.Loading)
+    private val dataFlow: MutableStateFlow<Product?> = MutableStateFlow(null)
 
-    operator fun invoke(id: Int) = responseFlow.also {
-        _idFlow.tryEmit(id)
-    }.also { callLogic() }
+    override suspend fun innerLogic(): NetworkResult<Product> = run {
+        val id = _idFlow.single() ?: throw ClientExceptions(ClientError.PARAMETER_NOT_AVAILABLE)
+        val currentProduct = productRepository.getProductDetail(id)
+        NetworkResult.Success(currentProduct).also { dataFlow.emit(it.data) }
+    }
 
-    private fun callLogic() {
+    operator fun plusAssign(id: Int) {
         coroutineScope.launch {
-            productRepository.getProductDetail(requireNotNull(_idFlow.value))
-                .onEach {
-                    when (it) {
-                        is NetworkResult.Loading -> responseFlow.emit(NetworkResult.Loading)
-                        is NetworkResult.Success -> responseFlow.emit(NetworkResult.Success(it.data))
-                        is NetworkResult.Error -> responseFlow.emit(NetworkResult.Error(it.error))
-                    }
-                }.collect()
+            _idFlow.emit(id)
         }
     }
 
-    fun refresh() = callLogic()
-
-    fun getCurrentProduct() = responseFlow
+    suspend fun getCurrentProduct() = dataFlow.single()
 }

@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -147,7 +148,7 @@ private fun NewItemComponent(
                         .size(width = 300.dp, height = 327.dp)
                         .clickable(interactionSource = remember {
                             MutableInteractionSource()
-                        }, indication = rememberRipple(), role = Role.Button, onClick = {
+                        }, indication = ripple(), role = Role.Button, onClick = {
                             onClickMore()
                         }),
                     contentScale = ContentScale.Crop
@@ -173,7 +174,7 @@ fun RolloutCardComponent(rollOut: com.zerosome.domain.model.Rollout, onClick: ()
             }
             .clickable(interactionSource = remember {
                 MutableInteractionSource()
-            }, indication = rememberRipple(), onClick = onClick)
+            }, indication = ripple(), onClick = onClick)
     ) {
         ZSImage(
             modifier = Modifier

@@ -17,10 +17,10 @@ import com.zerosome.design.ui.theme.ZSColor
 
 @Composable
 fun SplashScreen(
-    viewModel: SplashViewModel = hiltViewModel(),
     onMoveToLogin: () -> Unit,
     onMoveToMain: () -> Unit
 ) {
+    val viewModel = hiltViewModel<SplashViewModel>()
     val effect by viewModel.uiEffect.collectAsState(initial = null)
     LaunchedEffect(key1 = effect) {
         when (effect) {
